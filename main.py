@@ -5,7 +5,7 @@ import string
 import uuid
 import datetime
 
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import RedirectResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -42,8 +42,18 @@ async def read_card(card_id: str):
 		return RedirectResponse(url = "https://snyco.dev")
 
 @app.post("/create")
-async def create_card(card: dict):
-	auth_header = card.get("Authorization")
+async def create_card(request: Request, card: dict):
+	"""
+		card: {
+			"type": "vcard" | "url",
+			"vcard": "...", (if type is vcard)
+			"url": "...", (if type is url)
+			"owner_id": "optional, if not provided a new user will be created",
+			"username": "optional, for new user creation",
+			"payment_id": "optional, for tracking payments"
+		}
+	"""
+	auth_header = request.get("Authorization")
 	if await db.admin.find_one({"token": auth_header}) is None:
 		return {"error": "Unauthorized"}, 401
 
@@ -55,12 +65,19 @@ async def create_card(card: dict):
 		if not vcard or not vcard.startswith("BEGIN:VCARD") or not vcard.endswith("END:VCARD"):
 			return {"error": "Invalid vCard format"}, 400
 		card["vcard"] = vcard
+		if not await db.users.find_one({"_id": card.get("owner_id")}):
+			card["owner_id"] = uuid.uuid4()
+			await db.users.insert_one(
+				{
+					"_id": card["owner_id"],
+					"username": card.get("username", "unknown"),
+					"token": "".join(random.choices(string.ascii_letters + string.digits, k = 16))
+				}
+			)
 		payload = {
 			"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
 			"owner": {
-				"id": uuid.uuid4(),
-				"username": card.get("username", "unknown"),
-				"token": "".join(random.choices(string.ascii_letters + string.digits, k = 16)),
+				"id": card.get("owner_id"),
 				"payment_id": card.get("payment_id", None)
 			},
 			"type": "vcard",
@@ -74,12 +91,19 @@ async def create_card(card: dict):
 
 	elif card.get("type") == "url":
 		url = card.get("url")
+		if not await db.users.find_one({"_id": card.get("owner_id")}):
+			card["owner_id"] = uuid.uuid4()
+			await db.users.insert_one(
+				{
+					"_id": card["owner_id"],
+					"username": card.get("username", "unknown"),
+					"token": "".join(random.choices(string.ascii_letters + string.digits, k = 16))
+				}
+			)
 		payload = {
 			"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
 			"owner": {
-				"id": uuid.uuid4(),
-				"username": card.get("username", "unknown"),
-				"token": "".join(random.choices(string.ascii_letters + string.digits, k = 16)),
+				"id": card.get("owner_id"),
 				"payment_id": card.get("payment_id", None)
 			},
 			"type": "url",
