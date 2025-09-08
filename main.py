@@ -2,7 +2,7 @@ import os
 import uvicorn
 import random
 import string
-import uuid
+import binascii
 import datetime
 
 from urllib.parse import quote_plus
@@ -94,10 +94,8 @@ async def create_card(request: Request, card: dict):
 
 		payload = {
 			"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
-			"owner": {
-				"id": card.get("owner_id"),
-				"payment_id": card.get("payment_id", None)
-			},
+			"owner_id": card.get("owner_id"),
+			"payment_id": card.get("payment_id", None),
 			"type": "vcard",
 			"vcard": vcard,
 			"created_at": datetime.datetime.now(datetime.timezone.utc),
@@ -120,10 +118,8 @@ async def create_card(request: Request, card: dict):
 
 		payload = {
 			"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
-			"owner": {
-				"id": card.get("owner_id"),
-				"payment_id": card.get("payment_id", None)
-			},
+			"owner": card.get("owner_id"),
+			"payment_id": card.get("payment_id", None),
 			"type": "url",
 			"url": url,
 			"created_at": datetime.datetime.now(datetime.timezone.utc),
