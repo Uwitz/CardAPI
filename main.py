@@ -15,7 +15,7 @@ from pymongo.errors import ServerSelectionTimeoutError
 load_dotenv(find_dotenv())
 app = FastAPI()
 db = AsyncIOMotorClient(
-	f"mongodb://{quote_plus(os.getenv("MONGO_USER"))}:{quote_plus(os.getenv("MONGO_PASS"))}@10.0.0.2:27017",
+	f"mongodb://{quote_plus(os.getenv('MONGO_USER'))}:{quote_plus(os.getenv('MONGO_PASS'))}@10.0.0.2:27017",
 	tls = True,
 	tlsCertificateKeyFile = "./certs/mongo.pem",
 	tlsCAFile = "./certs/ca.crt",
