@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/Users/snyco/Github/Card-API
-ExecStart=/usr/bin/env node /Users/snyco/Github/Card-API/index.js
+WorkingDirectory=/home/snyco/Card-API
+ExecStart=/home/snyco/Card-API/venv/bin/python3 /home/snyco/Card-API/main.py
 Restart=always
 
 [Install]
