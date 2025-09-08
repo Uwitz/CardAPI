@@ -10,6 +10,7 @@ from dotenv import find_dotenv, load_dotenv
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import RedirectResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo.errors import ServerSelectionTimeoutError
 
 load_dotenv(find_dotenv())
 app = FastAPI()
@@ -28,9 +29,25 @@ async def read_root():
 
 @app.get("/{card_id}")
 async def read_card(card_id: str):
-	user_card = await collection.find_one({"_id": card_id})
-	if not user_card:
-		return RedirectResponse(url = "https://snyco.dev")
+	try:
+		user_card = await collection.find_one({"_id": card_id})
+		if not user_card:
+			return RedirectResponse(url = "https://snyco.dev")
+	except ServerSelectionTimeoutError:
+		return JSONResponse(
+			content = {
+				"error": "timeout"
+			},
+			status_code = 503
+		)
+	except Exception as e:
+		print(f"Database error in read_card: {e}")
+		return JSONResponse(
+			content = {
+				"error": "internal"
+			},
+			status_code = 500
+		)
 	if user_card.get("type") == "vcard":
 		return Response(
 			content = user_card.get("vcard"),
@@ -44,7 +61,67 @@ async def read_card(card_id: str):
 	else:
 		return RedirectResponse(url = "https://snyco.dev")
 
-@app.post("/create")
+@app.post("/create/user")
+async def create_user(request: Request, user: dict):
+	auth_user = await db["admin"].find_one({"token": request.headers.get("Authorization")})
+	try:
+		if auth_user is None:
+			return JSONResponse(
+				content = {
+					"error": "unauthorized"
+				},
+				status_code = 401
+			)
+	except ServerSelectionTimeoutError:
+		return JSONResponse(
+			content = {
+				"error": "timeout"
+			},
+			status_code = 503
+		)
+	except Exception as e:
+		print(f"Database error in auth check: {e}")
+		return JSONResponse(
+			content = {
+				"error": "internal"
+			},
+			status_code = 500
+		)
+
+	if not user.get("username"):
+		return JSONResponse(
+			content = {
+				"error": "username_missing"
+			},
+			status_code = 400
+		)
+
+	new_user = {
+		"_id": "".join(random.choices(string.digits, k = 10)) + "." + str(int(datetime.datetime.now().timestamp())),
+		"username": user.get("username"),
+		"token": binascii.hexlify(os.urandom(20)).decode(),
+		"is_admin": False,
+		"created_at": datetime.datetime.now(datetime.timezone.utc)
+	}
+	if await db["users"].find_one({"username": user.get("username"), "_id": {"$ne": new_user["_id"]}}):
+		return JSONResponse(
+			content = {
+				"error": "duplicate_username"
+			},
+			status_code = 409
+		)
+	else:
+		await db["users"].insert_one(new_user)
+	return JSONResponse(
+		content = {
+			"id": str(new_user["_id"]),
+			"username": new_user["username"],
+			"token": new_user["token"]
+		},
+		status_code = 201
+	)
+
+@app.post("/create/link")
 async def create_card(request: Request, card: dict):
 	"""
 		card: {
