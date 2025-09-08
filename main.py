@@ -5,10 +5,10 @@ import string
 import uuid
 import datetime
 
-from fastapi import FastAPI, Request, Response
-from fastapi.responses import RedirectResponse
 from urllib.parse import quote_plus
 from dotenv import find_dotenv, load_dotenv
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import RedirectResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 
 load_dotenv(find_dotenv())
@@ -56,27 +56,42 @@ async def create_card(request: Request, card: dict):
 			"payment_id": "optional, for tracking payments"
 		}
 	"""
-	auth_header = request.get("Authorization")
-	if await db.admin.find_one({"token": auth_header}) is None:
-		return {"error": "Unauthorized"}, 401
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	if not auth_user or not auth_user.get("is_admin"):
+		return JSONResponse(
+			{
+				"error": "unauthorized"
+			},
+			401
+		)
 
 	if card.get("type") not in ["vcard", "url"]:
-		return {"error": "Invalid card type"}, 400
+		return JSONResponse(
+			content = {
+				"error": "invalid_type"
+			},
+			status_code = 400
+		)
 
 	elif card.get("type") == "vcard":
 		vcard = card.get("vcard")
 		if not vcard or not vcard.startswith("BEGIN:VCARD") or not vcard.endswith("END:VCARD"):
-			return {"error": "Invalid vCard format"}, 400
-		card["vcard"] = vcard
-		if not await db.users.find_one({"_id": card.get("owner_id")}):
-			card["owner_id"] = uuid.uuid4()
-			await db.users.insert_one(
-				{
-					"_id": card["owner_id"],
-					"username": card.get("username", "unknown"),
-					"token": "".join(random.choices(string.ascii_letters + string.digits, k = 16))
-				}
+			return JSONResponse(
+				content = {
+					"error": "invalid_format"
+				},
+				status_code = 400
 			)
+		card["vcard"] = vcard
+		owner = await db["users"].find_one({"_id": card.get("owner_id")})
+		if not owner:
+			return JSONResponse(
+				content = {
+					"error": "invalid_owner_id"
+				},
+				status_code = 400
+			)
+
 		payload = {
 			"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
 			"owner": {
@@ -94,15 +109,15 @@ async def create_card(request: Request, card: dict):
 
 	elif card.get("type") == "url":
 		url = card.get("url")
-		if not await db.users.find_one({"_id": card.get("owner_id")}):
-			card["owner_id"] = uuid.uuid4()
-			await db.users.insert_one(
-				{
-					"_id": card["owner_id"],
-					"username": card.get("username", "unknown"),
-					"token": "".join(random.choices(string.ascii_letters + string.digits, k = 16))
-				}
+		owner = await db["users"].find_one({"_id": card.get("owner_id")})
+		if not owner:
+			return JSONResponse(
+				content = {
+					"error": "invalid_owner_id"
+				},
+				status_code = 400
 			)
+
 		payload = {
 			"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
 			"owner": {
@@ -116,7 +131,12 @@ async def create_card(request: Request, card: dict):
 			"views": 0
 		}
 		if not url or not (url.startswith("http://") or url.startswith("https://")):
-			return {"error": "Invalid URL"}, 400
+			return JSONResponse(
+				content = {
+					"error": "invalid_url"
+				},
+				status_code = 400
+			)
 		result = await collection.insert_one(payload)
 		return {"id": str(result.inserted_id)}
 
