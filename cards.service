@@ -1,0 +1,12 @@
+[Unit]
+Description=Card API Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/Users/snyco/Github/Card-API
+ExecStart=/usr/bin/env node /Users/snyco/Github/Card-API/index.js
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
