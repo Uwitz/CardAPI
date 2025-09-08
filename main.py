@@ -32,7 +32,7 @@ async def read_card(card_id: str):
 	try:
 		user_card = await collection.find_one({"_id": card_id})
 		if not user_card:
-			return RedirectResponse(url = "https://snyco.dev")
+			return RedirectResponse(url = "https://uwitz.cards")
 	except ServerSelectionTimeoutError:
 		return JSONResponse(
 			content = {
@@ -59,7 +59,7 @@ async def read_card(card_id: str):
 	elif user_card.get("type") == "url":
 		return RedirectResponse(url = user_card.get("url"))
 	else:
-		return RedirectResponse(url = "https://snyco.dev")
+		return RedirectResponse(url = "https://uwitz.cards")
 
 @app.post("/create/user")
 async def create_user(request: Request, user: dict):
