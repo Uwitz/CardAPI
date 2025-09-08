@@ -7,17 +7,20 @@ import datetime
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import RedirectResponse
+from urllib.parse import quote_plus
+from dotenv import find_dotenv, load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 
+load_dotenv(find_dotenv())
 app = FastAPI()
 db = AsyncIOMotorClient(
-	f"mongodb://{os.getenv("MONGO_USER")}:{os.getenv("MONGO_PASS")}@10.0.0.2:27017",
+	f"mongodb://{quote_plus(os.getenv("MONGO_USER"))}:{quote_plus(os.getenv("MONGO_PASS"))}@10.0.0.2:27017",
 	tls = True,
 	tlsCertificateKeyFile = "./certs/mongo.pem",
 	tlsCAFile = "./certs/ca.crt",
 	tlsAllowInvalidCertificates = True
-).cards
-collection = db.user_cards
+)["cards"]
+collection = db["user_cards"]
 
 @app.get("/")
 async def read_root():
