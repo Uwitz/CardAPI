@@ -61,6 +61,36 @@ async def read_card(card_id: str):
 	else:
 		return RedirectResponse(url = "https://uwitz.cards")
 
+@app.head("/user/{user_id}")
+async def head_user(request: Request, user_id: str):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	if not auth_user or not auth_user.get("is_admin") and not auth_user.get("_id") == user_id:
+		return JSONResponse(
+			{
+				"error": "unauthorized"
+			},
+			401
+		)
+	user_record = await db["users"].find_one({"_id": user_id})
+	if not user_record:
+		return JSONResponse(
+			{
+				"error": "not_found"
+			},
+			404
+		)
+	else:
+		return JSONResponse(
+			content = {
+				"id": user_record.get("_id"),
+				"is_admin": user_record.get("is_admin"),
+				"username": user_record.get("username"),
+				"created_at": user_record.get("created_at"),
+				"updated_at": user_record.get("updated_at") if user_record.get("updated_at") else None
+			},
+			status_code = 200
+		)
+
 @app.head("/{card_id}")
 async def head_card(request: Request, card_id: str):
 	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
@@ -92,6 +122,47 @@ async def head_card(request: Request, card_id: str):
 			},
 			status_code = 200
 		)
+
+@app.get("/users")
+async def list_users(request: Request):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	if not auth_user or not auth_user.get("is_admin"):
+		return JSONResponse(
+			{
+				"error": "unauthorized"
+			},
+			401
+		)
+	user_list = []
+	try:
+		async for user in db["users"].find({}):
+				user_list.append(
+					{
+						"id": str(user.get("_id")),
+						"username": user.get("username"),
+						"is_admin": user.get("is_admin"),
+						"created_at": user.get("created_at"),
+						"updated_at": user.get("updated_at") if user.get("updated_at") else None
+					}
+				)
+	except ServerSelectionTimeoutError:
+		return JSONResponse(
+			content = {
+				"error": "timeout"
+			},
+			status_code = 503
+		)
+	except Exception as e:
+		print(f"Database error in list_users: {e}")
+		return JSONResponse(
+			content = {
+				"error": "internal"
+			},
+			status_code = 500
+		)
+	return {
+		"users": user_list
+	}
 
 @app.get("/cards")
 async def list_cards(request: Request):
