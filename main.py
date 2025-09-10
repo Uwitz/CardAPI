@@ -267,7 +267,7 @@ async def create_card(request: Request, card: dict):
 	result = await collection.insert_one(payload)
 	return {"id": str(result.inserted_id)}
 
-@app.patch("/update/{card_id}")
+@app.patch("/{card_id}")
 async def update_card(request: Request, card_id: str, card: dict):
 	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
 	card_record = await collection.find_one(
