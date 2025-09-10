@@ -304,5 +304,52 @@ async def terminate_user(request: Request):
 	await collection.delete_many({"owner_id": auth_user.get("_id")})
 	return {"status": "success"}
 
+@app.post("/request")
+async def data_request(request: Request):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	if not auth_user:
+		return JSONResponse(
+			{
+				"error": "invalid_token"
+			},
+			401
+		)
+	user_cards = []
+	async for card in collection.find({"owner_id": auth_user.get("_id")}):
+		if card.get("type") == "vcard":
+			card_ = {
+				"id": str(card.get("_id")),
+				"owner_id": str(card.get("owner_id")),
+				"payment_id": card.get("payment_id"),
+				"type": card.get("type"),
+				"vcard": card.get("vcard"),
+				"created_at": card.get("created_at"),
+				"updated_at": card.get("updated_at"),
+				"views": card.get("views", 0)
+			}
+		elif card.get("type") == "url":
+			card_ = {
+				"id": str(card.get("_id")),
+				"owner_id": str(card.get("owner_id")),
+				"payment_id": card.get("payment_id"),
+				"type": card.get("type"),
+				"url": card.get("url"),
+				"created_at": card.get("created_at"),
+				"updated_at": card.get("updated_at"),
+				"views": card.get("views", 0)
+			}
+		user_cards.append(card_)
+	return {
+		"user": {
+			"id": str(auth_user.get("_id")),
+			"username": auth_user.get("username"),
+			"token": auth_user.get("token"),
+			"is_admin": auth_user.get("is_admin"),
+			"created_at": auth_user.get("created_at"),
+			"updated_at": auth_user.get("updated_at") if auth_user.get("updated_at") else None
+		},
+		"cards": user_cards
+	}
+
 if __name__ == "__main__":
 	uvicorn.run(app, host = "127.0.0.1", port = 8000)
