@@ -290,5 +290,19 @@ async def delete_card(request: Request, card_id: str):
 	await collection.delete_one({"_id": card_id})
 	return {"status": "success"}
 
+@app.delete("/terminate")
+async def terminate_user(request: Request):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	if not auth_user:
+		return JSONResponse(
+			{
+				"error": "invalid_token"
+			},
+			401
+		)
+	await db["users"].delete_one({"_id": auth_user.get("_id")})
+	await collection.delete_many({"owner_id": auth_user.get("_id")})
+	return {"status": "success"}
+
 if __name__ == "__main__":
 	uvicorn.run(app, host = "127.0.0.1", port = 8000)
