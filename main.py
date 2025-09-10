@@ -105,7 +105,21 @@ async def list_cards(request: Request):
 		)
 	user_cards = []
 	try:
-		async for card in collection.find({}):
+		if auth_user.get("is_admin"):
+			async for card in collection.find({}):
+				user_cards.append(
+					{
+						"id": str(card.get("_id")),
+						"payment_id": card.get("payment_id"),
+						"type": card.get("type"),
+						"content": card.get("content"),
+						"created_at": card.get("created_at"),
+						"updated_at": card.get("updated_at"),
+						"views": card.get("views", 0)
+					}
+				)
+		else:
+			async for card in collection.find({"owner_id": auth_user.get("_id")}):
 				user_cards.append(
 					{
 						"id": str(card.get("_id")),
