@@ -344,13 +344,20 @@ async def delete_card(request: Request, card_id: str):
 	await collection.delete_one({"_id": card_id})
 	return {"status": "success"}
 
-@app.delete("/terminate")
-async def terminate_user(request: Request):
+@app.delete("/{user_id}")
+async def terminate_user(request: Request, user_id: str):
 	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
 	if not auth_user:
 		return JSONResponse(
 			{
 				"error": "invalid_token"
+			},
+			401
+		)
+	elif not auth_user.get("is_admin") and not auth_user.get("_id") == user_id:
+		return JSONResponse(
+			{
+				"error": "unauthorized"
 			},
 			401
 		)
