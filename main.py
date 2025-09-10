@@ -50,7 +50,7 @@ async def read_card(card_id: str):
 		)
 	if user_card.get("type") == "vcard":
 		return Response(
-			content = user_card.get("vcard"),
+			content = user_card.get("content"),
 			media_type = "text/vcard",
 			headers = {
 				"Content-Disposition": "attachment; filename=contact.vcf"
@@ -74,29 +74,17 @@ async def list_cards(request: Request):
 	user_cards = []
 	try:
 		async for card in collection.find({}):
-			if card.get("type") == "vcard":
-				card_ = {
-					"id": str(card.get("_id")),
-					"owner_id": str(card.get("owner_id")),
-					"payment_id": card.get("payment_id"),
-					"type": card.get("type"),
-					"vcard": card.get("vcard"),
-					"created_at": card.get("created_at"),
-					"updated_at": card.get("updated_at"),
-					"views": card.get("views", 0)
-				}
-			elif card.get("type") == "url":
-				card_ = {
-					"id": str(card.get("_id")),
-					"owner_id": str(card.get("owner_id")),
-					"payment_id": card.get("payment_id"),
-					"type": card.get("type"),
-					"url": card.get("url"),
-					"created_at": card.get("created_at"),
-					"updated_at": card.get("updated_at"),
-					"views": card.get("views", 0)
-				}
-			user_cards.append(card_)
+				user_cards.append(
+					{
+						"id": str(card.get("_id")),
+						"payment_id": card.get("payment_id"),
+						"type": card.get("type"),
+						"content": card.get("content"),
+						"created_at": card.get("created_at"),
+						"updated_at": card.get("updated_at"),
+						"views": card.get("views", 0)
+					}
+				)
 	except ServerSelectionTimeoutError:
 		return JSONResponse(
 			content = {
@@ -181,10 +169,8 @@ async def create_card(request: Request, card: dict):
 	"""
 		card: {
 			"type": "vcard" | "url",
-			"vcard": "...", (if type is vcard)
-			"url": "...", (if type is url)
+			"content": "...",
 			"owner_id": "optional, if not provided a new user will be created",
-			"username": "optional, for new user creation",
 			"payment_id": "optional, for tracking payments"
 		}
 	"""
@@ -205,68 +191,49 @@ async def create_card(request: Request, card: dict):
 			status_code = 400
 		)
 
-	elif card.get("type") == "vcard":
-		vcard = card.get("vcard")
-		if not vcard or not vcard.startswith("BEGIN:VCARD") or not vcard.endswith("END:VCARD"):
-			return JSONResponse(
-				content = {
-					"error": "invalid_format"
-				},
-				status_code = 400
-			)
-		card["vcard"] = vcard
-		owner = await db["users"].find_one({"_id": card.get("owner_id")})
-		if not owner:
-			return JSONResponse(
-				content = {
-					"error": "invalid_owner_id"
-				},
-				status_code = 400
-			)
+	content = card.get("content")
+	if card.get("type") == "vcard" and (
+		not content or not (content.startswith("BEGIN:VCARD") or content.endswith("END:VCARD"))
+	):
+		return JSONResponse(
+			content = {
+				"error": "invalid_format"
+			},
+			status_code = 400
+		)
 
-		payload = {
-			"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
-			"owner_id": card.get("owner_id"),
-			"payment_id": card.get("payment_id", None),
-			"type": "vcard",
-			"vcard": vcard,
-			"created_at": datetime.datetime.now(datetime.timezone.utc),
-			"updated_at": datetime.datetime.now(datetime.timezone.utc),
-			"views": 0
-		}
-		result = await collection.insert_one(payload)
-		return {"id": str(result.inserted_id)}
+	elif card.get("type") == "url" and (
+		not content or not (content.startswith("http://") or content.startswith("https://"))
+	):
+		return JSONResponse(
+			content = {
+				"error": "invalid_url"
+			},
+			status_code = 400
+		)
 
-	elif card.get("type") == "url":
-		url = card.get("url")
-		owner = await db["users"].find_one({"_id": card.get("owner_id")})
-		if not owner:
-			return JSONResponse(
-				content = {
-					"error": "invalid_owner_id"
-				},
-				status_code = 400
-			)
+	content = card.get("content")
+	owner = await db["users"].find_one({"_id": card.get("owner_id")})
+	if not owner:
+		return JSONResponse(
+			content = {
+				"error": "invalid_owner_id"
+			},
+			status_code = 400
+		)
 
-		payload = {
-			"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
-			"owner": card.get("owner_id"),
-			"payment_id": card.get("payment_id", None),
-			"type": "url",
-			"url": url,
-			"created_at": datetime.datetime.now(datetime.timezone.utc),
-			"updated_at": datetime.datetime.now(datetime.timezone.utc),
-			"views": 0
-		}
-		if not url or not (url.startswith("http://") or url.startswith("https://")):
-			return JSONResponse(
-				content = {
-					"error": "invalid_url"
-				},
-				status_code = 400
-			)
-		result = await collection.insert_one(payload)
-		return {"id": str(result.inserted_id)}
+	payload = {
+		"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
+		"owner": card.get("owner_id"),
+		"payment_id": card.get("payment_id", None),
+		"type": card.get("type"),
+		"content": content,
+		"created_at": datetime.datetime.now(datetime.timezone.utc),
+		"updated_at": datetime.datetime.now(datetime.timezone.utc),
+		"views": 0
+	}
+	result = await collection.insert_one(payload)
+	return {"id": str(result.inserted_id)}
 
 @app.patch("/update/{card_id}")
 async def update_card(request: Request, card_id: str, card: dict):
@@ -286,26 +253,26 @@ async def update_card(request: Request, card_id: str, card: dict):
 
 	update_fields = {}
 	if card.get("type") == "vcard":
-		vcard = card.get("vcard")
-		if not vcard or not vcard.startswith("BEGIN:VCARD") or not vcard.endswith("END:VCARD"):
+		content = card.get("content")
+		if not content or not content.startswith("BEGIN:VCARD") or not content.endswith("END:VCARD"):
 			return JSONResponse(
 				content = {
 					"error": "invalid_format"
 				},
 				status_code = 400
 			)
-		update_fields["$set"] = {"vcard": vcard}
+		update_fields["$set"] = {"content": content}
 
 	elif card.get("type") == "url":
-		url = card.get("url")
-		if not url or not (url.startswith("http://") or url.startswith("https://")):
+		content = card.get("content")
+		if not content or not (content.startswith("http://") or content.startswith("https://")):
 			return JSONResponse(
 				content = {
 					"error": "invalid_url"
 				},
 				status_code = 400
 			)
-		update_fields["$set"] = {"url": url}
+		update_fields["$set"] = {"content": content}
 
 	else:
 		return JSONResponse(
@@ -371,29 +338,18 @@ async def data_request(request: Request):
 		)
 	user_cards = []
 	async for card in collection.find({"owner_id": auth_user.get("_id")}):
-		if card.get("type") == "vcard":
-			card_ = {
+		user_cards.append(
+			{
 				"id": str(card.get("_id")),
 				"owner_id": str(card.get("owner_id")),
 				"payment_id": card.get("payment_id"),
 				"type": card.get("type"),
-				"vcard": card.get("vcard"),
+				"content": card.get("content"),
 				"created_at": card.get("created_at"),
 				"updated_at": card.get("updated_at"),
 				"views": card.get("views", 0)
 			}
-		elif card.get("type") == "url":
-			card_ = {
-				"id": str(card.get("_id")),
-				"owner_id": str(card.get("owner_id")),
-				"payment_id": card.get("payment_id"),
-				"type": card.get("type"),
-				"url": card.get("url"),
-				"created_at": card.get("created_at"),
-				"updated_at": card.get("updated_at"),
-				"views": card.get("views", 0)
-			}
-		user_cards.append(card_)
+		)
 	return {
 		"user": {
 			"id": str(auth_user.get("_id")),
