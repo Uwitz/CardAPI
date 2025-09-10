@@ -213,5 +213,64 @@ async def create_card(request: Request, card: dict):
 		result = await collection.insert_one(payload)
 		return {"id": str(result.inserted_id)}
 
+@app.patch("/update/{card_id}")
+async def update_card(request: Request, card_id: str, card: dict):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	card_record = await collection.find_one(
+		{
+			"_id": card_id
+		}
+	)
+	if not auth_user or not auth_user.get("token") == card_record.get("owner_id"):
+		return JSONResponse(
+			{
+				"error": "unauthorized"
+			},
+			401
+		)
+
+	update_fields = {}
+	if card.get("type") == "vcard":
+		vcard = card.get("vcard")
+		if not vcard or not vcard.startswith("BEGIN:VCARD") or not vcard.endswith("END:VCARD"):
+			return JSONResponse(
+				content = {
+					"error": "invalid_format"
+				},
+				status_code = 400
+			)
+		update_fields["$set"] = {"vcard": vcard}
+
+	elif card.get("type") == "url":
+		url = card.get("url")
+		if not url or not (url.startswith("http://") or url.startswith("https://")):
+			return JSONResponse(
+				content = {
+					"error": "invalid_url"
+				},
+				status_code = 400
+			)
+		update_fields["$set"] = {"url": url}
+
+	else:
+		return JSONResponse(
+			content = {
+				"error": "invalid_type"
+			},
+			status_code = 400
+		)
+
+	if not update_fields == {}:
+		update_fields["updated_at"] = datetime.datetime.now(datetime.timezone.utc)
+		await collection.update_one({"_id": card_id}, update_fields)
+		return {"status": "success"}
+	else:
+		return JSONResponse(
+			content = {
+				"error": "no_fields_to_update"
+			},
+			status_code = 400
+		)
+
 if __name__ == "__main__":
 	uvicorn.run(app, host = "127.0.0.1", port = 8000)
