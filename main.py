@@ -61,6 +61,61 @@ async def read_card(card_id: str):
 	else:
 		return RedirectResponse(url = "https://uwitz.cards")
 
+@app.get("/cards")
+async def list_cards(request: Request):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	if not auth_user or not auth_user.get("is_admin"):
+		return JSONResponse(
+			{
+				"error": "unauthorized"
+			},
+			401
+		)
+	user_cards = []
+	try:
+		async for card in collection.find({}):
+			if card.get("type") == "vcard":
+				card_ = {
+					"id": str(card.get("_id")),
+					"owner_id": str(card.get("owner_id")),
+					"payment_id": card.get("payment_id"),
+					"type": card.get("type"),
+					"vcard": card.get("vcard"),
+					"created_at": card.get("created_at"),
+					"updated_at": card.get("updated_at"),
+					"views": card.get("views", 0)
+				}
+			elif card.get("type") == "url":
+				card_ = {
+					"id": str(card.get("_id")),
+					"owner_id": str(card.get("owner_id")),
+					"payment_id": card.get("payment_id"),
+					"type": card.get("type"),
+					"url": card.get("url"),
+					"created_at": card.get("created_at"),
+					"updated_at": card.get("updated_at"),
+					"views": card.get("views", 0)
+				}
+			user_cards.append(card_)
+	except ServerSelectionTimeoutError:
+		return JSONResponse(
+			content = {
+				"error": "timeout"
+			},
+			status_code = 503
+		)
+	except Exception as e:
+		print(f"Database error in list_cards: {e}")
+		return JSONResponse(
+			content = {
+				"error": "internal"
+			},
+			status_code = 500
+		)
+	return {
+		"cards": user_cards
+	}
+
 @app.post("/create/user")
 async def create_user(request: Request, user: dict):
 	auth_user = await db["admin"].find_one({"token": request.headers.get("Authorization")})
