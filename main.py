@@ -8,6 +8,7 @@ import datetime
 from urllib.parse import quote_plus
 from dotenv import find_dotenv, load_dotenv
 from fastapi import FastAPI, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ServerSelectionTimeoutError
@@ -22,6 +23,14 @@ db = AsyncIOMotorClient(
 	tlsAllowInvalidCertificates = True
 )["cards"]
 collection = db["user_cards"]
+
+app.add_middleware(
+	CORSMiddleware,
+	allow_origins = ["https://portal.uwitz.cards"],
+	allow_credentials = True,
+	allow_methods = ["*"],
+	allow_headers = ["*"]
+)
 
 @app.get("/")
 async def read_root():
