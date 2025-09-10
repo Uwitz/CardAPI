@@ -61,6 +61,38 @@ async def read_card(card_id: str):
 	else:
 		return RedirectResponse(url = "https://uwitz.cards")
 
+@app.head("/{card_id}")
+async def head_card(request: Request, card_id: str):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	user_card = await collection.find_one({"_id": card_id})
+	if not auth_user:
+		return JSONResponse(
+			content = {
+				"error": "token_required"
+			},
+			status_code = 400
+		)
+	if (not user_card or not auth_user.get("_id") == user_card.get("owner_id")) and not auth_user.get("is_admin"):
+		return JSONResponse(
+			content = {
+				"error": "not_found"
+			},
+			status_code = 404
+		)
+
+	else:
+		return JSONResponse(
+			content = {
+				"type": user_card.get("type"),
+				"content": user_card.get("content"),
+				"payment_id": user_card.get("payment_id"),
+				"created_at": user_card.get("created_at"),
+				"updated_at": user_card.get("updated_at"),
+				"views": user_card.get("views", 0)
+			},
+			status_code = 200
+		)
+
 @app.get("/cards")
 async def list_cards(request: Request):
 	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
