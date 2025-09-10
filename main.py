@@ -272,5 +272,23 @@ async def update_card(request: Request, card_id: str, card: dict):
 			status_code = 400
 		)
 
+@app.delete("/delete/{card_id}")
+async def delete_card(request: Request, card_id: str):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	card_record = await collection.find_one(
+		{
+			"_id": card_id
+		}
+	)
+	if not auth_user or not auth_user.get("token") == card_record.get("owner_id") or not auth_user.get("is_admin"):
+		return JSONResponse(
+			{
+				"error": "unauthorized"
+			},
+			401
+		)
+	await collection.delete_one({"_id": card_id})
+	return {"status": "success"}
+
 if __name__ == "__main__":
 	uvicorn.run(app, host = "127.0.0.1", port = 8000)
