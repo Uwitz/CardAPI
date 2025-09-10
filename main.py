@@ -116,9 +116,9 @@ async def head_card(request: Request, card_id: str):
 				"type": user_card.get("type"),
 				"content": user_card.get("content"),
 				"payment_id": user_card.get("payment_id"),
+				"views": user_card.get("views", 0),
 				"created_at": user_card.get("created_at"),
-				"updated_at": user_card.get("updated_at"),
-				"views": user_card.get("views", 0)
+				"updated_at": user_card.get("updated_at")
 			},
 			status_code = 200
 		)
@@ -184,9 +184,9 @@ async def list_cards(request: Request):
 						"payment_id": card.get("payment_id"),
 						"type": card.get("type"),
 						"content": card.get("content"),
+						"views": card.get("views", 0),
 						"created_at": card.get("created_at"),
-						"updated_at": card.get("updated_at"),
-						"views": card.get("views", 0)
+						"updated_at": card.get("updated_at")
 					}
 				)
 		else:
@@ -197,9 +197,9 @@ async def list_cards(request: Request):
 						"payment_id": card.get("payment_id"),
 						"type": card.get("type"),
 						"content": card.get("content"),
+						"views": card.get("views", 0),
 						"created_at": card.get("created_at"),
-						"updated_at": card.get("updated_at"),
-						"views": card.get("views", 0)
+						"updated_at": card.get("updated_at")
 					}
 				)
 	except ServerSelectionTimeoutError:
@@ -261,7 +261,8 @@ async def create_user(request: Request, user: dict):
 		"username": user.get("username"),
 		"token": binascii.hexlify(os.urandom(20)).decode(),
 		"is_admin": False,
-		"created_at": datetime.datetime.now(datetime.timezone.utc)
+		"created_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp())),
+		"updated_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
 	}
 	if await db["users"].find_one({"username": user.get("username"), "_id": {"$ne": new_user["_id"]}}):
 		return JSONResponse(
@@ -341,13 +342,13 @@ async def create_card(request: Request, card: dict):
 
 	payload = {
 		"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
-		"owner": card.get("owner_id"),
+		"owner_id": card.get("owner_id"),
 		"payment_id": card.get("payment_id", None),
 		"type": card.get("type"),
 		"content": content,
-		"created_at": datetime.datetime.now(datetime.timezone.utc),
-		"updated_at": datetime.datetime.now(datetime.timezone.utc),
-		"views": 0
+		"views": 0,
+		"created_at": str(int(datetime.datetime.now(datetime.timezone.utc))),
+		"updated_at": str(int(datetime.datetime.now(datetime.timezone.utc)))
 	}
 	result = await collection.insert_one(payload)
 	return {"id": str(result.inserted_id)}
@@ -400,7 +401,7 @@ async def update_card(request: Request, card_id: str, card: dict):
 		)
 
 	if not update_fields == {}:
-		update_fields["updated_at"] = datetime.datetime.now(datetime.timezone.utc)
+		update_fields["$set"]["updated_at"] = str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
 		await collection.update_one({"_id": card_id}, update_fields)
 		return {"status": "success"}
 	else:
@@ -465,13 +466,13 @@ async def data_request(request: Request):
 		user_cards.append(
 			{
 				"id": str(card.get("_id")),
+				"type": card.get("type"),
 				"owner_id": str(card.get("owner_id")),
 				"payment_id": card.get("payment_id"),
-				"type": card.get("type"),
 				"content": card.get("content"),
+				"views": card.get("views", 0),
 				"created_at": card.get("created_at"),
-				"updated_at": card.get("updated_at"),
-				"views": card.get("views", 0)
+				"updated_at": card.get("updated_at")
 			}
 		)
 	return {
