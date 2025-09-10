@@ -326,7 +326,7 @@ async def update_card(request: Request, card_id: str, card: dict):
 			status_code = 400
 		)
 
-@app.delete("/delete/{card_id}")
+@app.delete("/{card_id}")
 async def delete_card(request: Request, card_id: str):
 	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
 	card_record = await collection.find_one(
