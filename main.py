@@ -92,6 +92,7 @@ async def head_user(request: Request, user_id: str):
 		return JSONResponse(
 			content = {
 				"id": user_record.get("_id"),
+				"name": user_record.get("name"),
 				"is_admin": user_record.get("is_admin"),
 				"username": user_record.get("username"),
 				"plan": user_record.get("plan"),
@@ -180,6 +181,7 @@ async def user_profile(request: Request, data: dict):
 
 	return {
 		"id": str(auth_user.get("_id")),
+		"name": auth_user.get("name"),
 		"username": auth_user.get("username"),
 		"token": auth_user.get("token"),
 		"is_admin": auth_user.get("is_admin"),
@@ -208,6 +210,7 @@ async def list_users(request: Request):
 				user_list.append(
 					{
 						"id": str(user.get("_id")),
+						"name": user.get("name"),
 						"username": user.get("username"),
 						"is_admin": user.get("is_admin"),
 						"plan": user.get("plan"),
@@ -342,6 +345,7 @@ async def create_user(request: Request, user: dict):
 	new_user = {
 		"_id": "".join(random.choices(string.digits, k = 10)) + "." + str(int(datetime.datetime.now().timestamp())),
 		"username": user.get("username"),
+		"name": user.get("name", None),
 		"token": binascii.hexlify(os.urandom(20)).decode(),
 		"is_admin": False,
 		"plan": user.get("plan", "individual"),
@@ -363,6 +367,7 @@ async def create_user(request: Request, user: dict):
 	return JSONResponse(
 		content = {
 			"id": str(new_user["_id"]),
+			"name": new_user["name"],
 			"username": new_user["username"],
 			"token": new_user["token"]
 		},
@@ -573,6 +578,7 @@ async def data_request(request: Request):
 	return {
 		"user": {
 			"id": str(auth_user.get("_id")),
+			"name": auth_user.get("name"),
 			"username": auth_user.get("username"),
 			"token": auth_user.get("token"),
 			"is_admin": auth_user.get("is_admin"),
