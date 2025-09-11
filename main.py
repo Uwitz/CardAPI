@@ -374,7 +374,7 @@ async def create_user(request: Request, user: dict):
 		status_code = 201
 	)
 
-@app.post("/create/link")
+@app.post("/create/card")
 async def create_card(request: Request, card: dict):
 	"""
 		card: {
@@ -443,8 +443,8 @@ async def create_card(request: Request, card: dict):
 		"views": 0,
 		"status": "active",
 		"version": 1.0,
-		"created_at": str(int(datetime.datetime.now(datetime.timezone.utc))),
-		"updated_at": str(int(datetime.datetime.now(datetime.timezone.utc)))
+		"created_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp())),
+		"updated_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
 	}
 	result = await collection.insert_one(payload)
 	return {"id": str(result.inserted_id)}
