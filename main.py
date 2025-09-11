@@ -94,6 +94,9 @@ async def head_user(request: Request, user_id: str):
 				"id": user_record.get("_id"),
 				"is_admin": user_record.get("is_admin"),
 				"username": user_record.get("username"),
+				"plan": user_record.get("plan"),
+				"status": user_record.get("status"),
+				"transactions": user_record.get("transactions"),
 				"created_at": user_record.get("created_at"),
 				"updated_at": user_record.get("updated_at") if user_record.get("updated_at") else None
 			},
@@ -122,10 +125,14 @@ async def head_card(request: Request, card_id: str):
 	else:
 		return JSONResponse(
 			content = {
+				"tier": user_card.get("tier"),
 				"type": user_card.get("type"),
 				"content": user_card.get("content"),
 				"payment_id": user_card.get("payment_id"),
+				"organisation": user_card.get("organisation"),
 				"views": user_card.get("views", 0),
+				"status": user_card.get("status", True),
+				"version": user_card.get("version", 1.0),
 				"created_at": user_card.get("created_at"),
 				"updated_at": user_card.get("updated_at")
 			},
@@ -150,6 +157,10 @@ async def list_users(request: Request):
 						"id": str(user.get("_id")),
 						"username": user.get("username"),
 						"is_admin": user.get("is_admin"),
+						"plan": user.get("plan"),
+						"organisation": user.get("organisation"),
+						"status": user.get("status"),
+						"transactions": user.get("transactions"),
 						"created_at": user.get("created_at"),
 						"updated_at": user.get("updated_at") if user.get("updated_at") else None
 					}
@@ -190,10 +201,15 @@ async def list_cards(request: Request):
 				user_cards.append(
 					{
 						"id": str(card.get("_id")),
-						"payment_id": card.get("payment_id"),
+						"tier": card.get("tier"),
+						"owner_id": str(card.get("owner_id")),
 						"type": card.get("type"),
 						"content": card.get("content"),
+						"payment_id": card.get("payment_id"),
+						"organisation": card.get("organisation"),
 						"views": card.get("views", 0),
+						"status": card.get("status", True),
+						"version": card.get("version", 1.0),
 						"created_at": card.get("created_at"),
 						"updated_at": card.get("updated_at")
 					}
@@ -203,10 +219,15 @@ async def list_cards(request: Request):
 				user_cards.append(
 					{
 						"id": str(card.get("_id")),
-						"payment_id": card.get("payment_id"),
+						"tier": card.get("tier"),
+						"owner_id": str(card.get("owner_id")),
 						"type": card.get("type"),
 						"content": card.get("content"),
+						"payment_id": card.get("payment_id"),
+						"organisation": card.get("organisation"),
 						"views": card.get("views", 0),
+						"status": card.get("status", True),
+						"version": card.get("version", 1.0),
 						"created_at": card.get("created_at"),
 						"updated_at": card.get("updated_at")
 					}
@@ -270,6 +291,10 @@ async def create_user(request: Request, user: dict):
 		"username": user.get("username"),
 		"token": binascii.hexlify(os.urandom(20)).decode(),
 		"is_admin": False,
+		"plan": user.get("plan", "individual"),
+		"organisation": user.get("organisation", None),
+		"status": "active",
+		"transactions": [],
 		"created_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp())),
 		"updated_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
 	}
@@ -351,11 +376,15 @@ async def create_card(request: Request, card: dict):
 
 	payload = {
 		"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
+		"tier": owner.get("plan", "individual"),
 		"owner_id": card.get("owner_id"),
-		"payment_id": card.get("payment_id", None),
 		"type": card.get("type"),
 		"content": content,
+		"payment_id": card.get("payment_id", None),
+		"organisation": owner.get("organisation", None),
 		"views": 0,
+		"status": "active",
+		"version": 1.0,
 		"created_at": str(int(datetime.datetime.now(datetime.timezone.utc))),
 		"updated_at": str(int(datetime.datetime.now(datetime.timezone.utc)))
 	}
@@ -475,11 +504,15 @@ async def data_request(request: Request):
 		user_cards.append(
 			{
 				"id": str(card.get("_id")),
-				"type": card.get("type"),
+				"tier": card.get("tier"),
 				"owner_id": str(card.get("owner_id")),
-				"payment_id": card.get("payment_id"),
+				"type": card.get("type"),
 				"content": card.get("content"),
+				"payment_id": card.get("payment_id"),
+				"organisation": card.get("organisation"),
 				"views": card.get("views", 0),
+				"status": card.get("status", "active"),
+				"version": card.get("version", 1.0),
 				"created_at": card.get("created_at"),
 				"updated_at": card.get("updated_at")
 			}
@@ -490,6 +523,10 @@ async def data_request(request: Request):
 			"username": auth_user.get("username"),
 			"token": auth_user.get("token"),
 			"is_admin": auth_user.get("is_admin"),
+			"plan": auth_user.get("plan"),
+			"organisation": auth_user.get("organisation"),
+			"status": auth_user.get("status"),
+			"transactions": auth_user.get("transactions"),
 			"created_at": auth_user.get("created_at"),
 			"updated_at": auth_user.get("updated_at") if auth_user.get("updated_at") else None
 		},
