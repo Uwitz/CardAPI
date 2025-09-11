@@ -70,7 +70,7 @@ async def read_card(card_id: str):
 	else:
 		return RedirectResponse(url = "https://uwitz.cards")
 
-@app.head("/user/{user_id}")
+@app.get("/user/{user_id}")
 async def head_user(request: Request, user_id: str):
 	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
 	if not auth_user or not auth_user.get("is_admin") and not auth_user.get("_id") == user_id:
@@ -104,7 +104,7 @@ async def head_user(request: Request, user_id: str):
 			status_code = 200
 		)
 
-@app.head("/{card_id}")
+@app.get("/meta/{card_id}")
 async def head_card(request: Request, card_id: str):
 	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
 	user_card = await collection.find_one({"_id": card_id})
