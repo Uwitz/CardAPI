@@ -95,6 +95,7 @@ async def head_user(request: Request, user_id: str):
 				"is_admin": user_record.get("is_admin"),
 				"username": user_record.get("username"),
 				"plan": user_record.get("plan"),
+				"organisation": user_record.get("organisation"),
 				"status": user_record.get("status"),
 				"transactions": user_record.get("transactions"),
 				"created_at": user_record.get("created_at"),
@@ -131,13 +132,65 @@ async def head_card(request: Request, card_id: str):
 				"payment_id": user_card.get("payment_id"),
 				"organisation": user_card.get("organisation"),
 				"views": user_card.get("views", 0),
-				"status": user_card.get("status", True),
-				"version": user_card.get("version", 1.0),
+				"status": user_card.get("status"),
+				"version": user_card.get("version"),
 				"created_at": user_card.get("created_at"),
 				"updated_at": user_card.get("updated_at")
 			},
 			status_code = 200
 		)
+
+@app.post("/profile")
+async def user_profile(request: Request, data: dict):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	data_user = await db["users"].find_one({"username": data.get("username")})
+	if not (data.get("username") and data_user and not data_user.get("_id") == auth_user.get("_id")) or not auth_user or not data_user:
+		return JSONResponse(
+			content = {
+				"error": "invalid_token"
+			},
+			status_code = 401
+		)
+
+	if auth_user.get("status") != "active":
+		return JSONResponse(
+			content = {
+				"error": "access_denied"
+			},
+			status_code = 403
+		)
+
+	cards = [
+		{
+			"id": str(card.get("_id")),
+			"tier": card.get("tier"),
+			"owner_id": str(card.get("owner_id")),
+			"type": card.get("type"),
+			"content": card.get("content"),
+			"payment_id": card.get("payment_id"),
+			"organisation": card.get("organisation"),
+			"views": card.get("views", 0),
+			"status": card.get("status"),
+			"version": card.get("version"),
+			"created_at": card.get("created_at"),
+			"updated_at": card.get("updated_at")
+		}
+		async for card in collection.find({"owner_id": data_user.get("_id")})
+	]
+
+	return {
+		"id": str(auth_user.get("_id")),
+		"username": auth_user.get("username"),
+		"token": auth_user.get("token"),
+		"is_admin": auth_user.get("is_admin"),
+		"plan": auth_user.get("plan"),
+		"organisation": auth_user.get("organisation"),
+		"status": auth_user.get("status"),
+		"transactions": auth_user.get("transactions"),
+		"cards": cards,
+		"created_at": auth_user.get("created_at"),
+		"updated_at": auth_user.get("updated_at") if auth_user.get("updated_at") else None
+	}
 
 @app.get("/users")
 async def list_users(request: Request):
@@ -208,8 +261,8 @@ async def list_cards(request: Request):
 						"payment_id": card.get("payment_id"),
 						"organisation": card.get("organisation"),
 						"views": card.get("views", 0),
-						"status": card.get("status", True),
-						"version": card.get("version", 1.0),
+						"status": card.get("status"),
+						"version": card.get("version"),
 						"created_at": card.get("created_at"),
 						"updated_at": card.get("updated_at")
 					}
@@ -226,8 +279,8 @@ async def list_cards(request: Request):
 						"payment_id": card.get("payment_id"),
 						"organisation": card.get("organisation"),
 						"views": card.get("views", 0),
-						"status": card.get("status", True),
-						"version": card.get("version", 1.0),
+						"status": card.get("status"),
+						"version": card.get("version"),
 						"created_at": card.get("created_at"),
 						"updated_at": card.get("updated_at")
 					}
@@ -512,7 +565,7 @@ async def data_request(request: Request):
 				"organisation": card.get("organisation"),
 				"views": card.get("views", 0),
 				"status": card.get("status", "active"),
-				"version": card.get("version", 1.0),
+				"version": card.get("version"),
 				"created_at": card.get("created_at"),
 				"updated_at": card.get("updated_at")
 			}
