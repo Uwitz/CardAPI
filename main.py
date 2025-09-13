@@ -37,11 +37,27 @@ async def read_root():
 	return "OK"
 
 @app.get("/{card_id}")
-async def read_card(card_id: str):
+async def read_card(request: Request, card_id: str):
 	try:
+		data: dict = request.body()
 		user_card = await collection.find_one({"_id": card_id})
-		if not user_card:
+		if not user_card or user_card.get("status") not in ["active", "pending"]:
 			return RedirectResponse(url = "https://uwitz.cards")
+
+		if user_card.get("status") == "pending" and user_card.get("pin") == data.get("pin"):
+			await collection.update_one(
+				{"_id": card_id},
+				{
+					"$set": {
+						"status": "active"
+					}
+				}
+			)
+			return JSONResponse(
+				content = {
+					"status": "active"
+				}
+			)
 	except ServerSelectionTimeoutError:
 		return JSONResponse(
 			content = {
@@ -441,7 +457,7 @@ async def create_card(request: Request, card: dict):
 		"payment_id": card.get("payment_id", None),
 		"organisation": owner.get("organisation", None),
 		"views": 0,
-		"status": "active",
+		"status": "active" if not card.get("status") != "pending" else "pending",
 		"version": 1.0,
 		"created_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp())),
 		"updated_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
