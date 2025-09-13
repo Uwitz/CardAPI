@@ -41,8 +41,11 @@ async def read_card(request: Request, card_id: str):
 	try:
 		data: dict = request.body()
 		user_card = await collection.find_one({"_id": card_id})
-		if not user_card or user_card.get("status") not in ["active", "pending"]:
+		if not user_card:
 			return RedirectResponse(url = "https://uwitz.cards")
+		
+		if user_card.get("status") == "pending" and not data:
+			return RedirectResponse(url = f"https://portal.uwitz.cards/setup/{card_id}")
 
 		if user_card.get("status") == "pending" and user_card.get("pin") == data.get("pin"):
 			await collection.update_one(
@@ -58,6 +61,15 @@ async def read_card(request: Request, card_id: str):
 					"status": "active"
 				}
 			)
+
+		elif user_card.get("status") == "pending" and user_card.get("pin") != data.get("pin"):
+			return JSONResponse(
+				content = {
+					"error": "invalid_card_pin"
+				},
+				status_code = 401
+			)
+
 	except ServerSelectionTimeoutError:
 		return JSONResponse(
 			content = {
