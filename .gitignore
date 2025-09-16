@@ -1,5 +1,7 @@
 # User added
 certs/*
+temp_db.py
+db_manager.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
