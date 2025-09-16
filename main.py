@@ -338,6 +338,42 @@ async def list_cards(request: Request):
 		"cards": user_cards
 	}
 
+@app.post("/payout")
+async def create_payout_request(request: Request, payout: dict):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	if not auth_user:
+		return JSONResponse({"error": "invalid_token"}, 401)
+	if auth_user.get("plan_expiry") and int(auth_user.get("plan_expiry")) < int(datetime.datetime.now(datetime.timezone.utc).timestamp()):
+		return JSONResponse({"error": "plan_expired"}, 403)
+	code = "PAYOUT-" + "".join(random.choices(string.ascii_uppercase + string.digits, k = 8))
+	payout_entry = {
+		"id": code,
+		"amount": payout.get("amount", 0.0),
+		"currency": payout.get("currency", auth_user.get("currency", "MYR")),
+		"status": "pending",
+		"created_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+	}
+	await db["users"].update_one({"_id": auth_user.get("_id")}, {"$push": {"payouts": payout_entry}})
+	return {"payout_id": code, "status": "pending"}
+
+@app.post("/admin/payout")
+async def admin_mark_payout_claimed(request: Request, data: dict):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	if not auth_user or not auth_user.get("is_admin"):
+		return JSONResponse({"error": "unauthorized"}, 401)
+	user_id = data.get("user_id")
+	payout_id = data.get("id")
+	if not user_id or not payout_id:
+		return JSONResponse({"error": "user_id_and_id_required"}, 400)
+	ts = str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+	result = await db["users"].update_one(
+		{"_id": user_id, "payouts.id": payout_id},
+		{"$set": {"payouts.$.status": "claimed", "payouts.$.claimed_at": ts}}
+	)
+	if result.matched_count == 0:
+		return JSONResponse({"error": "not_found"}, 404)
+	return {"status": "claimed", "id": payout_id}
+
 @app.post("/create/user")
 async def create_user(request: Request, user: dict):
 	auth_user = await db["admin"].find_one({"token": request.headers.get("Authorization")})
