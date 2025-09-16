@@ -121,6 +121,7 @@ async def head_user(request: Request, user_id: str):
 			content = {
 				"id": user_record.get("_id"),
 				"name": user_record.get("name"),
+				"plan_expiry": user_record.get("plan_expiry"),
 				"is_admin": user_record.get("is_admin"),
 				"username": user_record.get("username"),
 				"plan": user_record.get("plan"),
@@ -210,6 +211,7 @@ async def user_profile(request: Request, data: dict):
 	return {
 		"id": str(auth_user.get("_id")),
 		"name": auth_user.get("name"),
+		"plan_expiry": auth_user.get("plan_expiry"),
 		"username": auth_user.get("username"),
 		"token": auth_user.get("token"),
 		"is_admin": auth_user.get("is_admin"),
@@ -239,6 +241,7 @@ async def list_users(request: Request):
 					{
 						"id": str(user.get("_id")),
 						"name": user.get("name"),
+						"plan_expiry": user.get("plan_expiry"),
 						"username": user.get("username"),
 						"is_admin": user.get("is_admin"),
 						"plan": user.get("plan"),
@@ -374,6 +377,7 @@ async def create_user(request: Request, user: dict):
 		"_id": "".join(random.choices(string.digits, k = 10)) + "." + str(int(datetime.datetime.now().timestamp())),
 		"username": user.get("username"),
 		"name": user.get("name", None),
+		"plan_expiry": user.get("plan_expiry", None),
 		"token": binascii.hexlify(os.urandom(20)).decode(),
 		"is_admin": False,
 		"plan": user.get("plan", "individual"),
@@ -396,6 +400,7 @@ async def create_user(request: Request, user: dict):
 		content = {
 			"id": str(new_user["_id"]),
 			"name": new_user["name"],
+			"plan_expiry": new_user["plan_expiry"],
 			"username": new_user["username"],
 			"token": new_user["token"]
 		},
@@ -607,6 +612,7 @@ async def data_request(request: Request):
 		"user": {
 			"id": str(auth_user.get("_id")),
 			"name": auth_user.get("name"),
+			"plan_expiry": auth_user.get("plan_expiry"),
 			"username": auth_user.get("username"),
 			"token": auth_user.get("token"),
 			"is_admin": auth_user.get("is_admin"),
