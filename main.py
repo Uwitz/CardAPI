@@ -122,6 +122,10 @@ async def head_user(request: Request, user_id: str):
 				"id": user_record.get("_id"),
 				"name": user_record.get("name"),
 				"plan_expiry": user_record.get("plan_expiry"),
+				"referral": user_record.get("referral"),
+				"referral_reward": user_record.get("referral_reward", 0.0),
+				"currency": user_record.get("currency", "MYR"),
+				"payouts": user_record.get("payouts", []),
 				"is_admin": user_record.get("is_admin"),
 				"username": user_record.get("username"),
 				"plan": user_record.get("plan"),
@@ -212,6 +216,10 @@ async def user_profile(request: Request, data: dict):
 		"id": str(auth_user.get("_id")),
 		"name": auth_user.get("name"),
 		"plan_expiry": auth_user.get("plan_expiry"),
+		"referral": auth_user.get("referral"),
+		"referral_reward": auth_user.get("referral_reward", 0.0),
+		"currency": auth_user.get("currency", "MYR"),
+		"payouts": auth_user.get("payouts", []),
 		"username": auth_user.get("username"),
 		"token": auth_user.get("token"),
 		"is_admin": auth_user.get("is_admin"),
@@ -242,6 +250,10 @@ async def list_users(request: Request):
 						"id": str(user.get("_id")),
 						"name": user.get("name"),
 						"plan_expiry": user.get("plan_expiry"),
+						"referral": user.get("referral"),
+						"referral_reward": user.get("referral_reward", 0.0),
+						"currency": user.get("currency", "MYR"),
+						"payouts": user.get("payouts", []),
 						"username": user.get("username"),
 						"is_admin": user.get("is_admin"),
 						"plan": user.get("plan"),
@@ -414,6 +426,10 @@ async def create_user(request: Request, user: dict):
 		"username": user.get("username"),
 		"name": user.get("name", None),
 		"plan_expiry": user.get("plan_expiry", None),
+		"referral": user.get("referral", None),
+		"referral_reward": user.get("referral_reward", 0.0),
+		"currency": user.get("currency", "MYR"),
+		"payouts": [],
 		"token": binascii.hexlify(os.urandom(20)).decode(),
 		"is_admin": False,
 		"plan": user.get("plan", "individual"),
@@ -437,6 +453,10 @@ async def create_user(request: Request, user: dict):
 			"id": str(new_user["_id"]),
 			"name": new_user["name"],
 			"plan_expiry": new_user["plan_expiry"],
+			"referral": new_user["referral"],
+			"referral_reward": new_user["referral_reward"],
+			"currency": new_user["currency"],
+			"payouts": new_user["payouts"],
 			"username": new_user["username"],
 			"token": new_user["token"]
 		},
@@ -526,13 +546,16 @@ async def update_card(request: Request, card_id: str, card: dict):
 			"_id": card_id
 		}
 	)
-	if not auth_user or not auth_user.get("token") == card_record.get("owner_id"):
+	if not auth_user or not auth_user.get("is_admin"):
 		return JSONResponse(
 			{
 				"error": "unauthorized"
 			},
 			401
 		)
+	owner = await db["users"].find_one({"_id": card_record.get("owner_id")})
+	if owner and owner.get("plan_expiry") and int(owner.get("plan_expiry")) < int(datetime.datetime.now(datetime.timezone.utc).timestamp()):
+		return JSONResponse({"error": "plan_expired"}, 403)
 
 	update_fields = {}
 	if card.get("type") == "vcard":
@@ -605,7 +628,7 @@ async def terminate_user(request: Request, user_id: str):
 			},
 			401
 		)
-	elif not auth_user.get("is_admin") and not auth_user.get("_id") == user_id:
+	if not auth_user.get("is_admin"):
 		return JSONResponse(
 			{
 				"error": "unauthorized"
@@ -727,6 +750,10 @@ async def data_request(request: Request):
 			"id": str(auth_user.get("_id")),
 			"name": auth_user.get("name"),
 			"plan_expiry": auth_user.get("plan_expiry"),
+			"referral": auth_user.get("referral"),
+			"referral_reward": auth_user.get("referral_reward", 0.0),
+			"currency": auth_user.get("currency", "MYR"),
+			"payouts": auth_user.get("payouts", []),
 			"username": auth_user.get("username"),
 			"token": auth_user.get("token"),
 			"is_admin": auth_user.get("is_admin"),
