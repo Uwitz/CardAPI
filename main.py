@@ -612,9 +612,87 @@ async def terminate_user(request: Request, user_id: str):
 			},
 			401
 		)
-	await db["users"].delete_one({"_id": auth_user.get("_id")})
-	await collection.delete_many({"owner_id": auth_user.get("_id")})
-	return {"status": "success"}
+
+	elif auth_user.get("_id") == user_id:
+		await db["users"].delete_one({"_id": user_id})
+		await collection.delete_many({"owner_id": user_id})
+		return JSONResponse(
+			{
+				"status": "success"
+			},
+			200
+		)
+
+	else:
+		return JSONResponse(
+			{
+				"error": "unauthorized"
+			},
+			401
+		)
+
+@app.post("/renew/user/{user_id}")
+async def admin_renew_user_plan(request: Request, user_id: str, data: dict):
+	auth_user = await db["users"].find_one({"token": request.headers.get("Authorization")})
+	if not auth_user or not auth_user.get("is_admin"):
+		return JSONResponse(
+			{
+				"error": "unauthorized"
+			},
+			401
+		)
+
+	updates = {}
+	if data.get("plan"):
+		updates["plan"] = data.get("plan")
+	if "plan_expiry" in data:
+		updates["plan_expiry"] = data.get("plan_expiry")
+
+	transaction_update = None
+	transaction = data.get("transaction")
+	if isinstance(transaction, dict):
+		transaction_update = {
+			"type": transaction.get("type"),
+			"id": transaction.get("id"),
+			"bank": transaction.get("bank"),
+			"gateway": transaction.get("gateway"),
+			"amount": transaction.get("amount"),
+			"timestamp": transaction.get("timestamp") or str(int(datetime.datetime.now(datetime.timezone.utc).timestamp())),
+			"referral": transaction.get("referral")
+		}
+
+	if not updates and not transaction_update:
+		return JSONResponse(
+			{
+				"error": "no_fields_to_update"
+			},
+			400
+		)
+	updates["updated_at"] = str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+
+	update_ops = {"$set": updates}
+	if transaction_update:
+		update_ops["$push"] = {"transactions": transaction_update}
+
+	result = await db["users"].update_one({"_id": user_id}, update_ops)
+	if result.matched_count == 0:
+		return JSONResponse({"error": "not_found"}, 404)
+	user_record = await db["users"].find_one({"_id": user_id})
+	return JSONResponse(
+		content = {
+			"id": user_record.get("_id"),
+			"name": user_record.get("name"),
+			"plan": user_record.get("plan"),
+			"plan_expiry": user_record.get("plan_expiry"),
+			"username": user_record.get("username"),
+			"organisation": user_record.get("organisation"),
+			"status": user_record.get("status"),
+			"transactions": user_record.get("transactions"),
+			"created_at": user_record.get("created_at"),
+			"updated_at": user_record.get("updated_at")
+		},
+		status_code = 200
+	)
 
 @app.post("/request")
 async def data_request(request: Request):
