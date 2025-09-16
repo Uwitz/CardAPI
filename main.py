@@ -524,11 +524,13 @@ async def create_card(request: Request, card: dict):
 	transaction = card.get("transaction")
 	user_update_ops = {}
 	if isinstance(transaction, dict):
+		trans_entry_id = "".join(random.choices(string.ascii_uppercase + string.digits, k = 12))
 		trans_entry = {
 			"type": transaction.get("type"),
-			"id": transaction.get("id"),
+			"id": trans_entry_id,
 			"bank": transaction.get("bank"),
 			"gateway": transaction.get("gateway"),
+			"reference": transaction.get("reference"),
 			"amount": transaction.get("amount"),
 			"timestamp": transaction.get("timestamp") or str(int(datetime.datetime.now(datetime.timezone.utc).timestamp())),
 			"referral": transaction.get("referral")
@@ -541,7 +543,7 @@ async def create_card(request: Request, card: dict):
 		"owner_id": card.get("owner_id"),
 		"type": card.get("type"),
 		"content": content,
-		"payment_id": card.get("payment_id", None),
+		"payment_id": trans_entry_id,
 		"organisation": owner.get("organisation", None),
 		"views": 0,
 		"status": "active" if not card.get("status") != "pending" else "pending",
@@ -690,11 +692,13 @@ async def admin_renew_user_plan(request: Request, user_id: str, data: dict):
 	transaction_update = None
 	transaction = data.get("transaction")
 	if isinstance(transaction, dict):
+		transaction_id = "".join(random.choices(string.ascii_uppercase + string.digits, k = 10))
 		transaction_update = {
 			"type": transaction.get("type"),
-			"id": transaction.get("id"),
+			"id": transaction_id,
 			"bank": transaction.get("bank"),
 			"gateway": transaction.get("gateway"),
+			"reference": transaction.get("reference"),
 			"amount": transaction.get("amount"),
 			"timestamp": transaction.get("timestamp") or str(int(datetime.datetime.now(datetime.timezone.utc).timestamp())),
 			"referral": transaction.get("referral")
