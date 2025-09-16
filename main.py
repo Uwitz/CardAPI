@@ -521,6 +521,20 @@ async def create_card(request: Request, card: dict):
 			status_code = 400
 		)
 
+	transaction = card.get("transaction")
+	user_update_ops = {}
+	if isinstance(transaction, dict):
+		trans_entry = {
+			"type": transaction.get("type"),
+			"id": transaction.get("id"),
+			"bank": transaction.get("bank"),
+			"gateway": transaction.get("gateway"),
+			"amount": transaction.get("amount"),
+			"timestamp": transaction.get("timestamp") or str(int(datetime.datetime.now(datetime.timezone.utc).timestamp())),
+			"referral": transaction.get("referral")
+		}
+		user_update_ops["$push"] = {"transactions": trans_entry}
+
 	payload = {
 		"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
 		"tier": owner.get("plan", "individual"),
@@ -536,6 +550,8 @@ async def create_card(request: Request, card: dict):
 		"updated_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
 	}
 	result = await collection.insert_one(payload)
+	if user_update_ops:
+		await db["users"].update_one({"_id": card.get("owner_id")}, user_update_ops)
 	return {"id": str(result.inserted_id)}
 
 @app.patch("/{card_id}")
@@ -608,7 +624,7 @@ async def delete_card(request: Request, card_id: str):
 			"_id": card_id
 		}
 	)
-	if not auth_user or not auth_user.get("token") == card_record.get("owner_id") or not auth_user.get("is_admin"):
+	if not auth_user or not auth_user.get("is_admin"):
 		return JSONResponse(
 			{
 				"error": "unauthorized"
