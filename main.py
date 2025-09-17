@@ -424,9 +424,18 @@ async def create_user(request: Request, user: dict):
 			status_code = 400
 		)
 
+	username = str(user.get("username")).strip().lower()
+	import re
+	unix_username_pattern = re.compile(r"^[a-z_][a-z0-9_-]{0,31}$")
+	if not unix_username_pattern.match(username):
+		return JSONResponse(
+			content = {"error": "invalid_username"},
+			status_code = 400
+		)
+
 	new_user = {
 		"_id": "".join(random.choices(string.digits, k = 10)) + "." + str(int(datetime.datetime.now().timestamp())),
-		"username": user.get("username"),
+		"username": username,
 		"name": user.get("name", None),
 		"display_name": user.get("display_name", username),
 		"plan_expiry": user.get("plan_expiry", None),
@@ -443,7 +452,7 @@ async def create_user(request: Request, user: dict):
 		"created_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp())),
 		"updated_at": str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
 	}
-	if await db["users"].find_one({"username": user.get("username"), "_id": {"$ne": new_user["_id"]}}):
+	if await db["users"].find_one({"username": username, "_id": {"$ne": new_user["_id"]}}):
 		return JSONResponse(
 			content = {
 				"error": "duplicate_username"
