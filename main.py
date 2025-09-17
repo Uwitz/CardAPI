@@ -120,6 +120,7 @@ async def head_user(request: Request, user_id: str):
 		return JSONResponse(
 			content = {
 				"id": user_record.get("_id"),
+				"display_name": user_record.get("display_name"),
 				"name": user_record.get("name"),
 				"plan_expiry": user_record.get("plan_expiry"),
 				"referral": user_record.get("referral"),
@@ -214,6 +215,7 @@ async def user_profile(request: Request, data: dict):
 
 	return {
 		"id": str(auth_user.get("_id")),
+		"display_name": auth_user.get("display_name"),
 		"name": auth_user.get("name"),
 		"plan_expiry": auth_user.get("plan_expiry"),
 		"referral": auth_user.get("referral"),
@@ -248,6 +250,7 @@ async def list_users(request: Request):
 				user_list.append(
 					{
 						"id": str(user.get("_id")),
+						"display_name": user.get("display_name"),
 						"name": user.get("name"),
 						"plan_expiry": user.get("plan_expiry"),
 						"referral": user.get("referral"),
@@ -425,6 +428,7 @@ async def create_user(request: Request, user: dict):
 		"_id": "".join(random.choices(string.digits, k = 10)) + "." + str(int(datetime.datetime.now().timestamp())),
 		"username": user.get("username"),
 		"name": user.get("name", None),
+		"display_name": user.get("display_name", username),
 		"plan_expiry": user.get("plan_expiry", None),
 		"referral": user.get("referral", None),
 		"referral_reward": user.get("referral_reward", 0.0),
@@ -451,6 +455,7 @@ async def create_user(request: Request, user: dict):
 	return JSONResponse(
 		content = {
 			"id": str(new_user["_id"]),
+			"display_name": new_user["display_name"],
 			"name": new_user["name"],
 			"plan_expiry": new_user["plan_expiry"],
 			"referral": new_user["referral"],
@@ -768,6 +773,7 @@ async def data_request(request: Request):
 	return {
 		"user": {
 			"id": str(auth_user.get("_id")),
+			"display_name": auth_user.get("display_name"),
 			"name": auth_user.get("name"),
 			"plan_expiry": auth_user.get("plan_expiry"),
 			"referral": auth_user.get("referral"),
