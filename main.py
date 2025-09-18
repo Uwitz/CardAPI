@@ -1,4 +1,5 @@
 import os
+import re
 import uvicorn
 import random
 import string
@@ -122,6 +123,7 @@ async def head_user(request: Request, user_id: str):
 				"id": user_record.get("_id"),
 				"display_name": user_record.get("display_name"),
 				"name": user_record.get("name"),
+				"email": user_record.get("email"),
 				"plan_expiry": user_record.get("plan_expiry"),
 				"referral": user_record.get("referral"),
 				"referral_reward": user_record.get("referral_reward", 0.0),
@@ -217,6 +219,7 @@ async def user_profile(request: Request, data: dict):
 		"id": str(auth_user.get("_id")),
 		"display_name": auth_user.get("display_name"),
 		"name": auth_user.get("name"),
+		"email": auth_user.get("email"),
 		"plan_expiry": auth_user.get("plan_expiry"),
 		"referral": auth_user.get("referral"),
 		"referral_reward": auth_user.get("referral_reward", 0.0),
@@ -252,6 +255,7 @@ async def list_users(request: Request):
 						"id": str(user.get("_id")),
 						"display_name": user.get("display_name"),
 						"name": user.get("name"),
+						"email": user.get("email"),
 						"plan_expiry": user.get("plan_expiry"),
 						"referral": user.get("referral"),
 						"referral_reward": user.get("referral_reward", 0.0),
@@ -425,11 +429,28 @@ async def create_user(request: Request, user: dict):
 		)
 
 	username = str(user.get("username")).strip().lower()
-	import re
 	unix_username_pattern = re.compile(r"^[a-z_][a-z0-9_-]{0,31}$")
 	if not unix_username_pattern.match(username):
 		return JSONResponse(
 			content = {"error": "invalid_username"},
+			status_code = 400
+		)
+
+	email = user.get("email")
+	if email:
+		email = email.strip().lower()
+		email_pattern = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+		if email and not email_pattern.match(email):
+			return JSONResponse(
+				content = {"error": "invalid_email"},
+				status_code = 400
+			)
+
+	else:
+		return JSONResponse(
+			content = {
+				"error": "email_missing"
+			},
 			status_code = 400
 		)
 
@@ -438,6 +459,7 @@ async def create_user(request: Request, user: dict):
 		"username": username,
 		"name": user.get("name", None),
 		"display_name": user.get("display_name", username),
+		"email": email if isinstance(email, str) else None,
 		"plan_expiry": user.get("plan_expiry", None),
 		"referral": user.get("referral", None),
 		"referral_reward": user.get("referral_reward", 0.0),
@@ -466,6 +488,7 @@ async def create_user(request: Request, user: dict):
 			"id": str(new_user["_id"]),
 			"display_name": new_user["display_name"],
 			"name": new_user["name"],
+			"email": new_user["email"],
 			"plan_expiry": new_user["plan_expiry"],
 			"referral": new_user["referral"],
 			"referral_reward": new_user["referral_reward"],
@@ -739,6 +762,7 @@ async def admin_renew_user_plan(request: Request, user_id: str, data: dict):
 		content = {
 			"id": user_record.get("_id"),
 			"name": user_record.get("name"),
+			"email": user_record.get("email"),
 			"plan": user_record.get("plan"),
 			"plan_expiry": user_record.get("plan_expiry"),
 			"username": user_record.get("username"),
@@ -784,6 +808,7 @@ async def data_request(request: Request):
 			"id": str(auth_user.get("_id")),
 			"display_name": auth_user.get("display_name"),
 			"name": auth_user.get("name"),
+			"email": auth_user.get("email"),
 			"plan_expiry": auth_user.get("plan_expiry"),
 			"referral": auth_user.get("referral"),
 			"referral_reward": auth_user.get("referral_reward", 0.0),
