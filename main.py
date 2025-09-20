@@ -658,15 +658,33 @@ async def delete_card(request: Request, card_id: str):
 			"_id": card_id
 		}
 	)
-	if not auth_user or not auth_user.get("is_admin"):
+	if not auth_user:
 		return JSONResponse(
 			{
 				"error": "unauthorized"
 			},
 			401
 		)
-	await collection.delete_one({"_id": card_id})
-	return {"status": "success"}
+	if auth_user.get("is_admin"):
+		await collection.delete_one({"_id": card_id})
+		return {"status": "success"}
+	if not card_record:
+		return JSONResponse(
+			{
+				"error": "not_found"
+			},
+			404
+		)
+	elif card_record.get("owner_id") != auth_user.get("_id") and not auth_user.get("is_admin"):
+		return JSONResponse(
+			{
+				"error": "unauthorized"
+			},
+			401
+		)
+	else:
+		await collection.delete_one({"_id": card_id})
+		return {"status": "success"}
 
 @app.delete("/{user_id}")
 async def terminate_user(request: Request, user_id: str):
