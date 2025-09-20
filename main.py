@@ -122,7 +122,6 @@ async def head_user(request: Request, user_id: str):
 			content = {
 				"id": user_record.get("_id"),
 				"display_name": user_record.get("display_name"),
-				"name": user_record.get("name"),
 				"email": user_record.get("email"),
 				"plan_expiry": user_record.get("plan_expiry"),
 				"referral": user_record.get("referral"),
@@ -218,7 +217,6 @@ async def user_profile(request: Request, data: dict):
 	return {
 		"id": str(auth_user.get("_id")),
 		"display_name": auth_user.get("display_name"),
-		"name": auth_user.get("name"),
 		"email": auth_user.get("email"),
 		"plan_expiry": auth_user.get("plan_expiry"),
 		"referral": auth_user.get("referral"),
@@ -254,7 +252,6 @@ async def list_users(request: Request):
 					{
 						"id": str(user.get("_id")),
 						"display_name": user.get("display_name"),
-						"name": user.get("name"),
 						"email": user.get("email"),
 						"plan_expiry": user.get("plan_expiry"),
 						"referral": user.get("referral"),
@@ -457,7 +454,6 @@ async def create_user(request: Request, user: dict):
 	new_user = {
 		"_id": "".join(random.choices(string.digits, k = 10)) + "." + str(int(datetime.datetime.now().timestamp())),
 		"username": username,
-		"name": user.get("name", None),
 		"display_name": user.get("display_name", username),
 		"email": email if isinstance(email, str) else None,
 		"plan_expiry": user.get("plan_expiry", None),
@@ -487,7 +483,6 @@ async def create_user(request: Request, user: dict):
 		content = {
 			"id": str(new_user["_id"]),
 			"display_name": new_user["display_name"],
-			"name": new_user["name"],
 			"email": new_user["email"],
 			"plan_expiry": new_user["plan_expiry"],
 			"referral": new_user["referral"],
@@ -761,7 +756,7 @@ async def admin_renew_user_plan(request: Request, user_id: str, data: dict):
 	return JSONResponse(
 		content = {
 			"id": user_record.get("_id"),
-			"name": user_record.get("name"),
+			"display_name": user_record.get("display_name"),
 			"email": user_record.get("email"),
 			"plan": user_record.get("plan"),
 			"plan_expiry": user_record.get("plan_expiry"),
@@ -807,7 +802,6 @@ async def data_request(request: Request):
 		"user": {
 			"id": str(auth_user.get("_id")),
 			"display_name": auth_user.get("display_name"),
-			"name": auth_user.get("name"),
 			"email": auth_user.get("email"),
 			"plan_expiry": auth_user.get("plan_expiry"),
 			"referral": auth_user.get("referral"),
