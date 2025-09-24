@@ -451,19 +451,22 @@ async def create_user(request: Request, user: dict):
 			status_code = 400
 		)
 
+	plan_value = user.get("plan", "individual")
+	plan_expiry = None if plan_value == "individual" else str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()) + 30 * 24 * 60 * 60)
+
 	new_user = {
 		"_id": "".join(random.choices(string.digits, k = 10)) + "." + str(int(datetime.datetime.now().timestamp())),
 		"username": username,
 		"display_name": user.get("display_name", username),
 		"email": email if isinstance(email, str) else None,
-		"plan_expiry": user.get("plan_expiry", None),
-		"referral": user.get("referral", None),
-		"referral_reward": user.get("referral_reward", 0.0),
+		"plan_expiry": plan_expiry,
+		"referral": "".join(random.choices(string.ascii_uppercase + string.digits, k = 6)),
+		"referral_reward": 0,
 		"currency": user.get("currency", "MYR"),
 		"payouts": [],
 		"token": binascii.hexlify(os.urandom(20)).decode(),
 		"is_admin": False,
-		"plan": user.get("plan", "individual"),
+		"plan": plan_value,
 		"organisation": user.get("organisation", None),
 		"status": "active",
 		"transactions": [],
@@ -586,6 +589,14 @@ async def create_card(request: Request, card: dict):
 	result = await collection.insert_one(payload)
 	if user_update_ops:
 		await db["users"].update_one({"_id": card.get("owner_id")}, user_update_ops)
+
+	# Apply referral reward if referral code provided and referrer currency is MYR
+	if isinstance(transaction, dict) and isinstance(transaction.get("referral"), str):
+		ref_code = transaction.get("referral").strip().upper()
+		if ref_code:
+			ref_owner = await db["users"].find_one({"referral": ref_code})
+			if ref_owner and ref_owner.get("currency", "MYR") == "MYR":
+				await db["users"].update_one({"_id": ref_owner.get("_id")}, {"$inc": {"referral_reward": 5}})
 	return {"id": str(result.inserted_id)}
 
 @app.patch("/{card_id}")
