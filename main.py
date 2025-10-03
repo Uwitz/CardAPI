@@ -574,7 +574,7 @@ async def create_card(request: Request, card: dict):
 
 	payload = {
 		"_id": "".join(random.choices(string.ascii_letters + string.digits, k = 8)),
-		"tier": owner.get("plan", "individual"),
+		"tier": card.get("tier", "plastic"),
 		"owner_id": card.get("owner_id"),
 		"type": card.get("type"),
 		"content": content,
