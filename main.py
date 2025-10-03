@@ -40,7 +40,7 @@ async def read_root():
 @app.get("/{card_id}")
 async def read_card(request: Request, card_id: str):
 	try:
-		data: dict = request.body()
+		data: dict = await request.body()
 		user_card = await collection.find_one({"_id": card_id})
 		if not user_card:
 			return RedirectResponse(url = "https://uwitz.cards")
@@ -590,7 +590,6 @@ async def create_card(request: Request, card: dict):
 	if user_update_ops:
 		await db["users"].update_one({"_id": card.get("owner_id")}, user_update_ops)
 
-	# Apply referral reward if referral code provided and referrer currency is MYR
 	if isinstance(transaction, dict) and isinstance(transaction.get("referral"), str):
 		ref_code = transaction.get("referral").strip().upper()
 		if ref_code:
