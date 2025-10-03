@@ -95,7 +95,7 @@ async def read_card(request: Request, card_id: str):
 			}
 		)
 	elif user_card.get("type") == "url":
-		return RedirectResponse(url = user_card.get("url"))
+		return RedirectResponse(url = user_card.get("content"))
 	else:
 		return RedirectResponse(url = "https://uwitz.cards")
 
