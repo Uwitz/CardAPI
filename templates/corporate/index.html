@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block body_class %}corporate-accent{% endblock %}
+{% block title %}Corporate — {{ brand }}{% endblock %}
+{% block page_title %}Corporate Dashboard{% endblock %}
+{% block content %}
+<div class="page-header animate-fade-up">
+  <h1>{{ org.name if org else 'Organisation' }}</h1>
+  <p>Manage your corporate cards and team members</p>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+  <div class="metric-card">
+    <div class="metric-card-label">Team Members</div>
+    <div class="metric-card-value">{{ members | length }}</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-card-label">Org Cards</div>
+    <div class="metric-card-value">{{ cards | length }}</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-card-label">Status</div>
+    <div class="metric-card-value text-sm" style="margin-top: 0.5rem;">{{ org.status if org else 'N/A' }}</div>
+  </div>
+</div>
+
+<div class="flex gap-3 mb-6">
+  <a href="/corporate/cards" class="btn btn-primary btn-sm">Manage Cards</a>
+  <a href="/corporate/members" class="btn btn-outline btn-sm">Manage Members</a>
+  <a href="/corporate/orders" class="btn btn-outline btn-sm">Orders</a>
+</div>
+
+{% if cards %}
+<h2 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem;">Recent Cards</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+  {% for card in cards[:6] %}
+  <div class="card">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="badge badge-info">{{ card.card_type }}</span>
+      <span class="badge {% if card.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
+    </div>
+    <div class="font-mono font-semibold text-sm">{{ card.card_id }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

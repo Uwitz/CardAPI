@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Register — {{ brand }}{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center" style="min-height: 80vh;">
+  <div class="card animate-fade-up" style="width: 100%; max-width: 400px;">
+    <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem;">Create account</h1>
+    <p class="text-muted text-sm mb-6">Get started with Uwitz Cards</p>
+
+    {% if error %}
+      <div style="background: var(--primary-50); color: var(--primary-700); padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; margin-bottom: 1rem;">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/register">
+      <div class="form-group">
+        <label class="form-label">Display Name</label>
+        <input type="text" name="display_name" class="form-input" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-input" required pattern="[a-z_][a-z0-9_-]{0,31}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-input" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-input" required minlength="8">
+      </div>
+      <button type="submit" class="btn btn-primary w-full mt-2">Create account</button>
+    </form>
+
+    <p class="text-center text-sm text-muted mt-4">
+      Already have an account? <a href="/dashboard/login" style="color: var(--primary-500); font-weight: 500;">Sign in</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

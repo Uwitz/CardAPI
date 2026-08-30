@@ -1,32 +1,242 @@
 {% extends "base.html" %}
-{% block title %}Sign In — {{ brand }}{% endblock %}
+{% block title %}Sign in — {{ brand }}{% endblock %}
+{% block head %}
+<script src="/static/js/config.js"></script>
+<script src="/static/js/flicker-field.js"></script>
+<style>
+  .app-layout { display: block !important; }
+  .sidebar, .topbar { display: none !important; }
+  .main-area { margin-left: 0 !important; }
+  .main-content { padding: 0 !important; }
+
+  .login-shell {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    min-height: 100vh;
+    background: var(--bg-1);
+  }
+  .login-left {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-0);
+    background-image: var(--bg-vignette);
+    border-right: 1px solid var(--line-1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 52px;
+  }
+  .login-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+  }
+
+  .login-btn {
+    width: 100%; height: 52px; border-radius: 999px; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    font: 600 14px/1 var(--font-hero);
+    transition: transform var(--dur-1) var(--ease-out), background var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+  }
+  .login-btn:hover { transform: translateY(-2px); }
+  .login-btn:active { transform: translateY(0); }
+
+  .login-btn-irys {
+    background: var(--accent); color: #FFFFFF;
+    box-shadow: 0 2px 22px rgba(218,42,28,0.35);
+  }
+  .login-btn-irys:hover { background: var(--accent-hover); box-shadow: 0 6px 30px rgba(218,42,28,0.45); }
+
+  .login-btn-oidc {
+    background: var(--surface-card); color: var(--text-strong);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-2);
+  }
+  .login-btn-oidc:hover { border-color: var(--border-strong); box-shadow: var(--shadow-3); }
+
+  .login-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 20px 0;
+    font: 500 11px/1 var(--font-sans);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .login-divider::before, .login-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--line-1);
+  }
+
+  .login-form input {
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .login-footer {
+    margin-top: 24px;
+    font: 500 11px/1.5 var(--font-sans);
+    color: var(--text-faint);
+    text-align: center;
+  }
+  .login-footer a { color: var(--cyan-400); }
+
+  @media (max-width: 820px) {
+    .login-shell { grid-template-columns: 1fr !important; }
+    .login-left { display: none !important; }
+  }
+</style>
+{% endblock %}
 {% block content %}
-<div class="min-h-screen flex items-center justify-center" style="padding: 2rem 1rem;">
-  <div class="card" style="max-width: 28rem; width: 100%; padding: 2rem;">
-    <div class="text-center mb-6">
-      <div style="width: 3rem; height: 3rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--primary-600), var(--primary-800)); display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 700; margin-bottom: 1rem;">UC</div>
-      <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Sign in to {{ brand }}</h1>
-      <p class="text-muted" style="font-size: 0.875rem;">Enter your API token to access the dashboard.</p>
+<div class="login-shell">
+
+  <!-- LEFT PANEL -->
+  <div class="login-left">
+    <uwitz-flicker-field gap="14" block="5" count="28" opacity="0.85" speed="0.8" pull="0.5" style="position:absolute;inset:0;z-index:0;"></uwitz-flicker-field>
+    <a href="/" style="position:relative;z-index:2;display:flex;align-items:center;gap:9px;text-decoration:none;">
+      <div style="width:28px;height:28px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font:700 11px/1 var(--font-mono);box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 2px 8px rgba(0,0,0,0.5);">UC</div>
+      <span style="font:600 16px/1 var(--font-hero);letter-spacing:0.14em;color:#F3F1EF;">UWITZ</span>
+    </a>
+    <div style="position:relative;z-index:2;">
+      <span class="u-eyebrow">NFC Card Platform</span>
+      <h1 style="margin-top:16px;max-width:16ch;font:500 clamp(32px,3.2vw,42px)/1.08 var(--font-hero);letter-spacing:-0.022em;color:var(--text-strong);">Manage your cards, your way.</h1>
+      <p style="margin-top:16px;max-width:40ch;font:400 14px/1.6 var(--font-sans);color:var(--text-muted);">Create, order, and manage NFC business cards. Social cards, corporate cards, and dynamic TagLink cards.</p>
     </div>
-
-    {% if error %}
-      <div style="padding: 0.75rem 1rem; border-radius: 0.75rem; background: var(--primary-50); color: var(--primary-700); font-size: 0.875rem; margin-bottom: 1rem;">
-        {{ error }}
+    <div style="position:relative;z-index:2;display:flex;gap:30px;">
+      <div>
+        <div style="font:700 22px/1 var(--font-hero);color:var(--text-strong);">NFC</div>
+        <div style="margin-top:5px;font:500 10px/1 var(--font-sans);letter-spacing:0.12em;text-transform:uppercase;color:var(--text-faint);">NTAG 215</div>
       </div>
-    {% endif %}
-
-    <form method="POST" action="/dashboard/login">
-      <input type="hidden" name="{{ CSRF_FORM_FIELD }}" value="{{ csrf_token }}">
-      <div class="mb-4">
-        <label class="form-label" for="token">API Token</label>
-        <input type="password" id="token" name="token" class="form-input" placeholder="Your API token" required autofocus>
+      <div>
+        <div style="font:700 22px/1 var(--font-hero);color:var(--text-strong);">API</div>
+        <div style="margin-top:5px;font:500 10px/1 var(--font-sans);letter-spacing:0.12em;text-transform:uppercase;color:var(--text-faint);">TagLink</div>
       </div>
-      <button type="submit" class="btn btn-primary w-full">Sign in</button>
-    </form>
+      <div>
+        <div style="font:700 22px/1 var(--font-hero);color:var(--text-strong);">vCard</div>
+        <div style="margin-top:5px;font:500 10px/1 var(--font-sans);letter-spacing:0.12em;text-transform:uppercase;color:var(--text-faint);">Contact</div>
+      </div>
+    </div>
+  </div>
 
-    <p class="text-center mt-6" style="font-size: 0.75rem; color: var(--neutral-500);">
-      Your token is used to verify access and is stored in a secure session cookie.
-    </p>
+  <!-- RIGHT PANEL -->
+  <div class="login-right">
+    <div style="width:100%;max-width:360px;">
+      <span class="u-eyebrow">Secure sign-in</span>
+      <h2 style="margin:10px 0 4px;font:600 26px/1.1 var(--font-hero);letter-spacing:-0.02em;color:var(--text-strong);">Sign in to continue</h2>
+      <p style="font:400 13px/1.5 var(--font-sans);color:var(--text-muted);margin-bottom:28px;">Choose your sign-in method below.</p>
+
+      <div id="auth-error" class="alert-error" style="display:none;margin-bottom:16px;"></div>
+
+      <!-- SSO Buttons -->
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <button class="login-btn login-btn-irys" onclick="redirectToProvider('irys')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6z"/></svg>
+          Sign in with Irys
+        </button>
+        <button class="login-btn login-btn-oidc" onclick="redirectToProvider('entraid')">
+          <svg width="20" height="20" viewBox="0 0 23 23" fill="none"><rect x="1" y="1" width="10" height="10" fill="#f25022"/><rect x="12" y="1" width="10" height="10" fill="#7fba00"/><rect x="1" y="12" width="10" height="10" fill="#00a4ef"/><rect x="12" y="12" width="10" height="10" fill="#ffb900"/></svg>
+          Sign in with Entra ID
+        </button>
+      </div>
+
+      <div class="login-divider">or sign in with email</div>
+
+      <!-- Email/Password Form -->
+      <form class="login-form" method="POST" action="/dashboard/login">
+        <div class="form-group">
+          <input type="email" name="email" class="form-input" placeholder="Email address" required autofocus>
+        </div>
+        <div class="form-group">
+          <input type="password" name="password" class="form-input" placeholder="Password" required>
+        </div>
+        <button type="submit" class="login-btn login-btn-oidc" style="margin-top:4px;">
+          Sign in with email
+        </button>
+      </form>
+
+      <div class="login-footer">
+        Don't have an account? <a href="/register">Register</a> · <a href="/">Back to site</a>
+      </div>
+    </div>
   </div>
 </div>
+
+<script>
+function redirectToProvider(provider) {
+  const state = crypto.randomUUID();
+  sessionStorage.setItem('oauth_state', state);
+  sessionStorage.setItem('oauth_provider', provider);
+
+  if (provider === 'irys') {
+    const cfg = UWITZ_CONFIG.irys;
+    const params = new URLSearchParams({
+      client_id: cfg.clientId,
+      redirect_uri: cfg.redirectUri,
+      scope: cfg.scope,
+      response_type: 'code',
+      state: state,
+    });
+    window.location.href = cfg.authorizeUrl + '?' + params.toString();
+  } else {
+    const cfg = UWITZ_CONFIG.oidc.providers[provider];
+    if (!cfg) { showError('Unknown provider: ' + provider); return; }
+    const authorizeUrl = cfg.authorizeUrl.replace('{tenant}', cfg.tenant || 'common');
+    const params = new URLSearchParams({
+      client_id: cfg.clientId,
+      redirect_uri: cfg.redirectUri,
+      scope: cfg.scope,
+      response_type: 'code',
+      state: state,
+    });
+    window.location.href = authorizeUrl + '?' + params.toString();
+  }
+}
+
+async function handleCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const returnedState = params.get('state');
+  const error = params.get('error');
+  if (error) { showError(params.get('error_description') || error); return; }
+  if (!code) return;
+
+  const savedState = sessionStorage.getItem('oauth_state');
+  const provider = sessionStorage.getItem('oauth_provider') || 'irys';
+  sessionStorage.removeItem('oauth_state');
+  sessionStorage.removeItem('oauth_provider');
+  if (returnedState !== savedState) { showError('Invalid state parameter. Please try again.'); return; }
+
+  const btns = document.querySelectorAll('.login-btn');
+  btns.forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
+
+  try {
+    const resp = await fetch('/api/auth/oidc/callback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider, code, redirectUri: provider === 'irys' ? UWITZ_CONFIG.irys.redirectUri : UWITZ_CONFIG.oidc.providers[provider]?.redirectUri }),
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) throw new Error(data.error || 'Authentication failed');
+
+    if (data.session_cookie) {
+      window.location.href = '/dashboard';
+    } else if (data.token) {
+      localStorage.setItem('token', data.token);
+      window.location.href = '/dashboard';
+    } else {
+      window.location.href = '/dashboard';
+    }
+  } catch(e) {
+    showError('Authentication failed: ' + e.message);
+    btns.forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.display = '';
+}
+
+handleCallback();
+</script>
 {% endblock %}

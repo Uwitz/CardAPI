@@ -1,112 +1,64 @@
 {% extends "base.html" %}
 {% block title %}Dashboard — {{ brand }}{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
 {% block content %}
-{% import 'components/icons.html' as icons %}
-<section class="page-header">
-  <div class="container-main">
-    <div class="page-header-badge">Overview</div>
-    <h1>Dashboard</h1>
-    <p>Manage your cards, orders, and account settings.</p>
-  </div>
-</section>
+<div class="page-header animate-fade-up">
+  <h1>Welcome back, {{ user.display_name }}</h1>
+  <p>Manage your NFC cards and subscriptions</p>
+</div>
 
-<div class="container-main" style="padding: 2rem 1rem;">
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <div class="metric-card">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <p class="metric-card-label">Total Cards</p>
-          <p class="metric-card-value text-zinc-900">{{ stats.total_cards }}</p>
-          <p class="metric-card-hint">All your cards</p>
-        </div>
-        {{ icons.card('icon-lg') }}
-      </div>
-    </div>
-    <div class="metric-card">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <p class="metric-card-label">Active Cards</p>
-          <p class="metric-card-value" style="color: var(--success);">{{ stats.active_cards }}</p>
-          <p class="metric-card-hint">Live and shareable</p>
-        </div>
-        {{ icons.check_circle('icon-lg') }}
-      </div>
-    </div>
-    <div class="metric-card">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <p class="metric-card-label">Total Views</p>
-          <p class="metric-card-value" style="color: #2563eb;">{{ stats.total_views }}</p>
-          <p class="metric-card-hint">Across all cards</p>
-        </div>
-        {{ icons.eye('icon-lg') }}
-      </div>
-    </div>
-    <div class="metric-card">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <p class="metric-card-label">Referral Rewards</p>
-          <p class="metric-card-value" style="color: #9333ea;">{{ "%.2f"|format(stats.referral_reward) }}</p>
-          <p class="metric-card-hint">Earned so far</p>
-        </div>
-        {{ icons.trending_up('icon-lg') }}
-      </div>
-    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  <div class="metric-card">
+    <div class="metric-card-label">Cards</div>
+    <div class="metric-card-value">{{ cards | length }}</div>
   </div>
-
-  <div class="flex flex-wrap gap-2 mb-6">
-    <a href="/dashboard/cards" class="btn btn-outline btn-sm">{{ icons.card('icon-sm') }} My Cards</a>
-    <a href="/dashboard/orders" class="btn btn-outline btn-sm">{{ icons.shopping_bag('icon-sm') }} Orders</a>
-    <a href="/dashboard/builder" class="btn btn-outline btn-sm">{{ icons.layers('icon-sm') }} Builder</a>
-    <a href="/dashboard/domains" class="btn btn-outline btn-sm">{{ icons.globe('icon-sm') }} Domains</a>
-    <a href="/dashboard/order/new" class="btn btn-primary btn-sm">{{ icons.credit_card('icon-sm') }} Order New Card</a>
+  <div class="metric-card">
+    <div class="metric-card-label">Active Subscriptions</div>
+    <div class="metric-card-value">{{ subscriptions | length }}</div>
   </div>
-
-  <div class="card">
-    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Recent Cards</h2>
-    {% if recent_cards %}
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Type</th>
-            <th>Tier</th>
-            <th>Status</th>
-            <th>Views</th>
-            <th>Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for c in recent_cards %}
-          <tr>
-            <td class="font-mono text-xs">{{ c.id }}</td>
-            <td><span class="badge badge-neutral">{{ c.type }}</span></td>
-            <td><span class="badge badge-info">{{ c.tier }}</span></td>
-            <td>
-              {% if c.status == "active" %}
-                <span class="badge badge-success">{{ c.status }}</span>
-              {% elif c.status == "pending" %}
-                <span class="badge badge-warning">{{ c.status }}</span>
-              {% else %}
-                <span class="badge badge-neutral">{{ c.status }}</span>
-              {% endif %}
-            </td>
-            <td>{{ c.views }}</td>
-            <td class="text-muted text-xs">{{ c.created_at[:10] if c.created_at else "—" }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <div class="empty-state">
-        <p>No cards yet</p>
-        <p class="text-sm mt-2">Order a new card or use the builder to get started.</p>
-        <div class="flex gap-2 mt-4" style="justify-content: center;">
-          <a href="/dashboard/order/new" class="btn btn-primary btn-sm">Order New Card</a>
-          <a href="/dashboard/builder" class="btn btn-outline btn-sm">Open Builder</a>
-        </div>
-      </div>
-    {% endif %}
+  <div class="metric-card">
+    <div class="metric-card-label">Total Orders</div>
+    <div class="metric-card-value">{{ orders | length }}</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-card-label">Account</div>
+    <div class="metric-card-value text-sm font-semibold" style="margin-top: 0.5rem;">{{ user.role | capitalize }}</div>
   </div>
 </div>
+
+<div class="flex items-center justify-between mb-4">
+  <h2 style="font-size: 1.125rem; font-weight: 600;">Recent Cards</h2>
+  <a href="/dashboard/cards/new" class="btn btn-primary btn-sm">+ New Card</a>
+</div>
+
+{% if cards %}
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+  {% for card in cards %}
+  <a href="/dashboard/cards/{{ card.card_id }}" class="card" style="text-decoration: none;">
+    {% if card.image_url %}
+      <img src="{{ card.image_url }}" class="card-image-preview mb-3" alt="Card face">
+    {% endif %}
+    <div class="flex items-center justify-between mb-2">
+      <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
+      <span class="badge badge-info">{{ card.card_type }}</span>
+    </div>
+    <div class="font-semibold text-sm" style="margin-top: 0.5rem;">{{ card.card_id }}</div>
+    <div class="text-xs text-muted" style="margin-top: 0.25rem;">
+      {% if card.card_type == 'taglink' %}
+        {{ card.redirect_url or card.plain_text or 'No content' }}
+      {% else %}
+        {{ card.vcard_data[:50] if card.vcard_data else 'No vCard' }}...
+      {% endif %}
+    </div>
+    <div class="text-xs text-muted" style="margin-top: 0.5rem;">{{ card.views }} views</div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p class="font-semibold mb-2">No cards yet</p>
+  <p class="text-sm">Create your first NFC card to get started.</p>
+  <a href="/dashboard/cards/new" class="btn btn-primary mt-4">Create Card</a>
+</div>
+{% endif %}
 {% endblock %}

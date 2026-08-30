@@ -1,0 +1,7 @@
+{% extends "emails/base.html" %}
+{% block content %}
+<h1 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Welcome to Uwitz Cards!</h1>
+<p style="color: #525252; font-size: 14px;">Hi {{ display_name }},</p>
+<p style="color: #525252; font-size: 14px;">Your account is ready. You can now create and manage your NFC cards.</p>
+<a href="{{ site_url }}/dashboard" style="display: inline-block; padding: 10px 24px; background: #dc2626; color: white; border-radius: 8px; font-weight: 500; font-size: 14px; text-decoration: none; margin-top: 16px;">Go to Dashboard</a>
+{% endblock %}

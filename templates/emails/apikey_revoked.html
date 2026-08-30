@@ -1,0 +1,6 @@
+{% extends "emails/base.html" %}
+{% block content %}
+<h1 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">API Key Revoked</h1>
+<p style="color: #525252; font-size: 14px;">Hi {{ display_name }},</p>
+<p style="color: #525252; font-size: 14px;">An API key for card <code>{{ card_id }}</code> has been revoked.</p>
+{% endblock %}

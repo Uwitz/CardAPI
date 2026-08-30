@@ -5,93 +5,119 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token }}">
   <title>{% block title %}{{ brand }}{% endblock %}</title>
-  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400 800; font-display: swap; src: url('/static/assets/fonts/geist-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+    @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400 800; font-display: swap; src: url('/static/assets/fonts/geist-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+    @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('/static/assets/fonts/geist-mono-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+    @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('/static/assets/fonts/geist-mono-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  </style>
+  <link rel="stylesheet" href="/static/css/base.css">
+  <link rel="stylesheet" href="/static/css/components.css">
+  <link rel="stylesheet" href="/static/css/layout.css">
+  <link rel="stylesheet" href="/static/css/utilities.css">
   <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>
-  <script>
-    // Theme init (read before paint to avoid flash)
-    (function() {
-      const t = localStorage.getItem('theme');
-      if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      }
-    })();
-  </script>
+  {% block head %}{% endblock %}
 </head>
 <body>
-  {% import 'components/icons.html' as icons %}
-
-  <header class="navbar">
-    <div class="container-main">
-      <div class="flex items-center justify-between" style="height: 4rem; gap: 1rem;">
-        <a href="/dashboard" class="flex items-center gap-2" style="text-decoration: none;">
-          <div style="width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; background: linear-gradient(135deg, var(--primary-600), var(--primary-800)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.875rem;">UC</div>
-          <span style="font-weight: 700; font-size: 1.125rem; color: var(--neutral-900);">{{ brand }}</span>
+  <div class="app-layout {% block body_class %}{% endblock %}">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard" class="sidebar-brand">
+          <div class="sidebar-logo">UC</div>
+          <span class="sidebar-brand-text">UWITZ</span>
         </a>
-        <nav class="flex items-center gap-1" style="display: none;">
-          {% if user %}
-            <a href="/dashboard" class="navbar-link">Dashboard</a>
-            <a href="/dashboard/cards" class="navbar-link">My Cards</a>
-            <a href="/dashboard/orders" class="navbar-link">Orders</a>
-            <a href="/dashboard/order/new" class="navbar-link">Order New</a>
-            <a href="/dashboard/builder" class="navbar-link">Builder</a>
-            {% if user.is_admin %}
-              <a href="/admin" class="navbar-link">Admin</a>
-            {% endif %}
-          {% endif %}
-        </nav>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="toggleTheme()" class="btn btn-muted btn-sm" aria-label="Toggle theme" id="theme-btn" style="padding: 0.5rem 0.625rem;">
-            <span id="theme-icon-wrap"></span>
-          </button>
-          {% if user %}
-            <span style="font-size: 0.875rem; color: var(--neutral-600);">{{ user.display_name or user.username }}</span>
-            <form method="POST" action="/dashboard/logout" style="display: inline;">
-              <input type="hidden" name="{{ CSRF_FORM_FIELD }}" value="{{ csrf_token }}">
-              <button type="submit" class="btn btn-outline btn-sm">{{ icons.log_out('icon-sm') }} Sign out</button>
-            </form>
-          {% endif %}
-        </div>
       </div>
+      <nav class="sidebar-nav">
+        {% if user %}
+          <a href="/dashboard" class="sidebar-link {% if request.url.path == '/dashboard' %}active{% endif %}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </a>
+          <a href="/dashboard/cards" class="sidebar-link {% if '/cards' in request.url.path and '/corporate' not in request.url.path and '/admin' not in request.url.path %}active{% endif %}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            My Cards
+          </a>
+          <a href="/dashboard/orders" class="sidebar-link {% if '/orders' in request.url.path and '/corporate' not in request.url.path and '/admin' not in request.url.path %}active{% endif %}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            Orders
+          </a>
+          <a href="/dashboard/subscriptions" class="sidebar-link {% if '/subscriptions' in request.url.path and '/admin' not in request.url.path %}active{% endif %}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            Subscriptions
+          </a>
+
+          {% if user.role == 'corporate_admin' or user.role == 'admin' %}
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section">Corporate</div>
+            <a href="/corporate" class="sidebar-link {% if request.url.path == '/corporate' %}active{% endif %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16"/></svg>
+              Org Dashboard
+            </a>
+            <a href="/corporate/cards" class="sidebar-link {% if '/corporate/cards' in request.url.path %}active{% endif %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              Org Cards
+            </a>
+            <a href="/corporate/members" class="sidebar-link {% if '/corporate/members' in request.url.path %}active{% endif %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              Members
+            </a>
+          {% endif %}
+
+          {% if user.role == 'admin' %}
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section">Admin</div>
+            <a href="/admin" class="sidebar-link {% if request.url.path == '/admin' %}active{% endif %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Admin Panel
+            </a>
+            <a href="/admin/users" class="sidebar-link {% if '/admin/users' in request.url.path %}active{% endif %}">Users</a>
+            <a href="/admin/cards" class="sidebar-link {% if '/admin/cards' in request.url.path %}active{% endif %}">All Cards</a>
+            <a href="/admin/orders" class="sidebar-link {% if '/admin/orders' in request.url.path %}active{% endif %}">All Orders</a>
+            <a href="/admin/subscriptions" class="sidebar-link {% if '/admin/subscriptions' in request.url.path %}active{% endif %}">Subscriptions</a>
+            <a href="/admin/pricing" class="sidebar-link {% if '/admin/pricing' in request.url.path %}active{% endif %}">Pricing</a>
+            <a href="/admin/email-logs" class="sidebar-link {% if '/admin/email-logs' in request.url.path %}active{% endif %}">Email Logs</a>
+          {% endif %}
+        {% else %}
+          <a href="/dashboard/login" class="sidebar-link">Login</a>
+          <a href="/register" class="sidebar-link">Register</a>
+        {% endif %}
+      </nav>
+      <div class="sidebar-footer">
+        {% if user %}
+          <div class="sidebar-user">
+            <div class="sidebar-avatar">{{ user.display_name[0] | upper }}</div>
+            <div>
+              <div class="sidebar-username">{{ user.display_name }}</div>
+              <div class="sidebar-role">{{ user.role }}</div>
+            </div>
+          </div>
+          <form method="POST" action="/dashboard/logout" style="margin-top: var(--space-2);">
+            <input type="hidden" name="{{ CSRF_FORM_FIELD }}" value="{{ csrf_token }}">
+            <button type="submit" class="sidebar-link" style="width: 100%; border: none; background: none; cursor: pointer;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+              Sign out
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    </aside>
+    <div class="main-area">
+      <header class="topbar">
+        <button class="topbar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        </button>
+        <div class="topbar-title">{% block page_title %}{% endblock %}</div>
+      </header>
+      <main class="main-content">
+        {% block content %}{% endblock %}
+      </main>
     </div>
-  </header>
-
-  <main>
-    {% block content %}{% endblock %}
-  </main>
-
-  <footer style="border-top: 1px solid var(--neutral-200); padding: 2rem 0; margin-top: 4rem;">
-    <div class="container-main text-center">
-      <p style="font-size: 0.875rem; color: var(--neutral-600);">
-        &copy; {{ now.split('T')[0] }} {{ brand }}. All rights reserved.
-      </p>
-    </div>
-  </footer>
-
+  </div>
   <script>
-    // SVG icon templates for the theme toggle
-    const sunIcon = `{{ icons.sun('icon-md') | safe }}`;
-    const moonIcon = `{{ icons.moon('icon-md') | safe }}`;
-
-    function updateThemeIcon() {
-      const isDark = document.documentElement.classList.contains('dark');
-      document.getElementById('theme-icon-wrap').innerHTML = isDark ? sunIcon : moonIcon;
-    }
-
-    function toggleTheme() {
-      const html = document.documentElement;
-      html.classList.toggle('dark');
-      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-      updateThemeIcon();
-    }
-
-    // HTMX: inject CSRF token
     document.addEventListener('htmx:configRequest', (e) => {
       const token = document.querySelector('meta[name="csrf-token"]')?.content;
       if (token) e.detail.headers['X-CSRF-Token'] = token;
     });
-
-    // Init theme icon on load
-    updateThemeIcon();
   </script>
 </body>
 </html>

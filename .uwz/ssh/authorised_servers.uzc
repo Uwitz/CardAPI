@@ -1,0 +1,5 @@
+# Uwitz AI-Agent Authorised Servers (`.uzc` = Uwitz Zone Config)
+# Format: <ip/domain> <descriptor>
+# Passwords for the `ai` user: .uwz/ssh/<descriptor>.uzp
+#
+soren.ns.uwitz.org production

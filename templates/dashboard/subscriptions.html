@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Subscriptions — {{ brand }}{% endblock %}
+{% block page_title %}Subscriptions{% endblock %}
+{% block content %}
+<h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Subscriptions</h1>
+
+{% if subscriptions %}
+<table class="table card" style="overflow: hidden;">
+  <thead><tr><th>Plan</th><th>Amount</th><th>Status</th><th>Period End</th><th></th></tr></thead>
+  <tbody>
+    {% for sub in subscriptions %}
+    <tr>
+      <td class="font-medium">{{ sub.plan }}</td>
+      <td>RM {{ '%.2f' | format(sub.amount) }}/{{ sub.interval }}</td>
+      <td><span class="badge {% if sub.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ sub.status }}</span></td>
+      <td class="text-sm text-muted">{{ sub.current_period_end[:10] if sub.current_period_end else '—' }}</td>
+      <td>
+        {% if sub.status == 'active' %}
+          {% if sub.manual_renewal %}
+            <button class="btn btn-outline btn-sm" onclick="renewSub('{{ sub._id }}')">Renew</button>
+          {% endif %}
+          <button class="btn btn-outline btn-sm" onclick="cancelSub('{{ sub._id }}')">Cancel</button>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+  <p class="font-semibold">No active subscriptions</p>
+</div>
+{% endif %}
+{% endblock %}
+{% block head %}
+<script>
+const token = localStorage.getItem('token');
+
+async function renewSub(id) {
+  const res = await fetch(`/api/subscriptions/${id}/renew`, {
+    method: 'POST', headers: { 'Authorization': `Bearer ${token}` },
+  });
+  if (res.ok) location.reload();
+}
+
+async function cancelSub(id) {
+  if (!confirm('Cancel this subscription?')) return;
+  const res = await fetch(`/api/subscriptions/${id}/cancel`, {
+    method: 'POST', headers: { 'Authorization': `Bearer ${token}` },
+  });
+  if (res.ok) location.reload();
+}
+</script>
+{% endblock %}

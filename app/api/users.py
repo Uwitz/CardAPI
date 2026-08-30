@@ -1,63 +1,89 @@
+import secrets
 from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import EmailStr
 
-from app.auth import get_api_user
-from app.database import db
+from app.auth import get_api_user, hash_password, verify_password
+from app.database import db, now_iso
+from app.models import UserRegister, UserLogin, UserUpdate
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 
 
-def _user_to_response(user: dict) -> dict:
-    return {
-        "id": user.get("_id"),
-        "display_name": user.get("display_name"),
-        "email": user.get("email"),
-        "plan_expiry": user.get("plan_expiry"),
-        "referral": user.get("referral"),
-        "referral_reward": user.get("referral_reward", 0.0),
-        "currency": user.get("currency", "MYR"),
-        "payouts": user.get("payouts", []),
-        "is_admin": user.get("is_admin", False),
-        "username": user.get("username"),
-        "plan": user.get("plan"),
-        "organisation": user.get("organisation"),
-        "status": user.get("status"),
-        "transactions": user.get("transactions", []),
-        "created_at": user.get("created_at"),
-        "updated_at": user.get("updated_at"),
-        # NOTE: token intentionally omitted
+@router.post("/register")
+async def register(data: UserRegister):
+    if await db["users"].find_one({"email": data.email}):
+        raise HTTPException(status_code=409, detail={"error": "email_exists"})
+    if await db["users"].find_one({"username": data.username}):
+        raise HTTPException(status_code=409, detail={"error": "username_exists"})
+
+    user_id = secrets.token_hex(5)
+    token = secrets.token_hex(20)
+    now = now_iso()
+
+    user = {
+        "_id": user_id,
+        "username": data.username,
+        "email": data.email,
+        "password_hash": hash_password(data.password),
+        "display_name": data.display_name,
+        "role": "individual",
+        "org_id": None,
+        "stripe_customer_id": None,
+        "token": token,
+        "status": "active",
+        "referral_code": secrets.token_hex(3).upper(),
+        "created_at": now,
+        "updated_at": now,
     }
+    await db["users"].insert_one(user)
+
+    from app.email import send_email
+    await send_email(data.email, "Welcome to Uwitz Cards", "welcome", {
+        "display_name": data.display_name,
+        "site_url": "https://portal.uwitz.cards",
+    })
+
+    return {"id": user_id, "token": token, "display_name": data.display_name}
 
 
-def _card_to_response(card: dict) -> dict:
-    return {
-        "id": card.get("_id"),
-        "tier": card.get("tier"),
-        "owner_id": card.get("owner_id"),
-        "type": card.get("type"),
-        "content": card.get("content"),
-        "payment_id": card.get("payment_id"),
-        "organisation": card.get("organisation"),
-        "views": card.get("views", 0),
-        "status": card.get("status"),
-        "version": card.get("version"),
-        "created_at": card.get("created_at"),
-        "updated_at": card.get("updated_at"),
-    }
+@router.post("/login")
+async def login(data: UserLogin):
+    user = await db["users"].find_one({"email": data.email})
+    if not user or not verify_password(data.password, user.get("password_hash", "")):
+        raise HTTPException(status_code=401, detail={"error": "invalid_credentials"})
+    if user.get("status") == "suspended":
+        raise HTTPException(status_code=403, detail={"error": "suspended"})
+    return {"id": user["_id"], "token": user["token"], "display_name": user["display_name"], "role": user.get("role", "individual")}
 
 
 @router.get("/me")
 async def get_me(user: dict = Depends(get_api_user)):
-    """Get the authenticated user's full profile + their cards. (Consolidates old /profile + /request)"""
-    cards = [_card_to_response(c) async for c in db["user_cards"].find({"owner_id": user.get("_id")})]
-    return {**_user_to_response(user), "cards": cards}
+    return {
+        "id": user["_id"],
+        "username": user["username"],
+        "email": user["email"],
+        "display_name": user["display_name"],
+        "role": user.get("role", "individual"),
+        "org_id": user.get("org_id"),
+        "status": user.get("status", "active"),
+        "referral_code": user.get("referral_code"),
+        "created_at": user.get("created_at"),
+    }
 
 
-@router.get("/{user_id}")
-async def get_user(user_id: str, user: dict = Depends(get_api_user)):
-    """Get a specific user. Admin or self only."""
-    if user.get("_id") != user_id and not user.get("is_admin"):
-        raise HTTPException(status_code=401, detail={"error": "unauthorized"})
-    target = await db["users"].find_one({"_id": user_id})
-    if not target:
-        raise HTTPException(status_code=404, detail={"error": "not_found"})
-    return _user_to_response(target)
+@router.patch("/me")
+async def update_me(data: UserUpdate, user: dict = Depends(get_api_user)):
+    updates = {k: v for k, v in data.model_dump(exclude_unset=True).items() if v is not None}
+    if updates:
+        updates["updated_at"] = now_iso()
+        await db["users"].update_one({"_id": user["_id"]}, {"$set": updates})
+    return {"status": "updated"}
+
+
+@router.get("/me/cards")
+async def my_cards(user: dict = Depends(get_api_user)):
+    cards = await db["cards"].find(
+        {"owner_id": user["_id"]},
+        {"pin": 0},
+    ).sort("created_at", -1).to_list(100)
+    return cards

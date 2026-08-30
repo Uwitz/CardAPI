@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Subscriptions — Admin{% endblock %}
+{% block page_title %}Subscription Management{% endblock %}
+{% block content %}
+<h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">All Subscriptions</h1>
+
+<table class="table card" style="overflow: hidden;">
+  <thead><tr><th>ID</th><th>User</th><th>Card</th><th>Plan</th><th>Amount</th><th>Status</th><th>Period End</th></tr></thead>
+  <tbody>
+    {% for sub in subscriptions %}
+    <tr>
+      <td class="font-mono text-sm">{{ sub._id }}</td>
+      <td class="font-mono text-sm">{{ sub.user_id }}</td>
+      <td class="font-mono text-sm">{{ sub.card_id }}</td>
+      <td>{{ sub.plan }}</td>
+      <td>RM {{ '%.2f' | format(sub.amount) }}</td>
+      <td><span class="badge {% if sub.status == 'active' %}badge-success{% elif sub.status == 'cancelled' %}badge-error{% else %}badge-neutral{% endif %}">{{ sub.status }}</span></td>
+      <td class="text-sm text-muted">{{ sub.current_period_end[:10] if sub.current_period_end else '—' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

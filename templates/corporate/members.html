@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block body_class %}corporate-accent{% endblock %}
+{% block title %}Members — {{ brand }}{% endblock %}
+{% block page_title %}Team Members{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 style="font-size: 1.25rem; font-weight: 700;">Team Members</h1>
+  <button class="btn btn-primary btn-sm" onclick="inviteMember()">+ Invite Member</button>
+</div>
+
+{% if members %}
+<table class="table card" style="overflow: hidden;">
+  <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th></th></tr></thead>
+  <tbody>
+    {% for m in members %}
+    <tr>
+      <td class="font-medium">{{ m.display_name }}</td>
+      <td class="text-sm">{{ m.email }}</td>
+      <td><span class="badge badge-neutral">{{ m.role }}</span></td>
+      <td class="text-sm text-muted">{{ m.created_at[:10] }}</td>
+      <td>
+        {% if m._id != user._id %}
+          <button class="btn btn-outline btn-sm" onclick="removeMember('{{ m._id }}')">Remove</button>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty-state"><p class="font-semibold">No members yet</p></div>
+{% endif %}
+{% endblock %}
+{% block head %}
+<script>
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+async function inviteMember() {
+  const email = prompt('Email address:');
+  if (!email) return;
+  const name = prompt('Display name:');
+  if (!name) return;
+  const res = await fetch('/api/corporate/members', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    body: JSON.stringify({ email, display_name: name }),
+  });
+  const data = await res.json();
+  if (res.ok) {
+    alert(`Member invited! Temp password: ${data.temp_password}`);
+    location.reload();
+  } else alert(data.detail?.error || 'Failed');
+}
+
+async function removeMember(id) {
+  if (!confirm('Remove this member?')) return;
+  await fetch(`/api/corporate/members/${id}`, {
+    method: 'DELETE', headers: { 'X-CSRF-Token': csrfToken },
+  });
+  location.reload();
+}
+</script>
+{% endblock %}

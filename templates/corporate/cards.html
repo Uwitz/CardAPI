@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block body_class %}corporate-accent{% endblock %}
+{% block title %}Org Cards — {{ brand }}{% endblock %}
+{% block page_title %}Organisation Cards{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 style="font-size: 1.25rem; font-weight: 700;">Org Cards</h1>
+</div>
+
+{% if cards %}
+<table class="table card" style="overflow: hidden;">
+  <thead><tr><th>Card ID</th><th>Type</th><th>Status</th><th>Views</th><th>Created</th></tr></thead>
+  <tbody>
+    {% for card in cards %}
+    <tr>
+      <td class="font-mono font-semibold">{{ card.card_id }}</td>
+      <td><span class="badge badge-info">{{ card.card_type }}</span></td>
+      <td><span class="badge {% if card.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.status }}</span></td>
+      <td>{{ card.views }}</td>
+      <td class="text-sm text-muted">{{ card.created_at[:10] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty-state"><p class="font-semibold">No org cards yet</p></div>
+{% endif %}
+{% endblock %}

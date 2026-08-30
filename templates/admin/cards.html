@@ -1,56 +1,49 @@
 {% extends "base.html" %}
-{% block title %}Cards — Admin — {{ brand }}{% endblock %}
+{% block title %}Cards — Admin{% endblock %}
+{% block page_title %}Card Management{% endblock %}
 {% block content %}
-{% import 'components/icons.html' as icons %}
-<section class="page-header page-header-admin">
-  <div class="container-main">
-    <div class="page-header-badge">{{ icons.shield('icon-sm') }} Cards</div>
-    <h1>Card Management</h1>
-    <p>View and manage all cards on the platform.</p>
-  </div>
-</section>
-
-<div class="container-main" style="padding: 2rem 1rem;">
-  <div class="card">
-    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">All Cards ({{ cards|length }})</h2>
-    {% if cards %}
-    <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Owner</th>
-          <th>Type</th>
-          <th>Tier</th>
-          <th>Status</th>
-          <th>Views</th>
-          <th>Created</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for c in cards %}
-        <tr>
-          <td class="font-mono text-xs">{{ c.id }}</td>
-          <td class="font-mono text-xs">{{ c.owner_id[:12] if c.owner_id else "—" }}…</td>
-          <td><span class="badge badge-neutral">{{ c.type }}</span></td>
-          <td><span class="badge badge-info">{{ c.tier }}</span></td>
-          <td>
-            {% if c.status == "active" %}
-              <span class="badge badge-success">{{ c.status }}</span>
-            {% elif c.status == "pending" %}
-              <span class="badge badge-warning">{{ c.status }}</span>
-            {% else %}
-              <span class="badge badge-neutral">{{ c.status }}</span>
-            {% endif %}
-          </td>
-          <td>{{ c.views }}</td>
-          <td class="text-muted text-xs">{{ c.created_at[:10] if c.created_at else "—" }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-    <div class="empty-state"><p>No cards yet</p></div>
-    {% endif %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 style="font-size: 1.25rem; font-weight: 700;">All Cards</h1>
+    <p class="text-sm text-muted">{{ cards | length }} total</p>
   </div>
 </div>
+
+<table class="table card" style="overflow: hidden;">
+  <thead><tr><th>Card ID</th><th>Type</th><th>Tier</th><th>Owner</th><th>Status</th><th>Sub</th><th>Views</th><th></th></tr></thead>
+  <tbody>
+    {% for card in cards %}
+    <tr>
+      <td class="font-mono font-semibold">{{ card.card_id }}</td>
+      <td><span class="badge badge-info">{{ card.card_type }}</span></td>
+      <td>{{ card.card_tier }}</td>
+      <td class="font-mono text-sm">{{ card.owner_id }}</td>
+      <td><span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span></td>
+      <td><span class="badge {% if card.subscription_status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.subscription_status }}</span></td>
+      <td>{{ card.views }}</td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="toggleFreeze('{{ card.card_id }}', {{ card.frozen | tojson }})">
+          {{ 'Unfreeze' if card.frozen else 'Freeze' }}
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block head %}
+<script>
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+async function toggleFreeze(cardId, frozen) {
+  const action = frozen ? 'unfreeze' : 'freeze';
+  if (!confirm(`${action} card ${cardId}?`)) return;
+  await fetch(`/api/admin/cards/${cardId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    body: JSON.stringify({ frozen: !frozen }),
+  });
+  location.reload();
+}
+</script>
 {% endblock %}

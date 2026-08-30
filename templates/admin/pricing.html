@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Pricing — Admin{% endblock %}
+{% block page_title %}Pricing Configuration{% endblock %}
+{% block content %}
+<h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;">Pricing</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="card">
+    <h2 style="font-weight: 600; margin-bottom: 1rem;">Card Prices (Physical)</h2>
+    <table class="table">
+      <thead><tr><th>Type</th><th>Price (MYR)</th></tr></thead>
+      <tbody>
+        {% for type, prices in card_pricing.items() %}
+        <tr>
+          <td class="font-medium">{{ type | capitalize }}</td>
+          <td>RM {{ '%.2f' | format(prices.physical) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 style="font-weight: 600; margin-bottom: 1rem;">Subscription Prices</h2>
+    <table class="table">
+      <thead><tr><th>Plan</th><th>Amount</th><th>Interval</th></tr></thead>
+      <tbody>
+        {% for plan, info in subscription_pricing.items() %}
+        <tr>
+          <td class="font-medium">{{ plan }}</td>
+          <td>RM {{ '%.2f' | format(info.amount) }}</td>
+          <td>{{ info.interval }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

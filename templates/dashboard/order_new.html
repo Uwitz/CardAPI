@@ -1,66 +1,64 @@
 {% extends "base.html" %}
-{% block title %}Order New Card — {{ brand }}{% endblock %}
+{% block title %}New Order — {{ brand }}{% endblock %}
+{% block page_title %}Place New Order{% endblock %}
 {% block content %}
-{% import 'components/icons.html' as icons %}
-<section class="page-header">
-  <div class="container-main">
-    <div class="page-header-badge">{{ icons.credit_card('icon-sm') }} Order</div>
-    <h1>Order a New Card</h1>
-    <p>Choose a tier and pay securely via Stripe.</p>
-  </div>
-</section>
-
-<div class="container-main" style="padding: 2rem 1rem;">
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    {% for t in tiers %}
-    <div class="card">
-      <div style="text-align: center; margin-bottom: 1rem;">
-        <h3 style="font-size: 1.25rem; font-weight: 700; text-transform: capitalize;">{{ t.id }}</h3>
-        <p style="font-size: 2rem; font-weight: 700; color: var(--primary-600); margin-top: 0.5rem;">
-          {% if t.amount_cents == 0 %}
-            Free
-          {% else %}
-            RM {{ "%.2f"|format(t.amount_cents / 100) }}
-          {% endif %}
-        </p>
+<div class="max-w-md mx-auto animate-fade-up">
+  <div class="card">
+    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Order a Physical Card</h2>
+    <form id="order-form" onsubmit="placeOrder(event)">
+      <div class="form-group">
+        <label class="form-label">Card Type</label>
+        <select id="order-type" class="form-input" onchange="updatePrice()">
+          <option value="social">Social Card — RM 35.00</option>
+          <option value="corporate">Corporate Card — RM 50.00</option>
+          <option value="taglink">TagLink Card — RM 15.00</option>
+        </select>
       </div>
-      <ul style="list-style: none; padding: 0; margin: 0 0 1.5rem 0;">
-        <li class="text-sm py-1" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--success);">{{ icons.check('icon-sm') }}</span> Digital vCard</li>
-        <li class="text-sm py-1" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--success);">{{ icons.check('icon-sm') }}</span> Custom design</li>
-        <li class="text-sm py-1" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--success);">{{ icons.check('icon-sm') }}</span> QR code included</li>
-        <li class="text-sm py-1" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--success);">{{ icons.check('icon-sm') }}</span> Unlimited views</li>
-      </ul>
-      <button type="button" class="btn btn-primary w-full" onclick="orderCard('{{ t.id }}')">
-        Order Now
-      </button>
-    </div>
-    {% endfor %}
+      <div id="price-summary" class="card" style="background: var(--neutral-50); margin-bottom: 1rem;">
+        <div class="flex justify-between text-sm mb-1"><span>Card price</span><span id="price-base">RM 35.00</span></div>
+        <div class="flex justify-between text-sm mb-1"><span>Stripe fee</span><span id="price-fee">RM 1.05</span></div>
+        <div class="flex justify-between font-bold"><span>Total</span><span id="price-total">RM 36.05</span></div>
+      </div>
+      <button type="submit" class="btn btn-primary w-full">Checkout with Stripe</button>
+    </form>
   </div>
 </div>
-
+{% endblock %}
+{% block head %}
 <script>
-  async function orderCard(tier) {
-    // For now, create a simple order with placeholder content
-    const content = 'BEGIN:VCARD\nVERSION:4.0\nFN:' + (window.prompt('Your full name:') || 'Test User') + '\nEND:VCARD\n';
-    try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || '' },
-        body: JSON.stringify({ tier: tier, card_type: 'vcard', card_content: content }),
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (data.checkout_url) {
-        window.location.href = data.checkout_url;
-      } else if (data.id) {
-        alert('Order created: ' + data.id + (data.status === 'paid' ? ' (no payment required)' : ' — status: ' + data.status));
-        window.location.href = '/dashboard/orders';
-      } else {
-        alert('Error: ' + (data.error || 'Unknown error'));
-      }
-    } catch (e) {
-      alert('Failed to create order: ' + e.message);
-    }
+const prices = { social: 35, corporate: 50, taglink: 15 };
+const feeRate = 0.03, feeMin = 0.50;
+
+function calcFee(amt) { return Math.max(amt * feeRate, feeMin).toFixed(2); }
+
+function updatePrice() {
+  const type = document.getElementById('order-type').value;
+  const base = prices[type];
+  const fee = calcFee(base);
+  const total = (base + parseFloat(fee)).toFixed(2);
+  document.getElementById('price-base').textContent = `RM ${base.toFixed(2)}`;
+  document.getElementById('price-fee').textContent = `RM ${fee}`;
+  document.getElementById('price-total').textContent = `RM ${total}`;
+}
+
+async function placeOrder(e) {
+  e.preventDefault();
+  const token = localStorage.getItem('token');
+  const type = document.getElementById('order-type').value;
+  const res = await fetch('/api/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ card_type: type, card_tier: 'physical' }),
+  });
+  const data = await res.json();
+  if (res.ok && data.checkout_url) {
+    window.location.href = data.checkout_url;
+  } else if (res.ok) {
+    window.location.href = '/dashboard/orders';
+  } else {
+    alert(data.detail?.error || 'Order failed');
   }
+}
+updatePrice();
 </script>
 {% endblock %}

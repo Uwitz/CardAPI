@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Card {{ card.card_id }} — {{ brand }}{% endblock %}
+{% block page_title %}Card {{ card.card_id }}{% endblock %}
+{% block content %}
+<div class="animate-fade-up">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="/dashboard/cards" class="btn btn-muted btn-sm">← Back</a>
+    <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
+    <span class="badge badge-info">{{ card.card_type }}</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Card info -->
+    <div class="card">
+      <h3 style="font-weight: 600; margin-bottom: 1rem;">Card Details</h3>
+      <div class="form-group">
+        <label class="form-label">Card ID (Public URL)</label>
+        <div class="font-mono text-lg font-bold">{{ card.card_id }}</div>
+        <div class="text-xs text-muted mt-1">uwitz.cards/{{ card.card_id }}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type / Tier</label>
+        <div>{{ card.card_type | capitalize }} / {{ card.card_tier }}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Views</label>
+        <div class="text-2xl font-bold">{{ card.views }}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subscription</label>
+        <span class="badge {% if card.subscription_status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.subscription_status }}</span>
+      </div>
+
+      {% if card.card_type in ('social', 'corporate') and card.vcard_data %}
+      <div class="form-group">
+        <label class="form-label">vCard Content</label>
+        <pre style="background: var(--neutral-100); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; overflow-x: auto; white-space: pre-wrap;">{{ card.vcard_data }}</pre>
+      </div>
+      {% endif %}
+
+      {% if card.card_type == 'taglink' %}
+      <div class="form-group">
+        <label class="form-label">Redirect URL</label>
+        <div class="text-sm">{{ card.redirect_url or '—' }}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Plain Text</label>
+        <div class="text-sm">{{ card.plain_text or '—' }}</div>
+      </div>
+      {% endif %}
+
+      <div class="flex gap-2 mt-4">
+        {% if card.status == 'active' %}
+          <button class="btn btn-outline btn-sm" onclick="freezeCard()">Freeze</button>
+        {% elif card.status == 'frozen' %}
+          <button class="btn btn-outline btn-sm" onclick="unfreezeCard()">Unfreeze</button>
+        {% endif %}
+        <button class="btn btn-danger btn-sm" onclick="deleteCard()">Delete</button>
+      </div>
+    </div>
+
+    <!-- Image -->
+    <div class="card">
+      <h3 style="font-weight: 600; margin-bottom: 1rem;">Card Face Image</h3>
+      {% if image %}
+        <img src="/static/uploads/cards/{{ image.filename }}" class="card-image-preview mb-3" alt="Card face">
+        <div class="text-xs text-muted">{{ image.width_px }}x{{ image.height_px }}px @ {{ image.dpi }} DPI</div>
+        <button class="btn btn-outline btn-sm mt-2" onclick="deleteImage()">Remove Image</button>
+      {% else %}
+        <div class="empty-state" style="padding: 2rem 0;">
+          <p class="text-sm mb-2">No image uploaded</p>
+          <p class="text-xs text-muted mb-4">ISO/IEC 7810 ID-1: 85.6mm × 54mm @ 300 DPI minimum</p>
+        </div>
+      {% endif %}
+      <div class="mt-3">
+        <input type="file" id="image-input" accept="image/*" class="form-input" onchange="uploadImage()">
+      </div>
+    </div>
+  </div>
+
+  {% if card.card_type == 'taglink' and taglink_keys %}
+  <div class="card mt-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 style="font-weight: 600;">TagLink API Keys</h3>
+      <button class="btn btn-primary btn-sm" onclick="createKey()">+ New Key</button>
+    </div>
+    <table class="table">
+      <thead><tr><th>Name</th><th>Prefix</th><th>Status</th><th>Last Used</th><th></th></tr></thead>
+      <tbody>
+        {% for key in taglink_keys %}
+        <tr>
+          <td class="font-medium">{{ key.name }}</td>
+          <td class="font-mono text-sm">{{ key.key_prefix }}...</td>
+          <td><span class="badge {% if key.status == 'active' %}badge-success{% else %}badge-error{% endif %}">{{ key.status }}</span></td>
+          <td class="text-sm text-muted">{{ key.last_used_at[:10] if key.last_used_at else 'Never' }}</td>
+          <td>
+            {% if key.status == 'active' %}
+              <button class="btn btn-outline btn-sm" onclick="revokeKey('{{ key._id }}')">Revoke</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+{% block head %}
+<script>
+const token = localStorage.getItem('token');
+const cardId = '{{ card.card_id }}';
+
+async function freezeCard() {
+  if (!confirm('Freeze this card? It will no longer be accessible.')) return;
+  await fetch(`/api/cards/${cardId}/freeze`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ reason: 'Frozen by user' }),
+  });
+  location.reload();
+}
+
+async function unfreezeCard() {
+  await fetch(`/api/cards/${cardId}/unfreeze`, {
+    method: 'POST', headers: { 'Authorization': `Bearer ${token}` },
+  });
+  location.reload();
+}
+
+async function deleteCard() {
+  if (!confirm('Permanently delete this card?')) return;
+  await fetch(`/api/cards/${cardId}`, {
+    method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` },
+  });
+  window.location.href = '/dashboard/cards';
+}
+
+async function uploadImage() {
+  const file = document.getElementById('image-input').files[0];
+  if (!file) return;
+  const form = new FormData();
+  form.append('file', file);
+  const res = await fetch(`/api/cards/${cardId}/image`, {
+    method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: form,
+  });
+  if (res.ok) location.reload();
+  else { const d = await res.json(); alert(d.detail?.error || 'Upload failed'); }
+}
+
+async function deleteImage() {
+  if (!confirm('Remove card image?')) return;
+  await fetch(`/api/cards/${cardId}/image`, {
+    method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` },
+  });
+  location.reload();
+}
+
+async function createKey() {
+  const name = prompt('API key name:');
+  if (!name) return;
+  const res = await fetch(`/api/taglink/${cardId}/keys`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ name }),
+  });
+  const data = await res.json();
+  if (res.ok) {
+    alert(`API Key created! Copy this key now — it won't be shown again:\n\n${data.key}`);
+    location.reload();
+  } else alert(data.detail?.error || 'Failed');
+}
+
+async function revokeKey(keyId) {
+  if (!confirm('Revoke this API key?')) return;
+  await fetch(`/api/taglink/${cardId}/keys/${keyId}`, {
+    method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` },
+  });
+  location.reload();
+}
+</script>
+{% endblock %}

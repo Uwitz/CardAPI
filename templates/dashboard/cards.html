@@ -1,70 +1,46 @@
 {% extends "base.html" %}
 {% block title %}My Cards — {{ brand }}{% endblock %}
+{% block page_title %}My Cards{% endblock %}
 {% block content %}
-{% import 'components/icons.html' as icons %}
-<section class="page-header">
-  <div class="container-main">
-    <div class="page-header-badge">{{ icons.card('icon-sm') }} My Cards</div>
-    <h1>My Cards</h1>
-    <p>All cards associated with your account.</p>
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 style="font-size: 1.25rem; font-weight: 700;">All Cards</h1>
+    <p class="text-sm text-muted">{{ cards | length }} card{{ 's' if cards | length != 1 }}</p>
   </div>
-</section>
-
-<div class="container-main" style="padding: 2rem 1rem;">
-  <div class="card">
-    <div class="flex items-center justify-between mb-4">
-      <h2 style="font-size: 1.125rem; font-weight: 700;">All Cards ({{ cards|length }})</h2>
-      <div class="flex gap-2">
-        <a href="/dashboard/builder" class="btn btn-outline btn-sm">{{ icons.layers('icon-sm') }} Builder</a>
-        <a href="/dashboard/order/new" class="btn btn-primary btn-sm">{{ icons.credit_card('icon-sm') }} Order New</a>
-      </div>
-    </div>
-    {% if cards %}
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Type</th>
-            <th>Tier</th>
-            <th>Status</th>
-            <th>Views</th>
-            <th>Created</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for c in cards %}
-          <tr>
-            <td class="font-mono text-xs">{{ c.id }}</td>
-            <td><span class="badge badge-neutral">{{ c.type }}</span></td>
-            <td><span class="badge badge-info">{{ c.tier }}</span></td>
-            <td>
-              {% if c.status == "active" %}
-                <span class="badge badge-success">{{ c.status }}</span>
-              {% elif c.status == "pending" %}
-                <span class="badge badge-warning">{{ c.status }}</span>
-              {% else %}
-                <span class="badge badge-neutral">{{ c.status }}</span>
-              {% endif %}
-            </td>
-            <td>{{ c.views }}</td>
-            <td class="text-muted text-xs">{{ c.created_at[:10] if c.created_at else "—" }}</td>
-            <td>
-              <a href="https://uwitz.cards/{{ c.id }}" target="_blank" class="btn btn-muted btn-sm">View</a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <div class="empty-state">
-        <p>No cards yet</p>
-        <p class="text-sm mt-2">Create your first card using the builder or order a new one.</p>
-        <div class="flex gap-2 mt-4" style="justify-content: center;">
-          <a href="/dashboard/builder" class="btn btn-primary btn-sm">Open Builder</a>
-        </div>
-      </div>
-    {% endif %}
-  </div>
+  <a href="/dashboard/cards/new" class="btn btn-primary btn-sm">+ New Card</a>
 </div>
+
+{% if cards %}
+<table class="table card" style="overflow: hidden;">
+  <thead>
+    <tr>
+      <th>Card ID</th>
+      <th>Type</th>
+      <th>Tier</th>
+      <th>Status</th>
+      <th>Views</th>
+      <th>Created</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for card in cards %}
+    <tr style="cursor: pointer;" onclick="location.href='/dashboard/cards/{{ card.card_id }}'">
+      <td class="font-mono font-semibold">{{ card.card_id }}</td>
+      <td><span class="badge badge-info">{{ card.card_type }}</span></td>
+      <td>{{ card.card_tier }}</td>
+      <td>
+        <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
+      </td>
+      <td>{{ card.views }}</td>
+      <td class="text-muted text-sm">{{ card.created_at[:10] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+  <p class="font-semibold mb-2">No cards yet</p>
+  <a href="/dashboard/cards/new" class="btn btn-primary mt-2">Create your first card</a>
+</div>
+{% endif %}
 {% endblock %}

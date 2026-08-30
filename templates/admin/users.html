@@ -1,60 +1,48 @@
 {% extends "base.html" %}
-{% block title %}Users — Admin — {{ brand }}{% endblock %}
+{% block title %}Users — Admin{% endblock %}
+{% block page_title %}User Management{% endblock %}
 {% block content %}
-{% import 'components/icons.html' as icons %}
-<section class="page-header page-header-admin">
-  <div class="container-main">
-    <div class="page-header-badge">{{ icons.shield('icon-sm') }} Users</div>
-    <h1>User Management</h1>
-    <p>View, create, and manage all platform users.</p>
-  </div>
-</section>
-
-<div class="container-main" style="padding: 2rem 1rem;">
-  <div class="card">
-    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">All Users ({{ users|length }})</h2>
-    {% if users %}
-    <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Display Name</th>
-          <th>Email</th>
-          <th>Username</th>
-          <th>Plan</th>
-          <th>Status</th>
-          <th>Admin</th>
-          <th>Created</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for u in users %}
-        <tr>
-          <td class="font-mono text-xs">{{ u.id[:12] if u.id else "—" }}…</td>
-          <td>{{ u.display_name or "—" }}</td>
-          <td class="text-xs">{{ u.email or "—" }}</td>
-          <td class="font-mono text-xs">{{ u.username }}</td>
-          <td><span class="badge badge-info">{{ u.plan or "—" }}</span></td>
-          <td>
-            {% if u.status == "active" %}
-              <span class="badge badge-success">{{ u.status }}</span>
-            {% else %}
-              <span class="badge badge-neutral">{{ u.status }}</span>
-            {% endif %}
-          </td>
-          <td>
-            {% if u.is_admin %}<span class="badge badge-error">Admin</span>{% else %}—{% endif %}
-          </td>
-          <td class="text-muted text-xs">{{ u.created_at[:10] if u.created_at else "—" }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-    <div class="empty-state">
-      <p>No users yet</p>
-    </div>
-    {% endif %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 style="font-size: 1.25rem; font-weight: 700;">Users</h1>
+    <p class="text-sm text-muted">{{ users | length }} total</p>
   </div>
 </div>
+
+<table class="table card" style="overflow: hidden;">
+  <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+  <tbody>
+    {% for u in users %}
+    <tr>
+      <td class="font-mono text-sm">{{ u._id }}</td>
+      <td class="font-medium">{{ u.display_name }}</td>
+      <td class="text-sm">{{ u.email }}</td>
+      <td><span class="badge badge-info">{{ u.role }}</span></td>
+      <td><span class="badge {% if u.status == 'active' %}badge-success{% else %}badge-error{% endif %}">{{ u.status }}</span></td>
+      <td class="text-sm text-muted">{{ u.created_at[:10] }}</td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="toggleUserStatus('{{ u._id }}', '{{ u.status }}')">
+          {{ 'Suspend' if u.status == 'active' else 'Activate' }}
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block head %}
+<script>
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+async function toggleUserStatus(id, current) {
+  const newStatus = current === 'active' ? 'suspended' : 'active';
+  if (!confirm(`${newStatus === 'suspended' ? 'Suspend' : 'Activate'} this user?`)) return;
+  await fetch(`/api/admin/users/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    body: JSON.stringify({ status: newStatus }),
+  });
+  location.reload();
+}
+</script>
 {% endblock %}
