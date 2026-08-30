@@ -63,7 +63,7 @@ button { cursor: pointer; font-family: var(--font-sans); }
 }
 .btn-danger:hover { background: #A31D0E; transform: translateY(-2px); }
 
-.btn-sm { height: 32px; padding: 0 14px; font-size: 12px; }
+.btn-sm { height: 32px; padding: 0 14px; font-size: 12px; border-radius: var(--radius-pill); }
 
 /* Badge / Chip */
 .badge {

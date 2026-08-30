@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from app.auth import get_dashboard_admin, hash_password
 from app.database import db, now_iso
 from app.config import get_settings
+from app.idgen import gen_user_id, gen_token, gen_referral, gen_short_hex
 
 settings = get_settings()
 
@@ -26,7 +27,7 @@ async def create_user(request: Request, user: dict = Depends(get_dashboard_admin
         raise HTTPException(status_code=409, detail={"error": "username_exists"})
     now = now_iso()
     new_user = {
-        "_id": _secrets.token_hex(5),
+        "_id": gen_user_id(),
         "username": data["username"],
         "email": data["email"],
         "password_hash": hash_password(data["password"]),
@@ -34,9 +35,9 @@ async def create_user(request: Request, user: dict = Depends(get_dashboard_admin
         "role": data.get("role", "individual"),
         "org_id": None,
         "stripe_customer_id": None,
-        "token": _secrets.token_hex(20),
+        "token": gen_token(),
         "status": "active",
-        "referral_code": _secrets.token_hex(3).upper(),
+        "referral_code": gen_referral(),
         "created_at": now,
         "updated_at": now,
     }
@@ -282,8 +283,8 @@ async def invite_orphan_owner(card_id: str, request: Request, user: dict = Depen
     while await db["users"].find_one({"username": username}):
         username = f"{base}{counter}"
         counter += 1
-    user_id = _secrets.token_hex(5)
-    await db["users"].insert_one({"_id": user_id, "username": username, "email": email, "password_hash": hash_password(temp_password), "display_name": username, "role": "individual", "org_id": None, "stripe_customer_id": None, "token": _secrets.token_hex(20), "status": "active", "referral_code": _secrets.token_hex(3).upper(), "created_at": now, "updated_at": now})
+    user_id = gen_user_id()
+    await db["users"].insert_one({"_id": user_id, "username": username, "email": email, "password_hash": hash_password(temp_password), "display_name": username, "role": "individual", "org_id": None, "stripe_customer_id": None, "token": gen_token(), "status": "active", "referral_code": gen_referral(), "created_at": now, "updated_at": now})
     await db["cards"].update_one({"card_id": card_id}, {"$set": {"owner_id": user_id, "updated_at": now}})
     await db["user_cards"].update_one({"_id": card_id}, {"$set": {"owner_id": user_id, "updated_at": now}})
     from app.email import send_email

@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Request
 from app.config import get_settings
 from app.database import db, now_iso
 from app.logging_config import logger
+from app.idgen import gen_short_hex, gen_order_id
 
 router = APIRouter(tags=["webhooks"])
 settings = get_settings()
@@ -66,16 +67,13 @@ async def _handle_checkout_completed(session):
     )
 
     # Create card
-    import secrets
-    import string
-    ALPHABET = string.ascii_letters + string.digits
-    card_id = "".join(secrets.choice(ALPHABET) for _ in range(6))
+    card_id = gen_card_id()
 
     card_type = order.get("card_type", "social")
     card_tier = order.get("card_tier", "physical")
 
     card = {
-        "_id": secrets.token_hex(4),
+        "_id": gen_short_hex(4),
         "card_id": card_id,
         "owner_id": order["user_id"],
         "org_id": order.get("org_id"),
@@ -93,7 +91,7 @@ async def _handle_checkout_completed(session):
         "freeze_reason": None,
         "views": 0,
         "status": "active",
-        "pin": secrets.token_hex(4),
+        "pin": gen_short_hex(4),
         "created_at": now,
         "updated_at": now,
     }

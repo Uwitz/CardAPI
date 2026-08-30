@@ -4,60 +4,164 @@
 {% block page_title %}Team Members{% endblock %}
 {% block content %}
 <div class="flex items-center justify-between mb-6">
-  <h1 style="font-size: 1.25rem; font-weight: 700;">Team Members</h1>
-  <button class="btn btn-primary btn-sm" onclick="inviteMember()">+ Invite Member</button>
+  <div>
+    <h1 style="font-size: 1.25rem; font-weight: 700;">Team Members</h1>
+    <p class="text-sm text-muted">Members grouped by organisation</p>
+  </div>
+  <button class="btn-primary btn-sm" onclick="showInvite()">+ Invite Member</button>
 </div>
 
-{% if members %}
-<table class="table card" style="overflow: hidden;">
-  <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th></th></tr></thead>
-  <tbody>
-    {% for m in members %}
-    <tr>
-      <td class="font-medium">{{ m.display_name }}</td>
-      <td class="text-sm">{{ m.email }}</td>
-      <td><span class="badge badge-neutral">{{ m.role }}</span></td>
-      <td class="text-sm text-muted">{{ m.created_at[:10] }}</td>
-      <td>
-        {% if m._id != user._id %}
-          <button class="btn btn-outline btn-sm" onclick="removeMember('{{ m._id }}')">Remove</button>
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% if org_members %}
+  {% for org_id, data in org_members.items() %}
+  <div class="card" style="margin-bottom: 16px; overflow: hidden;">
+    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <h3 style="font-size: 16px; font-weight: 600;">{{ data.org.name }}</h3>
+        <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">{{ data.members | length }} member{{ 's' if data.members | length != 1 }}</div>
+      </div>
+      <span class="tag tag-info">{{ data.org.slug }}</span>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Password</th>
+          <th>Joined</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in data.members %}
+        <tr>
+          <td style="font-weight: 500;">{{ m.display_name }}</td>
+          <td class="text-sm">{{ m.email }}</td>
+          <td><span class="tag {% if m.role == 'corporate_admin' %}tag-info{% else %}tag-neutral{% endif %}">{{ m.role }}</span></td>
+          <td><span class="tag {% if m.status == 'active' %}tag-success{% else %}tag-error{% endif %}">{{ m.status }}</span></td>
+          <td>
+            {% if m.password_hash is defined and m.password_hash %}
+              <span class="tag tag-success">Set</span>
+            {% else %}
+              <span class="tag tag-warning">None</span>
+            {% endif %}
+          </td>
+          <td class="text-sm text-muted">{{ m.created_at[:10] }}</td>
+          <td>
+            {% if m._id != user._id %}
+              <button class="btn-ghost btn-sm" onclick="removeMember('{{ m._id }}')">Remove</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endfor %}
 {% else %}
-<div class="empty-state"><p class="font-semibold">No members yet</p></div>
+<div class="empty-state">
+  <p class="font-semibold">No organisations yet</p>
+</div>
 {% endif %}
+
+{% if orphans %}
+<div class="card" style="margin-top: 16px; overflow: hidden;">
+  <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
+    <h3 style="font-size: 16px; font-weight: 600;">Unassigned Members</h3>
+    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Users without an organisation</div>
+  </div>
+  <table class="table">
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th></th></tr></thead>
+    <tbody>
+      {% for m in orphans %}
+      <tr>
+        <td style="font-weight: 500;">{{ m.display_name }}</td>
+        <td class="text-sm">{{ m.email }}</td>
+        <td><span class="tag tag-neutral">{{ m.role }}</span></td>
+        <td>
+          <button class="btn-ghost btn-sm" onclick="removeMember('{{ m._id }}')">Remove</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+<!-- Invite Modal -->
+<div class="modal-overlay" id="invite-modal">
+  <div class="modal-box" style="text-align: left;">
+    <h3 style="text-align: center;">Invite Team Member</h3>
+    <p style="text-align: center;">They'll receive an email with login credentials.</p>
+    <div class="form-group" style="margin-top: 16px;">
+      <label class="form-label">Email</label>
+      <input type="email" id="invite-email" placeholder="colleague@company.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Display Name</label>
+      <input type="text" id="invite-name" placeholder="John Doe">
+    </div>
+    <div class="modal-actions" style="margin-top: 16px;">
+      <button class="btn-ghost btn-sm" onclick="closeInvite()">Cancel</button>
+      <button class="btn-primary btn-sm" onclick="sendInvite()" id="invite-btn">Send Invite</button>
+    </div>
+    <div id="invite-result" style="margin-top: 12px; font-size: 12px; display: none; text-align: center;"></div>
+  </div>
+</div>
 {% endblock %}
 {% block head %}
 <script>
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
-async function inviteMember() {
-  const email = prompt('Email address:');
-  if (!email) return;
-  const name = prompt('Display name:');
-  if (!name) return;
+function showInvite() {
+  document.getElementById('invite-modal').classList.add('open');
+  document.getElementById('invite-email').value = '';
+  document.getElementById('invite-name').value = '';
+  document.getElementById('invite-result').style.display = 'none';
+}
+
+function closeInvite() {
+  document.getElementById('invite-modal').classList.remove('open');
+}
+
+async function sendInvite() {
+  const email = document.getElementById('invite-email').value.trim();
+  const name = document.getElementById('invite-name').value.trim();
+  if (!email || !name) { alert('Fill in all fields'); return; }
+
+  const btn = document.getElementById('invite-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
   const res = await fetch('/api/corporate/members', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
     body: JSON.stringify({ email, display_name: name }),
   });
   const data = await res.json();
+
+  const result = document.getElementById('invite-result');
+  result.style.display = 'block';
   if (res.ok) {
-    alert(`Member invited! Temp password: ${data.temp_password}`);
-    location.reload();
-  } else alert(data.detail?.error || 'Failed');
+    result.style.color = 'var(--green-400)';
+    result.textContent = data.temp_password ? `Invited! Temp password: ${data.temp_password}` : 'Member added.';
+    setTimeout(() => location.reload(), 2000);
+  } else {
+    result.style.color = 'var(--red-400)';
+    result.textContent = data.detail?.error || 'Failed';
+    btn.disabled = false;
+    btn.textContent = 'Send Invite';
+  }
 }
 
-async function removeMember(id) {
-  if (!confirm('Remove this member?')) return;
-  await fetch(`/api/corporate/members/${id}`, {
-    method: 'DELETE', headers: { 'X-CSRF-Token': csrfToken },
+async function removeMember(memberId) {
+  if (!confirm('Remove this member from the organisation?')) return;
+  const res = await fetch(`/api/corporate/members/${memberId}`, {
+    method: 'DELETE',
+    headers: { 'X-CSRF-Token': csrfToken },
   });
-  location.reload();
+  if (res.ok) location.reload();
 }
 </script>
 {% endblock %}

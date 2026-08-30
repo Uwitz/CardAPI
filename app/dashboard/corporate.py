@@ -34,11 +34,16 @@ async def corporate_index(request: Request):
         return RedirectResponse(url="/dashboard/login", status_code=303)
 
     org = await db["organisations"].find_one({"_id": user.get("org_id")})
-    cards = await db["cards"].find({"org_id": user.get("org_id")}).sort("created_at", -1).to_list(10)
-    members = await db["users"].find({"org_id": user.get("org_id")}).to_list(100)
+    cards = await db["cards"].find({"org_id": user.get("org_id")}).sort("created_at", -1).to_list(200)
+    members = await db["users"].find({"org_id": user.get("org_id")}).to_list(200)
+
+    # Count by role
+    admins = [m for m in members if m.get("role") == "corporate_admin"]
+    regular = [m for m in members if m.get("role") != "corporate_admin"]
 
     return _render(request, "corporate/index.html", {
         "user": user, "org": org, "cards": cards, "members": members,
+        "admin_count": len(admins), "member_count": len(regular),
         "corp_accent": True,
     })
 
@@ -63,8 +68,23 @@ async def corporate_members(request: Request):
     except (NotAuthenticated, NotCorporateAdmin):
         return RedirectResponse(url="/dashboard/login", status_code=303)
 
-    members = await db["users"].find({"org_id": user.get("org_id")}).to_list(200)
-    return _render(request, "corporate/members.html", {"user": user, "members": members, "corp_accent": True})
+    # Get all organisations
+    orgs = await db["organisations"].find({}).to_list(100)
+
+    # Group members by org
+    org_members = {}
+    for org in orgs:
+        members = await db["users"].find({"org_id": org["_id"]}).to_list(200)
+        if members:
+            org_members[org["_id"]] = {"org": org, "members": members}
+
+    # Also get unorged members (shouldn't exist but just in case)
+    orphans = await db["users"].find({"org_id": None, "role": {"$ne": "admin"}}).to_list(100)
+
+    return _render(request, "corporate/members.html", {
+        "user": user, "org_members": org_members, "orphans": orphans,
+        "corp_accent": True,
+    })
 
 
 @router.get("/corporate/orders", response_class=HTMLResponse)

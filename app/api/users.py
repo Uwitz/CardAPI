@@ -5,6 +5,7 @@ from pydantic import EmailStr
 from app.auth import get_api_user, hash_password, verify_password
 from app.database import db, now_iso
 from app.models import UserRegister, UserLogin, UserUpdate
+from app.idgen import gen_user_id, gen_token, gen_referral
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 
@@ -16,8 +17,8 @@ async def register(data: UserRegister):
     if await db["users"].find_one({"username": data.username}):
         raise HTTPException(status_code=409, detail={"error": "username_exists"})
 
-    user_id = secrets.token_hex(5)
-    token = secrets.token_hex(20)
+    user_id = gen_user_id()
+    token = gen_token()
     now = now_iso()
 
     user = {
@@ -31,7 +32,7 @@ async def register(data: UserRegister):
         "stripe_customer_id": None,
         "token": token,
         "status": "active",
-        "referral_code": secrets.token_hex(3).upper(),
+        "referral_code": gen_referral(),
         "created_at": now,
         "updated_at": now,
     }

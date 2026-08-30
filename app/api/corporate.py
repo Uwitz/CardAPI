@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.auth import get_dashboard_corporate_admin, hash_password
 from app.database import db, now_iso
+from app.idgen import gen_user_id, gen_token, gen_referral, gen_short_hex
 from app.models import CorporateMemberInvite
 
 router = APIRouter(prefix="/api/corporate", tags=["corporate"])
@@ -29,7 +30,7 @@ async def invite_member(data: CorporateMemberInvite, user: dict = Depends(get_da
         raise HTTPException(status_code=409, detail={"error": "email_exists"})
 
     now = now_iso()
-    member_id = secrets.token_hex(5)
+    member_id = gen_user_id()
     temp_password = secrets.token_urlsafe(12)
 
     member = {
@@ -41,9 +42,9 @@ async def invite_member(data: CorporateMemberInvite, user: dict = Depends(get_da
         "role": "individual",
         "org_id": org_id,
         "stripe_customer_id": None,
-        "token": secrets.token_hex(20),
+        "token": gen_token(),
         "status": "active",
-        "referral_code": secrets.token_hex(3).upper(),
+        "referral_code": gen_referral(),
         "created_at": now,
         "updated_at": now,
     }
@@ -95,13 +96,12 @@ async def create_org_card(request: Request, user: dict = Depends(get_dashboard_c
     if not org_id:
         raise HTTPException(status_code=400, detail={"error": "no_org"})
 
-    import string, random as rnd
-    ALPHABET = string.ascii_letters + string.digits
-    card_id = "".join(rnd.choices(ALPHABET, k=6))
+    import string as _s, random as _r
+    card_id = "".join(_r.choices(_s.ascii_letters + _s.digits, k=6))
     now = now_iso()
 
     card = {
-        "_id": secrets.token_hex(4),
+        "_id": gen_short_hex(4),
         "card_id": card_id,
         "owner_id": user["_id"],
         "org_id": org_id,

@@ -3,11 +3,12 @@ import secrets
 
 import httpx
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse
 
 from app.config import get_settings
 from app.database import db, now_iso
 from app.session import create_session_cookie
+from app.idgen import gen_user_id, gen_token, gen_referral
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 settings = get_settings()
@@ -66,7 +67,7 @@ async def oidc_callback(request: Request):
                 username = f"{base_username}{counter}"
                 counter += 1
 
-            user_id = secrets.token_hex(5)
+            user_id = gen_user_id()
             user = {
                 "_id": user_id,
                 "username": username,
@@ -76,10 +77,10 @@ async def oidc_callback(request: Request):
                 "role": user_role,
                 "org_id": None,
                 "stripe_customer_id": None,
-                "token": secrets.token_hex(20),
+                "token": gen_token(),
                 "sso_provider": provider,
                 "status": "active",
-                "referral_code": secrets.token_hex(3).upper(),
+                "referral_code": gen_referral(),
                 "created_at": now,
                 "updated_at": now,
             }

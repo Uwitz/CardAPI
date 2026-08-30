@@ -7,8 +7,9 @@ from app.auth import NotAuthenticated, hash_password, verify_password
 from app.config import get_settings
 from app.csrf import CSRF_FORM_FIELD, get_or_create_csrf_token, set_csrf_cookie, verify_csrf
 from app.database import db, now_iso
-from app.session import clear_session_cookie, create_session_cookie
+from app.session import create_session_cookie, clear_session_cookie
 from app.pricing import CARD_PRICING, SUBSCRIPTION_PRICING
+from app.idgen import gen_user_id, gen_token, gen_referral
 
 router = APIRouter(tags=["dashboard"])
 templates = Jinja2Templates(directory="templates")
@@ -78,8 +79,8 @@ async def register_submit(
 
     from app.auth import hash_password as hp
     now = now_iso()
-    user_id = secrets.token_hex(5)
-    token = secrets.token_hex(20)
+    user_id = gen_user_id()
+    token = gen_token()
 
     user = {
         "_id": user_id,
@@ -92,7 +93,7 @@ async def register_submit(
         "stripe_customer_id": None,
         "token": token,
         "status": "active",
-        "referral_code": secrets.token_hex(3).upper(),
+        "referral_code": gen_referral(),
         "created_at": now,
         "updated_at": now,
     }

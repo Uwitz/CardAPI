@@ -24,21 +24,22 @@
 </div>
 
 <div class="flex gap-3 mb-6">
-  <a href="/corporate/cards" class="btn btn-primary btn-sm">Manage Cards</a>
-  <a href="/corporate/members" class="btn btn-outline btn-sm">Manage Members</a>
-  <a href="/corporate/orders" class="btn btn-outline btn-sm">Orders</a>
+  <a href="/corporate/cards" class="btn-primary btn-sm">Manage Cards</a>
+  <a href="/corporate/members" class="btn-ghost btn-sm">Manage Members</a>
+  <a href="/corporate/orders" class="btn-ghost btn-sm">Orders</a>
 </div>
 
 {% if cards %}
-<h2 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem;">Recent Cards</h2>
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+<h3 style="margin-bottom: 12px;">Recent Cards</h3>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
   {% for card in cards[:6] %}
-  <div class="card">
-    <div class="flex items-center gap-2 mb-2">
-      <span class="badge badge-info">{{ card.card_type }}</span>
-      <span class="badge {% if card.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
+  <div class="card" style="padding: 16px;">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+      <span class="tag tag-info">{{ card.card_type }}</span>
+      <span class="tag {% if card.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.status }}</span>
     </div>
-    <div class="font-mono font-semibold text-sm">{{ card.card_id }}</div>
+    <div style="font-family: var(--font-mono); font-weight: 600; font-size: 14px;">{{ card.card_id }}</div>
+    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">{{ card.views }} views</div>
   </div>
   {% endfor %}
 </div>
