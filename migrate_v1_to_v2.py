@@ -74,7 +74,18 @@ def to_iso(v) -> str | None:
 
 
 async def migrate():
-    client = AsyncIOMotorClient(os.getenv("MONGO_URI", "mongodb://localhost:27017"))
+    mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+    tls_cert = os.environ.get("MONGO_TLS_CERT", "./certs/mongo.pem")
+    tls_ca = os.environ.get("MONGO_TLS_CA", "./certs/ca.crt")
+
+    connect_kwargs = {"serverSelectionTimeoutMS": 10000}
+    if os.path.exists(tls_cert):
+        connect_kwargs["tls"] = True
+        connect_kwargs["tlsCertificateKeyFile"] = tls_cert
+        connect_kwargs["tlsCAFile"] = tls_ca
+        connect_kwargs["tlsAllowInvalidCertificates"] = True
+
+    client = AsyncIOMotorClient(mongo_uri, **connect_kwargs)
     db = client[os.getenv("MONGO_DB", "cards")]
 
     s = {"users": 0, "cards": 0, "orders": 0, "renames": 0, "skipped": 0}

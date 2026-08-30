@@ -1,14 +1,21 @@
 from datetime import datetime, timezone
+import os
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.config import get_settings
 
 _settings = get_settings()
 
-db_client = AsyncIOMotorClient(
-    _settings.MONGO_URI,
-    serverSelectionTimeoutMS=5000,
-)
+_connect_kwargs = {"serverSelectionTimeoutMS": 5000}
+_tls_cert = os.environ.get("MONGO_TLS_CERT", "./certs/mongo.pem")
+_tls_ca = os.environ.get("MONGO_TLS_CA", "./certs/ca.crt")
+if os.path.exists(_tls_cert):
+    _connect_kwargs["tls"] = True
+    _connect_kwargs["tlsCertificateKeyFile"] = _tls_cert
+    _connect_kwargs["tlsCAFile"] = _tls_ca
+    _connect_kwargs["tlsAllowInvalidCertificates"] = True
+
+db_client = AsyncIOMotorClient(_settings.MONGO_URI, **_connect_kwargs)
 db = db_client[_settings.MONGO_DB]
 
 
