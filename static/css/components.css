@@ -170,3 +170,73 @@ select { appearance: none; cursor: pointer; }
   border-radius: var(--radius-md);
   font-size: var(--fs-sm);
 }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(9,9,10,0.85); backdrop-filter: blur(6px);
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  width: calc(100% - 48px); max-width: 480px;
+  background: var(--surface-card); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-4);
+  padding: 32px; text-align: center;
+  transform: translateY(12px) scale(0.97);
+  transition: all 0.25s var(--ease-out);
+}
+.modal-overlay.open .modal-box { transform: translateY(0) scale(1); opacity: 1; }
+.modal-box h3 { font: var(--fw-semibold) 18px/1.3 var(--font-hero); color: var(--text-strong); letter-spacing: -0.02em; margin-bottom: 6px; }
+.modal-box p { font: 400 13.5px/1.5 var(--font-sans); color: var(--text-muted); margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+/* Detail panel */
+.detail-panel {
+  background: var(--surface-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px;
+  animation: fade-up 0.2s var(--ease-out);
+}
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+@media (max-width: 600px) { .detail-grid { grid-template-columns: 1fr; } }
+.detail-label { font: var(--fw-medium) 11px/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
+.detail-value { font: 400 14px/1.5 var(--font-sans); color: var(--text-body); }
+.detail-value.mono { font-family: var(--font-mono); font-size: 13px; }
+
+/* Form — improved */
+input, textarea, select {
+  width: 100%;
+  background: var(--surface-inset);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  color: var(--text-strong);
+  font: var(--fw-medium) 14px/1 var(--font-sans);
+  padding: 0 var(--space-3);
+  height: var(--control-md);
+  box-shadow: var(--shadow-inset);
+  transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+input::placeholder, textarea::placeholder { color: var(--text-faint); }
+textarea { resize: vertical; height: auto; padding: var(--space-3); }
+select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A8683' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+/* Checkbox / Toggle */
+.toggle { position: relative; width: 40px; height: 22px; cursor: pointer; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: var(--border-strong); border-radius: var(--radius-pill); transition: background var(--dur-2) var(--ease-out); }
+.toggle-slider::before { content: ''; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: white; transition: transform var(--dur-2) var(--ease-out); }
+.toggle input:checked + .toggle-slider { background: var(--accent); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+/* Tag / Status */
+.tag { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 10px; border-radius: var(--radius-pill); font: var(--fw-semibold) 11px/1 var(--font-sans); letter-spacing: 0.02em; }
+.tag-success { background: var(--success-soft); color: var(--green-400); }
+.tag-warning { background: var(--warning-soft); color: var(--amber-400); }
+.tag-error { background: var(--danger-soft); color: var(--red-400); }
+.tag-info { background: var(--info-soft); color: var(--blue-400); }
+.tag-neutral { background: var(--accent-soft); color: var(--text-strong); }

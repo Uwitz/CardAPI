@@ -4,72 +4,76 @@
 {% block content %}
 <div class="max-w-md mx-auto animate-fade-up">
   <div class="card">
-    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Card Type</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-      <button class="card card-type-btn active" data-type="social" onclick="selectType(this)">
-        <div class="font-semibold text-sm">Social Card</div>
-        <div class="text-xs text-muted">vCard contact</div>
-        <div class="text-xs font-bold mt-1" style="color: var(--primary-500);">RM {{ card_pricing.social.physical }}</div>
+    <h3 style="margin-bottom: var(--space-4);">Choose card type</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: var(--space-6);">
+      <button class="card-type-btn active" data-type="social" onclick="selectType(this)" style="background: var(--surface-card); border: 2px solid var(--accent); border-radius: var(--radius-lg); padding: 20px; cursor: pointer; text-align: left; transition: all 0.15s;">
+        <div style="font: var(--fw-semibold) 14px/1.3 var(--font-sans); color: var(--text-strong);">Social Card</div>
+        <div style="font: 400 12px/1.4 var(--font-sans); color: var(--text-muted); margin-top: 4px;">vCard contact sharing</div>
+        <div style="font: var(--fw-bold) 13px/1 var(--font-mono); color: var(--accent); margin-top: 8px;">RM {{ card_pricing.social.physical }}</div>
       </button>
-      <button class="card card-type-btn" data-type="taglink" onclick="selectType(this)">
-        <div class="font-semibold text-sm">TagLink Card</div>
-        <div class="text-xs text-muted">Dynamic redirect</div>
-        <div class="text-xs font-bold mt-1" style="color: var(--primary-500);">RM {{ card_pricing.taglink.physical }}</div>
+      <button class="card-type-btn" data-type="taglink" onclick="selectType(this)" style="background: var(--surface-card); border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 20px; cursor: pointer; text-align: left; transition: all 0.15s;">
+        <div style="font: var(--fw-semibold) 14px/1.3 var(--font-sans); color: var(--text-strong);">TagLink Card</div>
+        <div style="font: 400 12px/1.4 var(--font-sans); color: var(--text-muted); margin-top: 4px;">Dynamic redirect</div>
+        <div style="font: var(--fw-bold) 13px/1 var(--font-mono); color: var(--accent); margin-top: 8px;">RM {{ card_pricing.taglink.physical }}</div>
       </button>
     </div>
 
-    <form id="card-form" method="POST" action="/api/users/me/cards" onsubmit="submitCard(event)">
+    <form id="card-form" onsubmit="submitCard(event)">
       <input type="hidden" name="card_type" id="card_type" value="social">
 
       <div class="form-group">
         <label class="form-label">Tier</label>
-        <select name="card_tier" class="form-input">
+        <select name="card_tier">
           <option value="digital">Digital (Free)</option>
           <option value="physical" selected>Physical Card</option>
         </select>
       </div>
 
-      <!-- vCard fields (social) -->
       <div id="vcard-fields">
+        <div style="font: var(--fw-semibold) 12px/1 var(--font-sans); color: var(--text-faint); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: var(--space-3);">Contact Information</div>
         <div class="form-group">
           <label class="form-label">Full Name</label>
-          <input type="text" id="vc-fn" class="form-input" placeholder="John Doe">
+          <input type="text" id="vc-fn" placeholder="John Doe">
         </div>
-        <div class="form-group">
-          <label class="form-label">Organisation</label>
-          <input type="text" id="vc-org" class="form-input" placeholder="Company Ltd">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Organisation</label>
+            <input type="text" id="vc-org" placeholder="Company Ltd">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" id="vc-title" placeholder="Software Engineer">
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Title</label>
-          <input type="text" id="vc-title" class="form-input" placeholder="Software Engineer">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" id="vc-email" class="form-input" placeholder="john@example.com">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Phone</label>
-          <input type="tel" id="vc-phone" class="form-input" placeholder="+60 12 345 6789">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="vc-email" placeholder="john@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="tel" id="vc-phone" placeholder="+60 12 345 6789">
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label">Website</label>
-          <input type="url" id="vc-url" class="form-input" placeholder="https://example.com">
+          <input type="url" id="vc-url" placeholder="https://example.com">
         </div>
       </div>
 
-      <!-- TagLink fields -->
       <div id="taglink-fields" style="display: none;">
+        <div style="font: var(--fw-semibold) 12px/1 var(--font-sans); color: var(--text-faint); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: var(--space-3);">TagLink Content</div>
         <div class="form-group">
-          <label class="form-label">Redirect URL (optional)</label>
-          <input type="url" id="tl-url" class="form-input" placeholder="https://example.com">
+          <label class="form-label">Redirect URL</label>
+          <input type="url" id="tl-url" placeholder="https://example.com">
         </div>
         <div class="form-group">
-          <label class="form-label">Plain Text (optional)</label>
-          <textarea id="tl-text" class="form-input" rows="3" maxlength="500" placeholder="Visit our website!"></textarea>
+          <label class="form-label">Plain Text</label>
+          <textarea id="tl-text" rows="3" maxlength="500" placeholder="Visit our website!"></textarea>
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary w-full mt-4">Create Card</button>
+      <button type="submit" class="btn-primary w-full" style="margin-top: var(--space-4);">Create Card</button>
     </form>
   </div>
 </div>
@@ -77,8 +81,12 @@
 {% block head %}
 <script>
 function selectType(btn) {
-  document.querySelectorAll('.card-type-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.card-type-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.borderColor = 'var(--border)';
+  });
   btn.classList.add('active');
+  btn.style.borderColor = 'var(--accent)';
   const type = btn.dataset.type;
   document.getElementById('card_type').value = type;
   document.getElementById('vcard-fields').style.display = type === 'social' ? 'block' : 'none';
@@ -129,5 +137,4 @@ async function submitCard(e) {
   }
 }
 </script>
-<style>.card-type-btn { cursor: pointer; text-align: left; transition: all 0.15s; border: 2px solid transparent; } .card-type-btn.active { border-color: var(--primary-500); }</style>
 {% endblock %}

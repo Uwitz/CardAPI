@@ -10,41 +10,43 @@
 </div>
 
 {% if orphans %}
-<table class="card" style="overflow: hidden;">
-  <thead>
-    <tr>
-      <th style="padding: 10px 16px; font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); text-align: left;">Card ID</th>
-      <th style="padding: 10px 16px; font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); text-align: left;">Type</th>
-      <th style="padding: 10px 16px; font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); text-align: left;">Status</th>
-      <th style="padding: 10px 16px; font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); text-align: left;">Owner ID</th>
-      <th style="padding: 10px 16px; font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); text-align: left;">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for card in orphans %}
-    <tr style="border-bottom: 1px solid var(--border-faint);">
-      <td style="padding: 10px 16px; font: 600 13px/1 var(--font-mono); color: var(--text-strong);">{{ card.card_id }}</td>
-      <td style="padding: 10px 16px;"><span class="badge badge-info">{{ card.card_type }}</span></td>
-      <td style="padding: 10px 16px;"><span class="badge {% if card.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.status }}</span></td>
-      <td style="padding: 10px 16px; font: 400 12px/1 var(--font-mono); color: var(--text-muted);">{{ card.owner_id or '—' }}</td>
-      <td style="padding: 10px 16px;">
-        <div style="display: flex; gap: 6px; align-items: center;">
-          <select id="user-{{ card.card_id }}" style="height: 30px; padding: 0 8px; font-size: 12px; background: var(--surface-inset); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-strong);">
-            <option value="">Select user...</option>
-            {% for u in users %}
-              <option value="{{ u._id }}">{{ u.display_name }} ({{ u.email }})</option>
-            {% endfor %}
-          </select>
-          <button class="btn btn-sm" onclick="assignCard('{{ card.card_id }}')">Assign</button>
-          <button class="btn btn-sm" onclick="showInvite('{{ card.card_id }}')">Invite Owner</button>
-        </div>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="card" style="overflow: hidden;">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Card ID</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Owner ID</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for card in orphans %}
+      <tr>
+        <td style="font-family: var(--font-mono); font-weight: 600;">{{ card.card_id }}</td>
+        <td><span class="tag tag-info">{{ card.card_type }}</span></td>
+        <td><span class="tag {% if card.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.status }}</span></td>
+        <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">{{ card.owner_id or '—' }}</td>
+        <td>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <select id="user-{{ card.card_id }}" style="height: 32px; padding: 0 28px 0 8px; font-size: 12px; max-width: 200px;">
+              <option value="">Select user...</option>
+              {% for u in users %}
+                <option value="{{ u._id }}">{{ u.display_name }} ({{ u.email }})</option>
+              {% endfor %}
+            </select>
+            <button class="btn-primary btn-sm" onclick="assignCard('{{ card.card_id }}')">Assign</button>
+            <button class="btn-ghost btn-sm" onclick="showInvite('{{ card.card_id }}')">Invite</button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% else %}
-<div class="empty-state" style="padding: 4rem 2rem;">
+<div class="empty-state">
   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1rem; opacity: 0.3;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
   <p class="font-semibold mb-2">No unassigned cards</p>
   <p class="text-sm text-muted">All cards have valid owner accounts.</p>
@@ -52,19 +54,18 @@
 {% endif %}
 
 <!-- Invite Modal -->
-<div id="invite-modal" style="display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(9,9,10,0.85); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center;">
-  <div style="background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow-4); padding: 32px; width: 100%; max-width: 400px; text-align: center;">
-    <h3 style="font: 600 18px/1.3 var(--font-hero); color: var(--text-strong); margin-bottom: 8px;">Invite Card Owner</h3>
-    <p style="font: 400 13px/1.5 var(--font-sans); color: var(--text-muted); margin-bottom: 20px;">Send an account creation email. A new user will be created and the card assigned to them.</p>
-    <input type="email" id="invite-email" class="form-input" placeholder="owner@example.com" style="margin-bottom: 16px;">
-    <div style="display: flex; gap: 8px; justify-content: center;">
-      <button class="btn btn-sm" onclick="closeInvite()">Cancel</button>
-      <button class="btn btn-sm btn-primary" onclick="sendInvite()" id="invite-btn">Send Invite</button>
+<div class="modal-overlay" id="invite-modal">
+  <div class="modal-box">
+    <h3>Invite Card Owner</h3>
+    <p>Send an account creation email. A new user will be created and the card assigned to them.</p>
+    <input type="email" id="invite-email" placeholder="owner@example.com" style="margin-bottom: 16px;">
+    <div class="modal-actions">
+      <button class="btn-ghost btn-sm" onclick="closeInvite()">Cancel</button>
+      <button class="btn-primary btn-sm" onclick="sendInvite()" id="invite-btn">Send Invite</button>
     </div>
     <div id="invite-result" style="margin-top: 12px; font-size: 12px; display: none;"></div>
   </div>
 </div>
-
 {% endblock %}
 {% block head %}
 <script>
@@ -92,13 +93,13 @@ async function assignCard(cardId) {
 
 function showInvite(cardId) {
   inviteCardId = cardId;
-  document.getElementById('invite-modal').style.display = 'flex';
+  document.getElementById('invite-modal').classList.add('open');
   document.getElementById('invite-email').value = '';
   document.getElementById('invite-result').style.display = 'none';
 }
 
 function closeInvite() {
-  document.getElementById('invite-modal').style.display = 'none';
+  document.getElementById('invite-modal').classList.remove('open');
 }
 
 async function sendInvite() {
@@ -119,15 +120,11 @@ async function sendInvite() {
   const result = document.getElementById('invite-result');
   result.style.display = 'block';
   if (res.ok) {
-    result.style.color = 'var(--success)';
-    if (data.temp_password) {
-      result.textContent = `User created! Temp password: ${data.temp_password}`;
-    } else {
-      result.textContent = 'Card assigned to existing user.';
-    }
+    result.style.color = 'var(--green-400)';
+    result.textContent = data.temp_password ? `User created! Temp password: ${data.temp_password}` : 'Card assigned to existing user.';
     setTimeout(() => location.reload(), 2000);
   } else {
-    result.style.color = 'var(--danger)';
+    result.style.color = 'var(--red-400)';
     result.textContent = data.detail?.error || 'Failed';
     btn.disabled = false;
     btn.textContent = 'Send Invite';
