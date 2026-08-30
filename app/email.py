@@ -26,10 +26,15 @@ async def send_email(to: str, subject: str, template: str, context: dict) -> boo
         msg["To"] = to
         msg.attach(MIMEText(html, "html"))
 
-        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
-            server.starttls()
-            server.login(settings.SMTP_USER, settings.SMTP_PASS)
-            server.send_message(msg)
+        if settings.SMTP_PORT == 465:
+            with smtplib.SMTP_SSL(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+                server.login(settings.SMTP_USER, settings.SMTP_PASS)
+                server.send_message(msg)
+        else:
+            with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+                server.starttls()
+                server.login(settings.SMTP_USER, settings.SMTP_PASS)
+                server.send_message(msg)
 
         await _log_email(to, subject, template, "sent", None)
         return True
