@@ -44,11 +44,17 @@ async def oidc_callback(request: Request):
         user = await db["users"].find_one({"email": email})
         now = now_iso()
 
+        # Entra ID users are always admins
+        user_role = "admin" if provider == "entraid" else "individual"
+
         if user:
-            # Update last SSO login
+            # Promote to admin if Entra ID
+            updates = {"updated_at": now, "last_sso_provider": provider}
+            if provider == "entraid" and user.get("role") != "admin":
+                updates["role"] = "admin"
             await db["users"].update_one(
                 {"_id": user["_id"]},
-                {"$set": {"updated_at": now, "last_sso_provider": provider}},
+                {"$set": updates},
             )
         else:
             # Create new user from SSO
@@ -85,8 +91,9 @@ async def oidc_callback(request: Request):
                 "site_url": settings.SITE_URL,
             })
 
-        # Create session cookie
-        resp = RedirectResponse(url="/dashboard", status_code=303)
+        # Create session cookie and return JSON (frontend handles redirect)
+        from fastapi.responses import JSONResponse
+        resp = JSONResponse(content={"status": "ok", "session_cookie": True})
         create_session_cookie(resp, user["_id"], user.get("role") == "admin")
         return resp
 

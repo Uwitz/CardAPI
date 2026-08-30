@@ -94,6 +94,13 @@ async def health():
     return {"status": "ok", "version": "3.0.0"}
 
 
+@app.get("/", include_in_schema=False)
+async def landing_page(request: Request):
+    from fastapi.templating import Jinja2Templates
+    templates = Jinja2Templates(directory="templates")
+    return templates.TemplateResponse("landing.html", {"request": request})
+
+
 # Root card router must be LAST so it doesn't catch /health, /dashboard, etc.
 app.include_router(cards_api.root_router)
 
