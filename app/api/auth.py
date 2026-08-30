@@ -73,7 +73,7 @@ async def oidc_callback(request: Request):
                 "email": email,
                 "password_hash": "",  # SSO users don't have password
                 "display_name": name,
-                "role": "individual",
+                "role": user_role,
                 "org_id": None,
                 "stripe_customer_id": None,
                 "token": secrets.token_hex(20),
