@@ -65,7 +65,6 @@ from app.api import corporate as corp_api
 from app.api import webhooks as webhook_api
 
 app.include_router(auth_api.router)
-app.include_router(cards_api.root_router)
 app.include_router(cards_api.router)
 app.include_router(users_api.router)
 app.include_router(orders_api.router)
@@ -93,6 +92,10 @@ async def startup():
 @app.get("/health")
 async def health():
     return {"status": "ok", "version": "3.0.0"}
+
+
+# Root card router must be LAST so it doesn't catch /health, /dashboard, etc.
+app.include_router(cards_api.root_router)
 
 
 if __name__ == "__main__":

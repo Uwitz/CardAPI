@@ -13,6 +13,7 @@ class Settings(BaseSettings):
 
     # Stripe
     STRIPE_SECRET_KEY: str = ""
+    STRIPE_PUBLISHABLE_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
     STRIPE_PRICE_SOCIAL_YEARLY: str = ""
     STRIPE_PRICE_CORPORATE_YEARLY: str = ""
