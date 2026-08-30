@@ -65,6 +65,7 @@ from app.api import corporate as corp_api
 from app.api import webhooks as webhook_api
 
 app.include_router(auth_api.router)
+app.include_router(cards_api.root_router)
 app.include_router(cards_api.router)
 app.include_router(users_api.router)
 app.include_router(orders_api.router)
