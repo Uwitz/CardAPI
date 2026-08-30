@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Card Builder — {{ brand }}{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container-main">
+    <div class="page-header-badge">Builder</div>
+    <h1>Card Builder</h1>
+    <p>Build your vCard or upload a custom design.</p>
+  </div>
+</section>
+
+<div class="container-main" style="padding: 2rem 1rem;">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="card">
+      <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Build vCard</h2>
+      <form id="vcard-form">
+        <div class="mb-4">
+          <label class="form-label" for="fn">Full Name</label>
+          <input type="text" id="fn" class="form-input" placeholder="John Doe">
+        </div>
+        <div class="mb-4">
+          <label class="form-label" for="org">Organisation</label>
+          <input type="text" id="org" class="form-input" placeholder="Acme Inc.">
+        </div>
+        <div class="mb-4">
+          <label class="form-label" for="title">Title</label>
+          <input type="text" id="title" class="form-input" placeholder="Software Engineer">
+        </div>
+        <div class="mb-4">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" id="email" class="form-input" placeholder="john@example.com">
+        </div>
+        <div class="mb-4">
+          <label class="form-label" for="phone">Phone</label>
+          <input type="tel" id="phone" class="form-input" placeholder="+60123456789">
+        </div>
+        <div class="mb-4">
+          <label class="form-label" for="url">Website</label>
+          <input type="url" id="url" class="form-input" placeholder="https://example.com">
+        </div>
+        <button type="button" class="btn btn-primary w-full" onclick="useVCard()">Use This vCard</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Live Preview</h2>
+      <pre id="vcard-preview" class="font-mono text-xs" style="background: var(--neutral-50); padding: 1rem; border-radius: 0.5rem; overflow-x: auto; white-space: pre-wrap; min-height: 12rem;">BEGIN:VCARD
+VERSION:4.0
+FN:John Doe
+END:VCARD</pre>
+      <hr style="border: none; border-top: 1px solid var(--neutral-200); margin: 1.5rem 0;">
+      <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Upload Custom Design</h2>
+      <form id="upload-form" enctype="multipart/form-data">
+        <div class="mb-4">
+          <label class="form-label" for="design">Design file (PNG/JPG)</label>
+          <input type="file" id="design" name="design" accept="image/*" class="form-input">
+        </div>
+        <button type="button" class="btn btn-outline w-full" onclick="alert('Upload feature coming soon — please use Order New Card flow for now.')">Upload</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function buildVCard() {
+    const fn = document.getElementById('fn').value || 'John Doe';
+    const org = document.getElementById('org').value;
+    const title = document.getElementById('title').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const url = document.getElementById('url').value;
+    let lines = ['BEGIN:VCARD', 'VERSION:4.0', 'FN:' + fn];
+    const n = fn.split(' ');
+    if (n.length >= 2) lines.push('N:' + n[n.length-1] + ';' + n.slice(0,-1).join(' ') + ';;;');
+    if (org) lines.push('ORG:' + org);
+    if (title) lines.push('TITLE:' + title);
+    if (email) lines.push('EMAIL:' + email);
+    if (phone) lines.push('TEL:' + phone);
+    if (url) lines.push('URL:' + url);
+    lines.push('END:VCARD');
+    return lines.join('\n');
+  }
+
+  function updatePreview() {
+    document.getElementById('vcard-preview').textContent = buildVCard();
+  }
+
+  document.querySelectorAll('#vcard-form input').forEach(el => {
+    el.addEventListener('input', updatePreview);
+  });
+  updatePreview();
+
+  function useVCard() {
+    const content = buildVCard();
+    // Store in sessionStorage and redirect to order page
+    sessionStorage.setItem('vcard_content', content);
+    window.location.href = '/dashboard/order/new?has_vcard=1';
+  }
+</script>
+{% endblock %}

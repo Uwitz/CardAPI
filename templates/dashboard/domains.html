@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}Domains — {{ brand }}{% endblock %}
+{% block content %}
+{% import 'components/icons.html' as icons %}
+<section class="page-header">
+  <div class="container-main">
+    <div class="page-header-badge">{{ icons.globe('icon-sm') }} Domains</div>
+    <h1>Verified Domains</h1>
+    <p>Prove ownership of your domains via DNS TXT records, then use them as redirect targets on your cards.</p>
+  </div>
+</section>
+
+<div class="container-main" style="padding: 2rem 1rem;">
+  <div class="card mb-6">
+    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem;">Add a domain</h2>
+    <p class="text-sm text-muted mb-4">Enter a domain you own. We'll give you a TXT record to add to your DNS, then you can verify it.</p>
+    <form id="add-domain-form" class="flex gap-2" style="align-items: flex-end;">
+      <div style="flex: 1;">
+        <label class="form-label" for="domain">Domain</label>
+        <input type="text" id="domain" class="form-input" placeholder="mycompany.com" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Add Domain</button>
+    </form>
+    <div id="add-error" style="margin-top: 0.5rem; color: var(--primary-600); font-size: 0.875rem;"></div>
+  </div>
+
+  <div class="card mb-6">
+    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Your domains ({{ domains|length }})</h2>
+    {% if domains %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Domain</th>
+          <th>Status</th>
+          <th>Verified at</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in domains %}
+        <tr>
+          <td>
+            <div class="font-semibold">{{ d.domain }}</div>
+            <div class="text-xs text-muted font-mono">{{ d.verification_host }}</div>
+          </td>
+          <td>
+            {% if d.verified %}
+              <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 0.25rem;">{{ icons.check('icon-sm') }} Verified</span>
+            {% else %}
+              <span class="badge badge-warning">Pending</span>
+            {% endif %}
+          </td>
+          <td class="text-muted text-xs">{{ d.verified_at[:10] if d.verified_at else "—" }}</td>
+          <td>
+            {% if not d.verified %}
+              <button type="button" class="btn btn-outline btn-sm" onclick="verifyDomain('{{ d.id }}', this)">Check DNS</button>
+            {% endif %}
+            <button type="button" class="btn btn-muted btn-sm" onclick="deleteDomain('{{ d.id }}', this)" style="color: var(--primary-600);">Delete</button>
+          </td>
+        </tr>
+        {% if not d.verified %}
+        <tr>
+          <td colspan="4" style="background: var(--neutral-50); padding: 1rem;">
+            <div class="text-sm" style="font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">{{ icons.clipboard('icon-sm') }} Add this TXT record to your DNS:</div>
+            <div class="font-mono text-xs" style="background: white; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--neutral-200); margin-bottom: 0.5rem;">
+              <div><strong>Host:</strong> {{ d.verification_host }}</div>
+              <div><strong>Type:</strong> TXT</div>
+              <div><strong>Value:</strong> {{ d.verification_record }}</div>
+            </div>
+            <div class="text-xs text-muted">DNS changes can take up to 48 hours to propagate, but usually complete within minutes.</div>
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <p>No domains yet</p>
+      <p class="text-sm mt-2">Add a domain above to get started.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem;">Common platforms (no verification needed)</h2>
+    <p class="text-sm text-muted mb-4">These platforms are pre-approved and can be used as redirect targets without DNS verification.</p>
+    <div class="flex flex-wrap gap-2">
+      {% for platform in common_platforms %}
+      <span class="badge badge-neutral">{{ platform }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+  document.getElementById('add-domain-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const domain = document.getElementById('domain').value.trim();
+    const errEl = document.getElementById('add-error');
+    errEl.textContent = '';
+    try {
+      const res = await fetch('/api/domains', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken || '' },
+        body: JSON.stringify({ domain }),
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        errEl.textContent = data.error || 'Failed to add domain';
+        return;
+      }
+      location.reload();
+    } catch (e) {
+      errEl.textContent = 'Network error: ' + e.message;
+    }
+  });
+
+  async function verifyDomain(id, btn) {
+    btn.disabled = true;
+    btn.textContent = 'Checking…';
+    try {
+      const res = await fetch(`/api/domains/${id}/verify`, {
+        method: 'POST',
+        headers: { 'X-CSRF-Token': csrfToken || '' },
+        credentials: 'include',
+      });
+      if (res.ok) {
+        location.reload();
+      } else {
+        const data = await res.json();
+        alert('Verification failed: ' + (data.error || 'Unknown') + '\n\nMake sure your DNS TXT record is set correctly.');
+        btn.disabled = false;
+        btn.textContent = 'Check DNS';
+      }
+    } catch (e) {
+      alert('Network error: ' + e.message);
+      btn.disabled = false;
+      btn.textContent = 'Check DNS';
+    }
+  }
+
+  async function deleteDomain(id, btn) {
+    if (!confirm('Delete this domain? Cards using it as a redirect will stop working.')) return;
+    try {
+      const res = await fetch(`/api/domains/${id}`, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-Token': csrfToken || '' },
+        credentials: 'include',
+      });
+      if (res.ok) location.reload();
+      else {
+        const data = await res.json();
+        alert('Failed: ' + (data.error || 'Unknown'));
+      }
+    } catch (e) {
+      alert('Network error: ' + e.message);
+    }
+  }
+</script>
+{% endblock %}

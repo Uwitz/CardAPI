@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>{% block title %}{{ brand }}{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>
+  <script>
+    // Theme init (read before paint to avoid flash)
+    (function() {
+      const t = localStorage.getItem('theme');
+      if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+</head>
+<body>
+  {% import 'components/icons.html' as icons %}
+
+  <header class="navbar">
+    <div class="container-main">
+      <div class="flex items-center justify-between" style="height: 4rem; gap: 1rem;">
+        <a href="/dashboard" class="flex items-center gap-2" style="text-decoration: none;">
+          <div style="width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; background: linear-gradient(135deg, var(--primary-600), var(--primary-800)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.875rem;">UC</div>
+          <span style="font-weight: 700; font-size: 1.125rem; color: var(--neutral-900);">{{ brand }}</span>
+        </a>
+        <nav class="flex items-center gap-1" style="display: none;">
+          {% if user %}
+            <a href="/dashboard" class="navbar-link">Dashboard</a>
+            <a href="/dashboard/cards" class="navbar-link">My Cards</a>
+            <a href="/dashboard/orders" class="navbar-link">Orders</a>
+            <a href="/dashboard/order/new" class="navbar-link">Order New</a>
+            <a href="/dashboard/builder" class="navbar-link">Builder</a>
+            {% if user.is_admin %}
+              <a href="/admin" class="navbar-link">Admin</a>
+            {% endif %}
+          {% endif %}
+        </nav>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="toggleTheme()" class="btn btn-muted btn-sm" aria-label="Toggle theme" id="theme-btn" style="padding: 0.5rem 0.625rem;">
+            <span id="theme-icon-wrap"></span>
+          </button>
+          {% if user %}
+            <span style="font-size: 0.875rem; color: var(--neutral-600);">{{ user.display_name or user.username }}</span>
+            <form method="POST" action="/dashboard/logout" style="display: inline;">
+              <input type="hidden" name="{{ CSRF_FORM_FIELD }}" value="{{ csrf_token }}">
+              <button type="submit" class="btn btn-outline btn-sm">{{ icons.log_out('icon-sm') }} Sign out</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer style="border-top: 1px solid var(--neutral-200); padding: 2rem 0; margin-top: 4rem;">
+    <div class="container-main text-center">
+      <p style="font-size: 0.875rem; color: var(--neutral-600);">
+        &copy; {{ now.split('T')[0] }} {{ brand }}. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // SVG icon templates for the theme toggle
+    const sunIcon = `{{ icons.sun('icon-md') | safe }}`;
+    const moonIcon = `{{ icons.moon('icon-md') | safe }}`;
+
+    function updateThemeIcon() {
+      const isDark = document.documentElement.classList.contains('dark');
+      document.getElementById('theme-icon-wrap').innerHTML = isDark ? sunIcon : moonIcon;
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+      updateThemeIcon();
+    }
+
+    // HTMX: inject CSRF token
+    document.addEventListener('htmx:configRequest', (e) => {
+      const token = document.querySelector('meta[name="csrf-token"]')?.content;
+      if (token) e.detail.headers['X-CSRF-Token'] = token;
+    });
+
+    // Init theme icon on load
+    updateThemeIcon();
+  </script>
+</body>
+</html>

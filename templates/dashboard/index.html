@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — {{ brand }}{% endblock %}
+{% block content %}
+{% import 'components/icons.html' as icons %}
+<section class="page-header">
+  <div class="container-main">
+    <div class="page-header-badge">Overview</div>
+    <h1>Dashboard</h1>
+    <p>Manage your cards, orders, and account settings.</p>
+  </div>
+</section>
+
+<div class="container-main" style="padding: 2rem 1rem;">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="metric-card">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="metric-card-label">Total Cards</p>
+          <p class="metric-card-value text-zinc-900">{{ stats.total_cards }}</p>
+          <p class="metric-card-hint">All your cards</p>
+        </div>
+        {{ icons.card('icon-lg') }}
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="metric-card-label">Active Cards</p>
+          <p class="metric-card-value" style="color: var(--success);">{{ stats.active_cards }}</p>
+          <p class="metric-card-hint">Live and shareable</p>
+        </div>
+        {{ icons.check_circle('icon-lg') }}
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="metric-card-label">Total Views</p>
+          <p class="metric-card-value" style="color: #2563eb;">{{ stats.total_views }}</p>
+          <p class="metric-card-hint">Across all cards</p>
+        </div>
+        {{ icons.eye('icon-lg') }}
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="metric-card-label">Referral Rewards</p>
+          <p class="metric-card-value" style="color: #9333ea;">{{ "%.2f"|format(stats.referral_reward) }}</p>
+          <p class="metric-card-hint">Earned so far</p>
+        </div>
+        {{ icons.trending_up('icon-lg') }}
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mb-6">
+    <a href="/dashboard/cards" class="btn btn-outline btn-sm">{{ icons.card('icon-sm') }} My Cards</a>
+    <a href="/dashboard/orders" class="btn btn-outline btn-sm">{{ icons.shopping_bag('icon-sm') }} Orders</a>
+    <a href="/dashboard/builder" class="btn btn-outline btn-sm">{{ icons.layers('icon-sm') }} Builder</a>
+    <a href="/dashboard/domains" class="btn btn-outline btn-sm">{{ icons.globe('icon-sm') }} Domains</a>
+    <a href="/dashboard/order/new" class="btn btn-primary btn-sm">{{ icons.credit_card('icon-sm') }} Order New Card</a>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Recent Cards</h2>
+    {% if recent_cards %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Tier</th>
+            <th>Status</th>
+            <th>Views</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in recent_cards %}
+          <tr>
+            <td class="font-mono text-xs">{{ c.id }}</td>
+            <td><span class="badge badge-neutral">{{ c.type }}</span></td>
+            <td><span class="badge badge-info">{{ c.tier }}</span></td>
+            <td>
+              {% if c.status == "active" %}
+                <span class="badge badge-success">{{ c.status }}</span>
+              {% elif c.status == "pending" %}
+                <span class="badge badge-warning">{{ c.status }}</span>
+              {% else %}
+                <span class="badge badge-neutral">{{ c.status }}</span>
+              {% endif %}
+            </td>
+            <td>{{ c.views }}</td>
+            <td class="text-muted text-xs">{{ c.created_at[:10] if c.created_at else "—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="empty-state">
+        <p>No cards yet</p>
+        <p class="text-sm mt-2">Order a new card or use the builder to get started.</p>
+        <div class="flex gap-2 mt-4" style="justify-content: center;">
+          <a href="/dashboard/order/new" class="btn btn-primary btn-sm">Order New Card</a>
+          <a href="/dashboard/builder" class="btn btn-outline btn-sm">Open Builder</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

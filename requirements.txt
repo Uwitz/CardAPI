@@ -1,0 +1,13 @@
+motor
+fastapi
+uvicorn[standard]
+pydantic
+jinja2>=3.1
+stripe>=7.0
+python-multipart>=0.0.6
+pydantic-settings>=2.0
+aiofiles>=23.0
+itsdangerous>=2.1
+slowapi>=0.1.9
+structlog>=23.0
+dnspython>=2.4

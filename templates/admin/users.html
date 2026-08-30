@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Users — Admin — {{ brand }}{% endblock %}
+{% block content %}
+{% import 'components/icons.html' as icons %}
+<section class="page-header page-header-admin">
+  <div class="container-main">
+    <div class="page-header-badge">{{ icons.shield('icon-sm') }} Users</div>
+    <h1>User Management</h1>
+    <p>View, create, and manage all platform users.</p>
+  </div>
+</section>
+
+<div class="container-main" style="padding: 2rem 1rem;">
+  <div class="card">
+    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">All Users ({{ users|length }})</h2>
+    {% if users %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Display Name</th>
+          <th>Email</th>
+          <th>Username</th>
+          <th>Plan</th>
+          <th>Status</th>
+          <th>Admin</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td class="font-mono text-xs">{{ u.id[:12] if u.id else "—" }}…</td>
+          <td>{{ u.display_name or "—" }}</td>
+          <td class="text-xs">{{ u.email or "—" }}</td>
+          <td class="font-mono text-xs">{{ u.username }}</td>
+          <td><span class="badge badge-info">{{ u.plan or "—" }}</span></td>
+          <td>
+            {% if u.status == "active" %}
+              <span class="badge badge-success">{{ u.status }}</span>
+            {% else %}
+              <span class="badge badge-neutral">{{ u.status }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if u.is_admin %}<span class="badge badge-error">Admin</span>{% else %}—{% endif %}
+          </td>
+          <td class="text-muted text-xs">{{ u.created_at[:10] if u.created_at else "—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <p>No users yet</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Cards — Admin — {{ brand }}{% endblock %}
+{% block content %}
+{% import 'components/icons.html' as icons %}
+<section class="page-header page-header-admin">
+  <div class="container-main">
+    <div class="page-header-badge">{{ icons.shield('icon-sm') }} Cards</div>
+    <h1>Card Management</h1>
+    <p>View and manage all cards on the platform.</p>
+  </div>
+</section>
+
+<div class="container-main" style="padding: 2rem 1rem;">
+  <div class="card">
+    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">All Cards ({{ cards|length }})</h2>
+    {% if cards %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Owner</th>
+          <th>Type</th>
+          <th>Tier</th>
+          <th>Status</th>
+          <th>Views</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in cards %}
+        <tr>
+          <td class="font-mono text-xs">{{ c.id }}</td>
+          <td class="font-mono text-xs">{{ c.owner_id[:12] if c.owner_id else "—" }}…</td>
+          <td><span class="badge badge-neutral">{{ c.type }}</span></td>
+          <td><span class="badge badge-info">{{ c.tier }}</span></td>
+          <td>
+            {% if c.status == "active" %}
+              <span class="badge badge-success">{{ c.status }}</span>
+            {% elif c.status == "pending" %}
+              <span class="badge badge-warning">{{ c.status }}</span>
+            {% else %}
+              <span class="badge badge-neutral">{{ c.status }}</span>
+            {% endif %}
+          </td>
+          <td>{{ c.views }}</td>
+          <td class="text-muted text-xs">{{ c.created_at[:10] if c.created_at else "—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>No cards yet</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

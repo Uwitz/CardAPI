@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Activity Logs — Admin — {{ brand }}{% endblock %}
+{% block content %}
+{% import 'components/icons.html' as icons %}
+<section class="page-header page-header-admin">
+  <div class="container-main">
+    <div class="page-header-badge">{{ icons.shield('icon-sm') }} Logs</div>
+    <h1>Activity Logs</h1>
+    <p>Recent system events and webhook activity.</p>
+  </div>
+</section>
+
+<div class="container-main" style="padding: 2rem 1rem;">
+  <div class="card">
+    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Recent Events ({{ logs|length }})</h2>
+    {% if logs %}
+    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+      {% for l in logs %}
+      <div style="padding: 0.75rem 1rem; border: 1px solid var(--neutral-200); border-radius: 0.75rem; display: flex; align-items: center; gap: 0.75rem;">
+        <span class="badge badge-info">{{ l.event }}</span>
+        <span class="text-xs text-muted">{{ l.timestamp }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><p>No events yet</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

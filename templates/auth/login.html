@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Sign In — {{ brand }}{% endblock %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center" style="padding: 2rem 1rem;">
+  <div class="card" style="max-width: 28rem; width: 100%; padding: 2rem;">
+    <div class="text-center mb-6">
+      <div style="width: 3rem; height: 3rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--primary-600), var(--primary-800)); display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: 700; margin-bottom: 1rem;">UC</div>
+      <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Sign in to {{ brand }}</h1>
+      <p class="text-muted" style="font-size: 0.875rem;">Enter your API token to access the dashboard.</p>
+    </div>
+
+    {% if error %}
+      <div style="padding: 0.75rem 1rem; border-radius: 0.75rem; background: var(--primary-50); color: var(--primary-700); font-size: 0.875rem; margin-bottom: 1rem;">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <form method="POST" action="/dashboard/login">
+      <input type="hidden" name="{{ CSRF_FORM_FIELD }}" value="{{ csrf_token }}">
+      <div class="mb-4">
+        <label class="form-label" for="token">API Token</label>
+        <input type="password" id="token" name="token" class="form-input" placeholder="Your API token" required autofocus>
+      </div>
+      <button type="submit" class="btn btn-primary w-full">Sign in</button>
+    </form>
+
+    <p class="text-center mt-6" style="font-size: 0.75rem; color: var(--neutral-500);">
+      Your token is used to verify access and is stored in a secure session cookie.
+    </p>
+  </div>
+</div>
+{% endblock %}

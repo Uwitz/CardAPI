@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Payouts — Admin — {{ brand }}{% endblock %}
+{% block content %}
+{% import 'components/icons.html' as icons %}
+<section class="page-header page-header-admin">
+  <div class="container-main">
+    <div class="page-header-badge">{{ icons.shield('icon-sm') }} Payouts</div>
+    <h1>Payout Management</h1>
+    <p>Review and process payout requests from users.</p>
+  </div>
+</section>
+
+<div class="container-main" style="padding: 2rem 1rem;">
+  <div class="card mb-6">
+    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Pending Payouts ({{ pending|length }})</h2>
+    {% if pending %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Amount</th>
+          <th>Requested</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in pending %}
+        <tr>
+          <td class="font-mono text-xs">{{ p.id }}</td>
+          <td>
+            <div>{{ p.user_name or "—" }}</div>
+            <div class="text-xs text-muted">{{ p.user_email or "" }}</div>
+          </td>
+          <td class="font-semibold">{{ p.currency }} {{ "%.2f"|format(p.amount) }}</td>
+          <td class="text-muted text-xs">{{ p.created_at[:10] if p.created_at else "—" }}</td>
+          <td>
+            <form method="POST" action="/api/admin/payouts" style="display: inline;" onsubmit="event.preventDefault(); processPayout('{{ p.user_id }}', '{{ p.id }}', this);">
+              <input type="hidden" name="user_id" value="{{ p.user_id }}">
+              <input type="hidden" name="id" value="{{ p.id }}">
+              <input type="hidden" name="action" value="approve">
+              <button type="submit" class="btn btn-primary btn-sm">Approve</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>No pending payouts</p></div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">History</h2>
+    {% if history %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in history %}
+        <tr>
+          <td class="font-mono text-xs">{{ p.id }}</td>
+          <td>{{ p.user_name or "—" }}</td>
+          <td>{{ p.currency }} {{ "%.2f"|format(p.amount) }}</td>
+          <td><span class="badge badge-neutral">{{ p.status }}</span></td>
+          <td class="text-muted text-xs">{{ p.created_at[:10] if p.created_at else "—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>No history</p></div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  async function processPayout(userId, payoutId, form) {
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    const res = await fetch('/api/admin/payouts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf || '' },
+      body: JSON.stringify({ user_id: userId, id: payoutId, action: 'approve' }),
+      credentials: 'include',
+    });
+    if (res.ok) {
+      location.reload();
+    } else {
+      const data = await res.json();
+      alert('Error: ' + (data.error || 'Unknown'));
+    }
+  }
+</script>
+{% endblock %}

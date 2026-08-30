@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Order New Card — {{ brand }}{% endblock %}
+{% block content %}
+{% import 'components/icons.html' as icons %}
+<section class="page-header">
+  <div class="container-main">
+    <div class="page-header-badge">{{ icons.credit_card('icon-sm') }} Order</div>
+    <h1>Order a New Card</h1>
+    <p>Choose a tier and pay securely via Stripe.</p>
+  </div>
+</section>
+
+<div class="container-main" style="padding: 2rem 1rem;">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {% for t in tiers %}
+    <div class="card">
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <h3 style="font-size: 1.25rem; font-weight: 700; text-transform: capitalize;">{{ t.id }}</h3>
+        <p style="font-size: 2rem; font-weight: 700; color: var(--primary-600); margin-top: 0.5rem;">
+          {% if t.amount_cents == 0 %}
+            Free
+          {% else %}
+            RM {{ "%.2f"|format(t.amount_cents / 100) }}
+          {% endif %}
+        </p>
+      </div>
+      <ul style="list-style: none; padding: 0; margin: 0 0 1.5rem 0;">
+        <li class="text-sm py-1" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--success);">{{ icons.check('icon-sm') }}</span> Digital vCard</li>
+        <li class="text-sm py-1" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--success);">{{ icons.check('icon-sm') }}</span> Custom design</li>
+        <li class="text-sm py-1" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--success);">{{ icons.check('icon-sm') }}</span> QR code included</li>
+        <li class="text-sm py-1" style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: var(--success);">{{ icons.check('icon-sm') }}</span> Unlimited views</li>
+      </ul>
+      <button type="button" class="btn btn-primary w-full" onclick="orderCard('{{ t.id }}')">
+        Order Now
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  async function orderCard(tier) {
+    // For now, create a simple order with placeholder content
+    const content = 'BEGIN:VCARD\nVERSION:4.0\nFN:' + (window.prompt('Your full name:') || 'Test User') + '\nEND:VCARD\n';
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || '' },
+        body: JSON.stringify({ tier: tier, card_type: 'vcard', card_content: content }),
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+      } else if (data.id) {
+        alert('Order created: ' + data.id + (data.status === 'paid' ? ' (no payment required)' : ' — status: ' + data.status));
+        window.location.href = '/dashboard/orders';
+      } else {
+        alert('Error: ' + (data.error || 'Unknown error'));
+      }
+    } catch (e) {
+      alert('Failed to create order: ' + e.message);
+    }
+  }
+</script>
+{% endblock %}

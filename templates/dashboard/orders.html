@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}My Orders — {{ brand }}{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div class="container-main">
+    <div class="page-header-badge">Orders</div>
+    <h1>My Orders</h1>
+    <p>Track your card orders and payment status.</p>
+  </div>
+</section>
+
+<div class="container-main" style="padding: 2rem 1rem;">
+  <div class="card">
+    <div class="flex items-center justify-between mb-4">
+      <h2 style="font-size: 1.125rem; font-weight: 700;">Order History</h2>
+      <a href="/dashboard/order/new" class="btn btn-primary btn-sm">New Order</a>
+    </div>
+    {% if orders %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Tier</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+          <tr>
+            <td class="font-mono text-xs">{{ o.id }}</td>
+            <td><span class="badge badge-info">{{ o.tier }}</span></td>
+            <td class="font-semibold">{{ o.currency }} {{ "%.2f"|format(o.amount) }}</td>
+            <td>
+              {% if o.status == "paid" or o.status == "shipped" or o.status == "delivered" %}
+                <span class="badge badge-success">{{ o.status }}</span>
+              {% elif o.status == "pending" %}
+                <span class="badge badge-warning">{{ o.status }}</span>
+              {% elif o.status == "refunded" %}
+                <span class="badge badge-info">{{ o.status }}</span>
+              {% else %}
+                <span class="badge badge-error">{{ o.status }}</span>
+              {% endif %}
+            </td>
+            <td class="text-muted text-xs">{{ o.created_at[:10] if o.created_at else "—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="empty-state">
+        <p>No orders yet</p>
+        <p class="text-sm mt-2">Order your first card to get started.</p>
+        <a href="/dashboard/order/new" class="btn btn-primary btn-sm mt-4">Order Now</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
