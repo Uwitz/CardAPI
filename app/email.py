@@ -8,7 +8,7 @@ from app.config import get_settings
 from app.database import db, now_iso
 from app.logging_config import logger
 
-_jinja_env = Environment(loader=FileSystemLoader("templates/emails"), autoescape=True)
+_jinja_env = Environment(loader=FileSystemLoader("templates"), autoescape=True)
 
 
 async def send_email(to: str, subject: str, template: str, context: dict) -> bool:
@@ -19,7 +19,7 @@ async def send_email(to: str, subject: str, template: str, context: dict) -> boo
         return False
 
     try:
-        html = _jinja_env.get_template(f"{template}.html").render(**context)
+        html = _jinja_env.get_template(f"emails/{template}.html").render(**context)
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
         msg["From"] = settings.SMTP_FROM
