@@ -9,41 +9,193 @@
   </div>
 </div>
 
-<table class="table card" style="overflow: hidden;">
-  <thead><tr><th>Card ID</th><th>Type</th><th>Tier</th><th>Owner</th><th>Status</th><th>Sub</th><th>Views</th><th></th></tr></thead>
-  <tbody>
-    {% for card in cards %}
-    <tr>
-      <td class="font-mono font-semibold">{{ card.card_id }}</td>
-      <td><span class="badge badge-info">{{ card.card_type }}</span></td>
-      <td>{{ card.card_tier }}</td>
-      <td class="font-mono text-sm">{{ card.owner_id }}</td>
-      <td><span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span></td>
-      <td><span class="badge {% if card.subscription_status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.subscription_status }}</span></td>
-      <td>{{ card.views }}</td>
-      <td>
-        <button class="btn btn-outline btn-sm" onclick="toggleFreeze('{{ card.card_id }}', {{ card.frozen | tojson }})">
-          {{ 'Unfreeze' if card.frozen else 'Freeze' }}
-        </button>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endblock %}
-{% block head %}
+<!-- Card detail panel -->
+<div id="card-detail" style="display: none;"></div>
+
+<div class="card" style="overflow: hidden;">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Card ID</th>
+        <th>Type</th>
+        <th>Tier</th>
+        <th>Owner</th>
+        <th>Status</th>
+        <th>Sub</th>
+        <th>Views</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for card in cards %}
+      <tr>
+        <td style="font-family: var(--font-mono); font-weight: 600;">{{ card.card_id }}</td>
+        <td><span class="tag tag-info">{{ card.card_type }}</span></td>
+        <td>{{ card.card_tier }}</td>
+        <td style="font-family: var(--font-mono); font-size: 12px;">{{ card.owner_id[:8] }}...</td>
+        <td><span class="tag {% if card.status == 'active' %}tag-success{% elif card.status == 'frozen' %}tag-error{% else %}tag-neutral{% endif %}">{{ card.status }}</span></td>
+        <td><span class="tag {% if card.subscription_status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.subscription_status }}</span></td>
+        <td>{{ card.views }}</td>
+        <td>
+          <div style="display: flex; gap: 4px;">
+            <button class="btn-ghost btn-sm" onclick="inspectCard('{{ card.card_id }}')">View</button>
+            <button class="btn-ghost btn-sm" onclick="editCard('{{ card.card_id }}')">Edit</button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="card-edit-modal">
+  <div class="modal-box" style="text-align: left; max-width: 560px;">
+    <h3 style="text-align: center;">Edit Card</h3>
+    <div class="detail-grid" style="margin-top: 20px;">
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select id="ce-status">
+          <option value="active">Active</option>
+          <option value="frozen">Frozen</option>
+          <option value="expired">Expired</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Card Type</label>
+        <select id="ce-type">
+          <option value="social">Social</option>
+          <option value="corporate">Corporate</option>
+          <option value="taglink">TagLink</option>
+        </select>
+      </div>
+      <div class="form-group" style="grid-column: 1 / -1;">
+        <label class="form-label">Owner ID</label>
+        <input type="text" id="ce-owner" style="font-family: var(--font-mono); font-size: 13px;">
+      </div>
+      <div class="form-group" style="grid-column: 1 / -1;">
+        <label class="form-label">vCard Data / Content</label>
+        <textarea id="ce-content" rows="5" style="font-family: var(--font-mono); font-size: 12px;"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top: 16px;">
+      <button class="btn-ghost btn-sm" onclick="closeCardEdit()">Cancel</button>
+      <button class="btn-primary btn-sm" onclick="saveCardEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+let editingCardId = null;
 
-async function toggleFreeze(cardId, frozen) {
-  const action = frozen ? 'unfreeze' : 'freeze';
-  if (!confirm(`${action} card ${cardId}?`)) return;
-  await fetch(`/api/admin/cards/${cardId}`, {
+async function inspectCard(cardId) {
+  const res = await fetch(`/api/admin/cards/${cardId}`);
+  const data = await res.json();
+  const c = data.card;
+  const owner = data.owner;
+  const image = data.image;
+
+  const panel = document.getElementById('card-detail');
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <div class="detail-panel">
+      <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+        <div>
+          <div style="font: var(--fw-semibold) 12px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px;">Card Details</div>
+          <h2 style="font: var(--fw-semibold) 20px/1.3 var(--font-hero); color: var(--text-strong); font-family: var(--font-mono);">${c.card_id}</h2>
+        </div>
+        <button class="btn-ghost btn-sm" onclick="document.getElementById('card-detail').style.display='none'">Close</button>
+      </div>
+      <div class="detail-grid">
+        <div><div class="detail-label">Internal ID</div><div class="detail-value mono">${c._id}</div></div>
+        <div><div class="detail-label">Type</div><div class="detail-value">${c.card_type}</div></div>
+        <div><div class="detail-label">Tier</div><div class="detail-value">${c.card_tier}</div></div>
+        <div><div class="detail-label">Status</div><div class="detail-value">${c.status}</div></div>
+        <div><div class="detail-label">Subscription</div><div class="detail-value">${c.subscription_status}</div></div>
+        <div><div class="detail-label">Views</div><div class="detail-value">${c.views}</div></div>
+        <div><div class="detail-label">Created</div><div class="detail-value">${c.created_at}</div></div>
+        <div><div class="detail-label">Updated</div><div class="detail-value">${c.updated_at}</div></div>
+        ${c.frozen ? `<div style="grid-column: 1 / -1;"><div class="detail-label">Freeze Reason</div><div class="detail-value">${c.freeze_reason || '—'}</div></div>` : ''}
+      </div>
+      ${owner ? `
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <div style="font: var(--fw-semibold) 12px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 12px;">Owner</div>
+          <div class="detail-grid">
+            <div><div class="detail-label">Name</div><div class="detail-value">${owner.display_name}</div></div>
+            <div><div class="detail-label">Email</div><div class="detail-value">${owner.email}</div></div>
+            <div><div class="detail-label">User ID</div><div class="detail-value mono">${owner._id}</div></div>
+            <div><div class="detail-label">Role</div><div class="detail-value">${owner.role}</div></div>
+          </div>
+        </div>
+      ` : ''}
+      ${c.vcard_data ? `
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <div style="font: var(--fw-semibold) 12px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 12px;">vCard Content</div>
+          <pre style="background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px; font-family: var(--font-mono); font-size: 12px; overflow-x: auto; white-space: pre-wrap; color: var(--text-body);">${c.vcard_data}</pre>
+        </div>
+      ` : ''}
+      ${c.redirect_url ? `
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <div style="font: var(--fw-semibold) 12px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 12px;">Redirect URL</div>
+          <div style="font-family: var(--font-mono); font-size: 13px; color: var(--text-link);">${c.redirect_url}</div>
+        </div>
+      ` : ''}
+      ${c.plain_text ? `
+        <div style="margin-top: 16px;">
+          <div style="font: var(--fw-semibold) 12px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 12px;">Plain Text</div>
+          <div style="font-size: 13px; color: var(--text-body);">${c.plain_text}</div>
+        </div>
+      ` : ''}
+      ${image ? `
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <div style="font: var(--fw-semibold) 12px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 12px;">Card Image</div>
+          <img src="/static/uploads/cards/${image.filename}" style="max-width: 340px; aspect-ratio: 85.6/54; border-radius: 8px; border: 1px solid var(--border); object-fit: cover;">
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">${image.width_px}x${image.height_px}px @ ${image.dpi} DPI</div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function editCard(cardId) {
+  editingCardId = cardId;
+  const row = event.target.closest('tr');
+  const cells = row.querySelectorAll('td');
+  document.getElementById('ce-type').value = cells[1].querySelector('.tag').textContent.trim().toLowerCase();
+  document.getElementById('ce-owner').value = cells[3].textContent.trim().replace('...', '');
+  document.getElementById('ce-status').value = cells[4].querySelector('.tag').textContent.trim().toLowerCase();
+  document.getElementById('ce-content').value = '';
+  document.getElementById('card-edit-modal').classList.add('open');
+}
+
+function closeCardEdit() {
+  document.getElementById('card-edit-modal').classList.remove('open');
+}
+
+async function saveCardEdit() {
+  const body = {
+    status: document.getElementById('ce-status').value,
+    card_type: document.getElementById('ce-type').value,
+    owner_id: document.getElementById('ce-owner').value,
+  };
+  const content = document.getElementById('ce-content').value.trim();
+  if (content) {
+    if (body.card_type === 'taglink') {
+      if (content.startsWith('http')) body.redirect_url = content;
+      else body.plain_text = content;
+    } else {
+      body.vcard_data = content;
+    }
+  }
+  const res = await fetch(`/api/admin/cards/${editingCardId}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
-    body: JSON.stringify({ frozen: !frozen }),
+    body: JSON.stringify(body),
   });
-  location.reload();
+  if (res.ok) location.reload();
+  else alert('Failed to update');
 }
 </script>
 {% endblock %}
