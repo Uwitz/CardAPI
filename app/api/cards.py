@@ -18,6 +18,7 @@ async def _serve_card(card_id: str):
     if not card:
         legacy = await db["user_cards"].find_one({"_id": card_id})
         if legacy:
+            # Legacy cards (pre-v3) are grandfathered — serve directly
             card_type = legacy.get("type", "vcard")
             content = legacy.get("content", "")
             if card_type == "vcard":
@@ -32,10 +33,31 @@ async def _serve_card(card_id: str):
                 return Response(content=content, media_type="text/plain")
         raise HTTPException(status_code=404, detail={"error": "not_found"})
 
-    if card.get("status") == "frozen":
-        raise HTTPException(status_code=403, detail={"error": "card_frozen"})
     if card.get("status") == "pending":
         return RedirectResponse(url=f"/activate/{card_id}")
+
+    # Subscription check — grandfathered cards (created before subscriptions, no sub_id) pass through
+    sub_id = card.get("subscription_id")
+    sub_status = card.get("subscription_status", "none")
+    created_before_subscriptions = card.get("created_at", "") < "2026-08-30"
+
+    if sub_id and sub_status != "active":
+        await db["cards"].update_one(
+            {"_id": card["_id"]},
+            {"$set": {"status": "frozen", "frozen": True, "freeze_reason": "subscription_expired", "updated_at": now_iso()}},
+        )
+        raise HTTPException(status_code=402, detail={"error": "subscription_expired", "card_id": card.get("card_id"), "redirect": f"/subscribe/{card.get('card_id', card_id)}"})
+
+    if not sub_id and not created_before_subscriptions:
+        if card.get("status") != "frozen":
+            await db["cards"].update_one(
+                {"_id": card["_id"]},
+                {"$set": {"status": "frozen", "frozen": True, "freeze_reason": "subscription_required", "updated_at": now_iso()}},
+            )
+        raise HTTPException(status_code=402, detail={"error": "subscription_required", "card_id": card.get("card_id"), "redirect": f"/subscribe/{card.get('card_id', card_id)}"})
+
+    if card.get("status") == "frozen" and card.get("freeze_reason") in ("subscription_expired", "subscription_required"):
+        raise HTTPException(status_code=402, detail={"error": card.get("freeze_reason"), "card_id": card.get("card_id"), "redirect": f"/subscribe/{card.get('card_id', card_id)}"})
 
     await db["cards"].update_one({"_id": card["_id"]}, {"$inc": {"views": 1}})
 

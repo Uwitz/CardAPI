@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.config import get_settings
-from app.database import ensure_indexes
+from app.database import db, ensure_indexes
 from app.logging_config import logger, setup_logging
 
 load_dotenv(find_dotenv())
@@ -42,6 +42,9 @@ app.add_middleware(RequestIDMiddleware)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    from fastapi.responses import RedirectResponse
+    if hasattr(exc, 'detail') and isinstance(exc.detail, dict) and 'redirect' in exc.detail:
+        return RedirectResponse(url=exc.detail['redirect'], status_code=302)
     logger.exception("unhandled_error", path=str(request.url), method=request.method)
     return JSONResponse(status_code=500, content={"error": "internal_server_error"})
 
@@ -99,6 +102,21 @@ async def landing_page(request: Request):
     from fastapi.templating import Jinja2Templates
     templates = Jinja2Templates(directory="templates")
     return templates.TemplateResponse("landing.html", {"request": request})
+
+
+@app.get("/subscribe/{card_id}", include_in_schema=False)
+async def subscription_required(request: Request, card_id: str):
+    from fastapi.templating import Jinja2Templates
+    templates = Jinja2Templates(directory="templates")
+    card = await db["cards"].find_one({"card_id": card_id})
+    if not card:
+        card = await db["cards"].find_one({"_id": card_id})
+    return templates.TemplateResponse("subscription_required.html", {
+        "request": request,
+        "card_id": card_id,
+        "card": card,
+        "brand": "Uwitz Cards",
+    })
 
 
 # Root card router must be LAST so it doesn't catch /health, /dashboard, etc.
