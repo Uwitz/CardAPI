@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Unassigned Cards — Admin{% endblock %}
+{% block page_title %}Unassigned Cards{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 style="font-size: 1.25rem; font-weight: 700;">Unassigned Cards</h1>
+    <p class="text-sm text-muted">{{ orphans | length }} card{{ 's' if orphans | length != 1 }} without a user account</p>
+  </div>
+</div>
+
+{% if orphans %}
+<table class="card" style="overflow: hidden;">
+  <thead>
+    <tr>
+      <th style="padding: 10px 16px; font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); text-align: left;">Card ID</th>
+      <th style="padding: 10px 16px; font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); text-align: left;">Type</th>
+      <th style="padding: 10px 16px; font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); text-align: left;">Status</th>
+      <th style="padding: 10px 16px; font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); text-align: left;">Owner ID</th>
+      <th style="padding: 10px 16px; font: 600 11px/1 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); text-align: left;">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for card in orphans %}
+    <tr style="border-bottom: 1px solid var(--border-faint);">
+      <td style="padding: 10px 16px; font: 600 13px/1 var(--font-mono); color: var(--text-strong);">{{ card.card_id }}</td>
+      <td style="padding: 10px 16px;"><span class="badge badge-info">{{ card.card_type }}</span></td>
+      <td style="padding: 10px 16px;"><span class="badge {% if card.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.status }}</span></td>
+      <td style="padding: 10px 16px; font: 400 12px/1 var(--font-mono); color: var(--text-muted);">{{ card.owner_id or '—' }}</td>
+      <td style="padding: 10px 16px;">
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <select id="user-{{ card.card_id }}" style="height: 30px; padding: 0 8px; font-size: 12px; background: var(--surface-inset); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-strong);">
+            <option value="">Select user...</option>
+            {% for u in users %}
+              <option value="{{ u._id }}">{{ u.display_name }} ({{ u.email }})</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-sm" onclick="assignCard('{{ card.card_id }}')">Assign</button>
+          <button class="btn btn-sm" onclick="showInvite('{{ card.card_id }}')">Invite Owner</button>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty-state" style="padding: 4rem 2rem;">
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1rem; opacity: 0.3;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <p class="font-semibold mb-2">No unassigned cards</p>
+  <p class="text-sm text-muted">All cards have valid owner accounts.</p>
+</div>
+{% endif %}
+
+<!-- Invite Modal -->
+<div id="invite-modal" style="display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(9,9,10,0.85); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center;">
+  <div style="background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow-4); padding: 32px; width: 100%; max-width: 400px; text-align: center;">
+    <h3 style="font: 600 18px/1.3 var(--font-hero); color: var(--text-strong); margin-bottom: 8px;">Invite Card Owner</h3>
+    <p style="font: 400 13px/1.5 var(--font-sans); color: var(--text-muted); margin-bottom: 20px;">Send an account creation email. A new user will be created and the card assigned to them.</p>
+    <input type="email" id="invite-email" class="form-input" placeholder="owner@example.com" style="margin-bottom: 16px;">
+    <div style="display: flex; gap: 8px; justify-content: center;">
+      <button class="btn btn-sm" onclick="closeInvite()">Cancel</button>
+      <button class="btn btn-sm btn-primary" onclick="sendInvite()" id="invite-btn">Send Invite</button>
+    </div>
+    <div id="invite-result" style="margin-top: 12px; font-size: 12px; display: none;"></div>
+  </div>
+</div>
+
+{% endblock %}
+{% block head %}
+<script>
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+let inviteCardId = null;
+
+async function assignCard(cardId) {
+  const select = document.getElementById('user-' + cardId);
+  const userId = select.value;
+  if (!userId) { alert('Select a user first'); return; }
+
+  const res = await fetch(`/api/admin/orphans/${cardId}/assign`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    body: JSON.stringify({ user_id: userId }),
+  });
+  const data = await res.json();
+  if (res.ok) {
+    alert('Card assigned successfully');
+    location.reload();
+  } else {
+    alert(data.detail?.error || 'Failed to assign');
+  }
+}
+
+function showInvite(cardId) {
+  inviteCardId = cardId;
+  document.getElementById('invite-modal').style.display = 'flex';
+  document.getElementById('invite-email').value = '';
+  document.getElementById('invite-result').style.display = 'none';
+}
+
+function closeInvite() {
+  document.getElementById('invite-modal').style.display = 'none';
+}
+
+async function sendInvite() {
+  const email = document.getElementById('invite-email').value.trim();
+  if (!email) { alert('Enter an email address'); return; }
+
+  const btn = document.getElementById('invite-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  const res = await fetch(`/api/admin/orphans/${inviteCardId}/invite`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    body: JSON.stringify({ email }),
+  });
+  const data = await res.json();
+
+  const result = document.getElementById('invite-result');
+  result.style.display = 'block';
+  if (res.ok) {
+    result.style.color = 'var(--success)';
+    if (data.temp_password) {
+      result.textContent = `User created! Temp password: ${data.temp_password}`;
+    } else {
+      result.textContent = 'Card assigned to existing user.';
+    }
+    setTimeout(() => location.reload(), 2000);
+  } else {
+    result.style.color = 'var(--danger)';
+    result.textContent = data.detail?.error || 'Failed';
+    btn.disabled = false;
+    btn.textContent = 'Send Invite';
+  }
+}
+</script>
+{% endblock %}

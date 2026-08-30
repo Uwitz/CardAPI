@@ -114,3 +114,44 @@ async def admin_email_logs(request: Request):
 
     logs = await db["email_logs"].find({}).sort("created_at", -1).to_list(200)
     return _render(request, "admin/email_logs.html", {"user": user, "logs": logs})
+
+
+@router.get("/admin/orphans", response_class=HTMLResponse)
+async def admin_orphans(request: Request):
+    try:
+        from app.auth import get_dashboard_admin
+        user = await get_dashboard_admin(request)
+    except (NotAuthenticated, NotAdmin):
+        return RedirectResponse(url="/dashboard/login", status_code=303)
+
+    # Find orphan cards
+    user_ids = set()
+    async for u in db["users"].find({}, {"_id": 1}):
+        user_ids.add(u["_id"])
+
+    orphans = []
+    seen = set()
+    async for card in db["cards"].find({}, {"pin": 0}):
+        owner = card.get("owner_id", "")
+        if not owner or owner not in user_ids:
+            card["_legacy"] = False
+            orphans.append(card)
+            seen.add(card.get("card_id", card["_id"]))
+
+    async for card in db["user_cards"].find({}, {"pin": 0}):
+        cid = card.get("_id", "")
+        if cid not in seen:
+            owner = card.get("owner_id", "")
+            if not owner or owner not in user_ids:
+                orphans.append({
+                    "_id": cid, "card_id": cid, "owner_id": owner,
+                    "card_type": card.get("type", "vcard"),
+                    "card_tier": card.get("tier", "plastic"),
+                    "status": card.get("status", "active"),
+                    "views": card.get("views", 0),
+                    "created_at": card.get("created_at", ""),
+                    "_legacy": True,
+                })
+
+    users = await db["users"].find({}, {"_id": 1, "display_name": 1, "email": 1}).to_list(500)
+    return _render(request, "admin/orphans.html", {"user": user, "orphans": orphans, "users": users})

@@ -222,3 +222,114 @@ async def get_pricing(user: dict = Depends(get_dashboard_admin)):
 async def list_email_logs(user: dict = Depends(get_dashboard_admin)):
     logs = await db["email_logs"].find({}).sort("created_at", -1).to_list(200)
     return logs
+
+
+# --- Unassigned / Orphan Cards ---
+
+@router.get("/orphans")
+async def list_orphan_cards(user: dict = Depends(get_dashboard_admin)):
+    user_ids = set()
+    async for u in db["users"].find({}, {"_id": 1}):
+        user_ids.add(u["_id"])
+
+    orphans = []
+    async for card in db["cards"].find({}, {"pin": 0}):
+        owner = card.get("owner_id", "")
+        if not owner or owner not in user_ids:
+            card["_orphan"] = True
+            orphans.append(card)
+
+    async for card in db["user_cards"].find({}, {"pin": 0}):
+        owner = card.get("owner_id", "")
+        if not owner or owner not in user_ids:
+            orphans.append({
+                "_id": card["_id"],
+                "card_id": card.get("_id", ""),
+                "owner_id": owner,
+                "card_type": card.get("type", "vcard"),
+                "card_tier": card.get("tier", "plastic"),
+                "status": card.get("status", "active"),
+                "views": card.get("views", 0),
+                "created_at": card.get("created_at", ""),
+                "_legacy": True,
+                "_orphan": True,
+            })
+
+    return orphans
+
+
+@router.post("/orphans/{card_id}/assign")
+async def assign_orphan_card(card_id: str, request: Request, user: dict = Depends(get_dashboard_admin)):
+    data = await request.json()
+    target_user_id = data.get("user_id")
+    if not target_user_id:
+        raise HTTPException(status_code=400, detail={"error": "user_id_required"})
+
+    target_user = await db["users"].find_one({"_id": target_user_id})
+    if not target_user:
+        raise HTTPException(status_code=404, detail={"error": "user_not_found"})
+
+    now = now_iso()
+    await db["cards"].update_one(
+        {"card_id": card_id},
+        {"$set": {"owner_id": target_user_id, "org_id": target_user.get("org_id"), "updated_at": now}},
+    )
+    await db["user_cards"].update_one(
+        {"_id": card_id},
+        {"$set": {"owner_id": target_user_id, "updated_at": now}},
+    )
+
+    from app.email import send_email
+    await send_email(target_user["email"], f"Card {card_id} assigned to you", "card_activated", {
+        "display_name": target_user.get("display_name", ""),
+        "card_id": card_id,
+    })
+
+    return {"status": "assigned", "user_id": target_user_id}
+
+
+@router.post("/orphans/{card_id}/invite")
+async def invite_orphan_owner(card_id: str, request: Request, user: dict = Depends(get_dashboard_admin)):
+    data = await request.json()
+    email = data.get("email", "").strip()
+    if not email:
+        raise HTTPException(status_code=400, detail={"error": "email_required"})
+
+    now = now_iso()
+    existing = await db["users"].find_one({"email": email})
+    if existing:
+        await db["cards"].update_one({"card_id": card_id}, {"$set": {"owner_id": existing["_id"], "updated_at": now}})
+        await db["user_cards"].update_one({"_id": card_id}, {"$set": {"owner_id": existing["_id"], "updated_at": now}})
+        return {"status": "assigned_to_existing", "user_id": existing["_id"]}
+
+    import secrets as _secrets
+    from app.auth import hash_password
+    temp_password = _secrets.token_urlsafe(12)
+    username = email.split("@")[0].lower()
+    base = username
+    counter = 1
+    while await db["users"].find_one({"username": username}):
+        username = f"{base}{counter}"
+        counter += 1
+
+    user_id = _secrets.token_hex(5)
+    await db["users"].insert_one({
+        "_id": user_id, "username": username, "email": email,
+        "password_hash": hash_password(temp_password), "display_name": username,
+        "role": "individual", "org_id": None, "stripe_customer_id": None,
+        "token": _secrets.token_hex(20), "status": "active",
+        "referral_code": _secrets.token_hex(3).upper(),
+        "created_at": now, "updated_at": now,
+    })
+
+    await db["cards"].update_one({"card_id": card_id}, {"$set": {"owner_id": user_id, "updated_at": now}})
+    await db["user_cards"].update_one({"_id": card_id}, {"$set": {"owner_id": user_id, "updated_at": now}})
+
+    from app.email import send_email
+    await send_email(email, "Your Uwitz Cards account is ready", "corp_invite", {
+        "display_name": username, "org_name": "Uwitz Cards",
+        "email": email, "temp_password": temp_password,
+        "site_url": settings.SITE_URL,
+    })
+
+    return {"status": "invited", "user_id": user_id, "temp_password": temp_password}
