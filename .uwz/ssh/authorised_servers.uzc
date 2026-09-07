@@ -1,5 +1,10 @@
 # Uwitz AI-Agent Authorised Servers (`.uzc` = Uwitz Zone Config)
-# Format: <ip/domain> <descriptor>
+# Format: <ip/domain> <descriptor> <role>
+# Roles: production, staging, dev-testing, lab, build
 # Passwords for the `ai` user: .uwz/ssh/<descriptor>.uzp
 #
-soren.ns.uwitz.org production
+# Examples:
+# 10.0.0.204 lab.uwz lab
+# 192.168.1.100 build-server build
+# prod-01.uwz.org prod-01 production
+# staging-01.uwz.org staging-01 staging
