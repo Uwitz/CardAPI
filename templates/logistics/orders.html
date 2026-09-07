@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Orders — {{ brand }}{% endblock %}
+{% block page_title %}Order Management{% endblock %}
+{% block content %}
+<div class="animate-fade-up">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 style="font-size: 1.25rem; font-weight: 700;">All Orders</h1>
+      <p class="text-sm text-muted">{{ orders | length }} order{{ 's' if orders | length != 1 }}</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <select id="status-filter" onchange="filterOrders()" style="height: 32px; padding: 0 10px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-strong); font: 500 12px/1 var(--font-sans);">
+        <option value="all">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="paid">Paid / Printing</option>
+        <option value="printing">Printing</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+      </select>
+    </div>
+  </div>
+
+  {% if orders %}
+  <div class="card" style="overflow: hidden; padding: 0;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Card Type</th>
+          <th>Tier</th>
+          <th>Status</th>
+          <th>Image</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr data-status="{{ order.status }}" style="cursor: pointer;" onclick="location.href='/logistics/orders/{{ order._id }}'">
+          <td class="font-mono font-semibold text-sm">{{ order._id }}</td>
+          <td>
+            {% if order.user_info %}
+              <div class="font-medium text-sm">{{ order.user_info.display_name }}</div>
+              <div class="text-xs text-muted">{{ order.user_info.email }}</div>
+            {% else %}
+              <span class="text-muted text-sm">—</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge badge-info">{{ order.card_type }}</span>
+          </td>
+          <td class="text-sm">{{ order.card_tier }}</td>
+          <td>
+            <span class="badge {% if order.status == 'paid' %}badge-success{% elif order.status == 'pending' %}badge-warning{% elif order.status == 'shipped' %}badge-info{% elif order.status == 'delivered' %}badge-success{% else %}badge-neutral{% endif %}">{{ order.status }}</span>
+          </td>
+          <td>
+            {% if order.has_image %}
+              <span class="badge badge-success">✓</span>
+            {% else %}
+              <span class="badge badge-error">✗</span>
+            {% endif %}
+          </td>
+          <td class="text-sm font-semibold">RM {{ order.amount_total }}</td>
+          <td class="text-muted text-sm">{{ order.created_at[:10] }}</td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); updateOrderStatus('{{ order._id }}', 'printing')" title="Start Printing">🖨</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p class="font-semibold mb-2">No orders yet</p>
+    <p class="text-sm text-muted">Orders will appear here when customers place them.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block head %}
+<script>
+function filterOrders() {
+  const filter = document.getElementById('status-filter').value;
+  document.querySelectorAll('tbody tr').forEach(row => {
+    if (filter === 'all' || row.dataset.status === filter) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
+async function updateOrderStatus(orderId, status) {
+  const token = localStorage.getItem('token');
+  await fetch(`/api/admin/orders/${orderId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ status }),
+  });
+  location.reload();
+}
+</script>
+{% endblock %}

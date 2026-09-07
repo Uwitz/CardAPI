@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Logistics Dashboard — {{ brand }}{% endblock %}
+{% block page_title %}Logistics Dashboard{% endblock %}
+{% block content %}
+<div class="animate-fade-up">
+  <div class="page-header">
+    <h1>Logistics Dashboard</h1>
+    <p>Order management, card printing, and shipping</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="metric-card">
+      <div class="metric-card-label">Pending Orders</div>
+      <div class="metric-card-value">{{ stats.pending }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-card-label">Printing Queue</div>
+      <div class="metric-card-value">{{ stats.printing }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-card-label">Shipped</div>
+      <div class="metric-card-value">{{ stats.shipped }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-card-label">Total Orders</div>
+      <div class="metric-card-value">{{ stats.total }}</div>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between mb-4">
+    <h2 style="font-size: 1.125rem; font-weight: 600;">Quick Actions</h2>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px;">
+    <a href="/logistics/orders" class="card card-hover" style="text-decoration: none; padding: 24px;">
+      <div style="font: 600 14px/1.3 var(--font-sans); color: var(--text-strong);">Manage Orders</div>
+      <div style="font: 400 12px/1.4 var(--font-sans); color: var(--text-muted); margin-top: 6px;">View and update order status, print cards, track shipments</div>
+    </a>
+    <a href="/logistics/orders?status=pending" class="card card-hover" style="text-decoration: none; padding: 24px;">
+      <div style="font: 600 14px/1.3 var(--font-sans); color: var(--text-strong);">Pending Orders</div>
+      <div style="font: 400 12px/1.4 var(--font-sans); color: var(--text-muted); margin-top: 6px;">Orders awaiting processing and payment confirmation</div>
+    </a>
+    <a href="/logistics/orders?status=printing" class="card card-hover" style="text-decoration: none; padding: 24px;">
+      <div style="font: 600 14px/1.3 var(--font-sans); color: var(--text-strong);">Print Queue</div>
+      <div style="font: 400 12px/1.4 var(--font-sans); color: var(--text-muted); margin-top: 6px;">Cards ready for printing and quality check</div>
+    </a>
+    <a href="/logistics/orders?status=shipped" class="card card-hover" style="text-decoration: none; padding: 24px;">
+      <div style="font: 600 14px/1.3 var(--font-sans); color: var(--text-strong);">Shipped</div>
+      <div style="font: 400 12px/1.4 var(--font-sans); color: var(--text-muted); margin-top: 6px;">Cards dispatched and in transit</div>
+    </a>
+  </div>
+</div>
+{% endblock %}

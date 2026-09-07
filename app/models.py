@@ -63,6 +63,11 @@ class CardActivate(BaseModel):
     pin: str = Field(..., min_length=1, max_length=32)
 
 
+class CardConvert(BaseModel):
+    target_type: Literal["social", "taglink"]
+    target_tier: Literal["digital", "physical"] = "digital"
+
+
 # --- Orders ---
 
 class OrderCreate(BaseModel):
@@ -97,13 +102,13 @@ class AdminUserCreate(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8, max_length=128)
     display_name: str
-    role: Literal["individual", "corporate_admin", "admin"] = "individual"
+    role: Literal["individual", "corporate_admin", "admin", "logistics_admin"] = "individual"
 
 
 class AdminUserUpdate(BaseModel):
     display_name: Optional[str] = None
     email: Optional[EmailStr] = None
-    role: Optional[Literal["individual", "corporate_admin", "admin"]] = None
+    role: Optional[Literal["individual", "corporate_admin", "admin", "logistics_admin"]] = None
     status: Optional[Literal["active", "suspended"]] = None
 
 

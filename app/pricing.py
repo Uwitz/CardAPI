@@ -10,6 +10,11 @@ SUBSCRIPTION_PRICING = {
     "taglink_monthly":  {"amount": 2.99,  "interval": "month"},
 }
 
+CONVERSION_PLAN_MAP = {
+    ("social", "taglink"): "taglink_monthly",
+    ("taglink", "social"): "social_yearly",
+}
+
 STRIPE_FEE_RATE = 0.03
 STRIPE_FEE_MIN = 0.50
 

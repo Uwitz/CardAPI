@@ -26,7 +26,9 @@
     {% for card in cards %}
     <tr style="cursor: pointer;" onclick="location.href='/dashboard/cards/{{ card.card_id }}'">
       <td class="font-mono font-semibold">{{ card.card_id }}</td>
-      <td><span class="badge badge-info">{{ card.card_type }}</span></td>
+      <td>
+        <span class="tier-badge tier-{{ card.card_type }} {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type }}</span>
+      </td>
       <td>{{ card.card_tier }}</td>
       <td>
         <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span>

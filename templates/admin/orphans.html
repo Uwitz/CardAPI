@@ -25,7 +25,7 @@
       {% for card in orphans %}
       <tr>
         <td style="font-family: var(--font-mono); font-weight: 600;">{{ card.card_id }}</td>
-        <td><span class="tag tag-info">{{ card.card_type }}</span></td>
+        <td><span class="tier-badge tier-{{ card.card_type }}">{{ card.card_type }}</span></td>
         <td><span class="tag {% if card.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.status }}</span></td>
         <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">{{ card.owner_id or '—' }}</td>
         <td>

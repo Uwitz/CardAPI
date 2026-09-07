@@ -28,7 +28,7 @@
       {% for card in cards %}
       <tr>
         <td style="font-family: var(--font-mono); font-weight: 600;">{{ card.card_id }}</td>
-        <td><span class="tag tag-info">{{ card.card_type }}</span></td>
+        <td><span class="tier-badge tier-{{ card.card_type }} {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type }}</span></td>
         <td>{{ card.card_tier }}</td>
         <td><span class="tag {% if card.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.status }}</span></td>
         <td><span class="tag {% if card.subscription_status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.subscription_status }}</span></td>

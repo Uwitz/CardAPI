@@ -17,6 +17,10 @@ class NotCorporateAdmin(Exception):
     pass
 
 
+class NotLogisticsAdmin(Exception):
+    pass
+
+
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
@@ -57,4 +61,11 @@ async def get_dashboard_corporate_admin(request: Request) -> dict:
     user = await get_dashboard_user(request)
     if user.get("role") not in ("admin", "corporate_admin"):
         raise NotCorporateAdmin()
+    return user
+
+
+async def get_dashboard_logistics_admin(request: Request) -> dict:
+    user = await get_dashboard_user(request)
+    if user.get("role") not in ("admin", "logistics_admin"):
+        raise NotLogisticsAdmin()
     return user

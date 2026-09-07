@@ -162,7 +162,12 @@ async def dashboard_card_new(request: Request):
     except NotAuthenticated:
         return RedirectResponse(url="/dashboard/login", status_code=303)
 
-    return _render(request, "dashboard/card_new.html", {"user": user})
+    from app.card_templates import list_templates, TEMPLATE_CATEGORIES
+    return _render(request, "dashboard/card_new.html", {
+        "user": user,
+        "templates": list_templates(),
+        "categories": TEMPLATE_CATEGORIES,
+    })
 
 
 @router.get("/dashboard/cards/{card_id}", response_class=HTMLResponse)

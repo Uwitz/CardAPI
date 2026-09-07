@@ -66,6 +66,8 @@ from app.api import images as images_api
 from app.api import admin as admin_api
 from app.api import corporate as corp_api
 from app.api import webhooks as webhook_api
+from app.api import card_templates as templates_api
+from app.legal import router as legal_router
 
 app.include_router(auth_api.router)
 app.include_router(cards_api.router)
@@ -77,14 +79,18 @@ app.include_router(images_api.router)
 app.include_router(admin_api.router)
 app.include_router(corp_api.router)
 app.include_router(webhook_api.router)
+app.include_router(templates_api.router)
+app.include_router(legal_router)
 
 from app.dashboard.routes import router as dashboard_router
 from app.dashboard.corporate import router as corp_dashboard_router
 from app.dashboard.admin import router as admin_dashboard_router
+from app.dashboard.logistics import router as logistics_dashboard_router
 
 app.include_router(dashboard_router)
 app.include_router(corp_dashboard_router)
 app.include_router(admin_dashboard_router)
+app.include_router(logistics_dashboard_router)
 
 
 @app.on_event("startup")

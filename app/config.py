@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     MONGO_DB: str = "cards"
 
     # Security
-    SESSION_SECRET: str
+    SESSION_SECRET: str = ""
     ALLOWED_ORIGIN: str = "http://localhost:8000"
 
     # Stripe
@@ -30,6 +30,12 @@ class Settings(BaseSettings):
     ENTRA_CLIENT_ID: str = "bf993ac3-0ca5-4172-9617-0e8851d5de1d"
     ENTRA_CLIENT_SECRET: str = ""
     ENTRA_TENANT_ID: str = "7625c8c5-0680-4ccc-8840-dc993791d475"
+
+    # Entra ID Access Group Codes
+    ENTRA_GROUP_LOGISTICS: str = "AGC001L"
+    ENTRA_GROUP_ADMIN_FULL: str = "AGC001Z"
+    ENTRA_GROUP_ADMIN_SUPER: str = "AGC001S"
+    ENTRA_GROUP_USER_ELEVATED: str = "UE01Z"
 
     # Irys (server-side only)
     IRYS_CLIENT_ID: str = ""

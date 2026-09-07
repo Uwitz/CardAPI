@@ -32,15 +32,15 @@
 </div>
 
 {% if cards %}
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
   {% for card in cards %}
-  <a href="/dashboard/cards/{{ card.card_id }}" class="card" style="text-decoration: none;">
+  <a href="/dashboard/cards/{{ card.card_id }}" class="card card-hover" style="text-decoration: none;">
     {% if card.image_url %}
-      <img src="{{ card.image_url }}" class="card-image-preview mb-3" alt="Card face">
+      <img src="{{ card.image_url }}" class="card-image-preview mb-4" alt="Card face">
     {% endif %}
-    <div class="flex items-center justify-between mb-2">
+    <div class="flex items-center justify-between mb-3">
       <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
-      <span class="badge badge-info">{{ card.card_type }}</span>
+      <span class="tier-badge tier-{{ card.card_type }} {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type }}</span>
     </div>
     <div class="font-semibold text-sm" style="margin-top: 0.5rem;">{{ card.card_id }}</div>
     <div class="text-xs text-muted" style="margin-top: 0.25rem;">
@@ -50,7 +50,10 @@
         {{ card.vcard_data[:50] if card.vcard_data else 'No vCard' }}...
       {% endif %}
     </div>
-    <div class="text-xs text-muted" style="margin-top: 0.5rem;">{{ card.views }} views</div>
+    <div class="flex items-center justify-between text-xs text-muted" style="margin-top: 0.75rem;">
+      <span>{{ card.views }} views</span>
+      <span class="text-faint">{{ card.card_tier }}</span>
+    </div>
   </a>
   {% endfor %}
 </div>

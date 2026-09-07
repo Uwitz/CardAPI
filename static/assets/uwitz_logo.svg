@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80" fill="none">
+  <!-- Outer red rounded rectangle -->
+  <rect x="1" y="1" width="118" height="78" rx="16" fill="#DA2A1C" stroke="#DA2A1C" stroke-width="2"/>
+  <!-- Inner dark area -->
+  <rect x="12" y="12" width="96" height="56" rx="10" fill="#0D0D0D"/>
+  <!-- Asterisk / star (left) -->
+  <g transform="translate(44, 40)">
+    <!-- Vertical bar -->
+    <rect x="-4" y="-18" width="8" height="36" rx="2" fill="#DA2A1C"/>
+    <!-- Diagonal bar 1 (top-left to bottom-right) -->
+    <rect x="-4" y="-18" width="8" height="36" rx="2" fill="#DA2A1C" transform="rotate(60)"/>
+    <!-- Diagonal bar 2 (top-right to bottom-left) -->
+    <rect x="-4" y="-18" width="8" height="36" rx="2" fill="#DA2A1C" transform="rotate(-60)"/>
+  </g>
+  <!-- Rounded square (right) -->
+  <rect x="72" y="22" width="28" height="28" rx="6" fill="#DA2A1C"/>
+</svg>

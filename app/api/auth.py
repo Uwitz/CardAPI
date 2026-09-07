@@ -37,22 +37,27 @@ async def oidc_callback(request: Request):
 
         email = token_data.get("email") or token_data.get("preferred_username") or token_data.get("upn", "")
         name = token_data.get("name", email.split("@")[0] if email else "User")
+        user_groups = token_data.get("groups", [])
 
         if not email:
             raise HTTPException(status_code=400, detail={"error": "no_email_in_token"})
+
+        # Determine role from Entra ID groups
+        if provider == "entraid":
+            user_role = _determine_role_from_groups(user_groups)
+        else:
+            user_role = "individual"
 
         # Find or create user in MongoDB
         user = await db["users"].find_one({"email": email})
         now = now_iso()
 
-        # Entra ID users are always admins
-        user_role = "admin" if provider == "entraid" else "individual"
-
         if user:
-            # Promote to admin if Entra ID
+            # Update groups and role on every login
             updates = {"updated_at": now, "last_sso_provider": provider}
-            if provider == "entraid" and user.get("role") != "admin":
-                updates["role"] = "admin"
+            if provider == "entraid":
+                updates["entra_groups"] = user_groups
+                updates["role"] = user_role
             await db["users"].update_one(
                 {"_id": user["_id"]},
                 {"$set": updates},
@@ -75,6 +80,7 @@ async def oidc_callback(request: Request):
                 "password_hash": "",  # SSO users don't have password
                 "display_name": name,
                 "role": user_role,
+                "entra_groups": user_groups,
                 "org_id": None,
                 "stripe_customer_id": None,
                 "token": gen_token(),
@@ -116,7 +122,7 @@ async def _exchange_entraid(code: str, redirect_uri: str) -> dict:
             "redirect_uri": redirect_uri,
             "client_id": settings.ENTRA_CLIENT_ID,
             "client_secret": settings.ENTRA_CLIENT_SECRET,
-            "scope": "openid profile email",
+            "scope": "openid profile email groups",
         })
 
     if resp.status_code != 200:
@@ -130,13 +136,15 @@ async def _exchange_entraid(code: str, redirect_uri: str) -> dict:
     if access_token:
         try:
             payload = access_token.split(".")[1]
-            # Add padding
             payload += "=" * (4 - len(payload) % 4)
             import base64
             import json
             claims = json.loads(base64.urlsafe_b64decode(payload))
             token_data["email"] = claims.get("email") or claims.get("preferred_username") or claims.get("upn", "")
             token_data["name"] = claims.get("name", "")
+            # Extract groups from token if present
+            if "groups" in claims:
+                token_data["groups"] = claims["groups"]
         except Exception:
             pass
 
@@ -152,7 +160,48 @@ async def _exchange_entraid(code: str, redirect_uri: str) -> dict:
                 token_data["email"] = me.get("mail") or me.get("userPrincipalName", "")
                 token_data["name"] = me.get("displayName", "")
 
+    # Fetch group memberships from Graph API
+    if access_token and "groups" not in token_data:
+        groups = await _fetch_entra_groups(access_token)
+        if groups:
+            token_data["groups"] = groups
+
     return token_data
+
+
+async def _fetch_entra_groups(access_token: str) -> list[str]:
+    """Fetch user's group memberships from Microsoft Graph API."""
+    groups = []
+    url = "https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName,id&$top=100"
+    try:
+        async with httpx.AsyncClient() as client:
+            while url:
+                resp = await client.get(url, headers={"Authorization": f"Bearer {access_token}"})
+                if resp.status_code != 200:
+                    break
+                data = resp.json()
+                for g in data.get("value", []):
+                    groups.append(g.get("displayName", ""))
+                url = data.get("@odata.nextLink")
+    except Exception:
+        pass
+    return groups
+
+
+def _determine_role_from_groups(groups: list[str]) -> str:
+    """Determine user role from Entra ID group memberships."""
+    group_codes = set(groups)
+
+    # Admin groups: UE01Z, AGC001Z, AGC001S
+    admin_groups = {settings.ENTRA_GROUP_ADMIN_FULL, settings.ENTRA_GROUP_ADMIN_SUPER, settings.ENTRA_GROUP_USER_ELEVATED}
+    if group_codes & admin_groups:
+        return "admin"
+
+    # Logistics admin: AGC001L
+    if settings.ENTRA_GROUP_LOGISTICS in group_codes:
+        return "logistics_admin"
+
+    return "individual"
 
 
 async def _exchange_irys(code: str, redirect_uri: str) -> dict:

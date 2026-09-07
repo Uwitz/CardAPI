@@ -1,4 +1,5 @@
 import json
+import secrets
 
 from fastapi import Request, Response
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
@@ -6,7 +7,8 @@ from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from app.config import get_settings
 
 _settings = get_settings()
-_serializer = URLSafeTimedSerializer(_settings.SESSION_SECRET, salt="uwitz-cards-session")
+_session_secret = _settings.SESSION_SECRET or secrets.token_hex(32)
+_serializer = URLSafeTimedSerializer(_session_secret, salt="uwitz-cards-session")
 
 SESSION_COOKIE_NAME = "uwitz_session"
 SESSION_MAX_AGE = 60 * 60 * 24 * 7  # 7 days

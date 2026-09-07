@@ -158,3 +158,51 @@ async def activate_card(card_id: str, request: Request):
         {"$set": {"status": "active", "pin": None}},
     )
     return {"status": "activated"}
+
+
+@router.post("/{card_id}/convert")
+async def convert_card(card_id: str, request: Request, user: dict = Depends(get_api_user)):
+    from app.models import CardConvert
+    from app.pricing import CONVERSION_PLAN_MAP
+
+    data = await request.json()
+    try:
+        convert_data = CardConvert(**data)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail={"error": "invalid_payload", "detail": str(e)})
+
+    card = await db["cards"].find_one({"card_id": card_id})
+    if not card or card["owner_id"] != user["_id"]:
+        raise HTTPException(status_code=404, detail={"error": "not_found"})
+
+    current_type = card.get("card_type")
+
+    if current_type == "corporate":
+        raise HTTPException(status_code=400, detail={"error": "corporate_cards_cannot_be_converted"})
+
+    if current_type == "taglink" and convert_data.target_type == "social":
+        raise HTTPException(status_code=400, detail={"error": "taglink_cannot_upgrade_to_social"})
+
+    if current_type == convert_data.target_type:
+        raise HTTPException(status_code=400, detail={"error": "already_this_type"})
+
+    updates = {
+        "card_type": convert_data.target_type,
+        "card_tier": convert_data.target_tier,
+        "updated_at": now_iso(),
+    }
+
+    # Transfer subscription to new plan
+    conversion_key = (current_type, convert_data.target_type)
+    new_plan = CONVERSION_PLAN_MAP.get(conversion_key)
+    sub = await db["subscriptions"].find_one({"card_id": card["_id"], "status": "active"})
+    if sub and new_plan:
+        await db["subscriptions"].update_one(
+            {"_id": sub["_id"]},
+            {"$set": {"plan": new_plan, "updated_at": now_iso()}},
+        )
+        updates["subscription_plan"] = new_plan
+
+    await db["cards"].update_one({"_id": card["_id"]}, {"$set": updates})
+
+    return {"status": "converted", "from": current_type, "to": convert_data.target_type}
