@@ -33,7 +33,7 @@
       {% if card.card_type in ('social', 'corporate') and card.vcard_data %}
       <div class="form-group">
         <label class="form-label">vCard Content</label>
-        <pre style="background: var(--neutral-100); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; overflow-x: auto; white-space: pre-wrap;">{{ card.vcard_data }}</pre>
+        <pre style="background: var(--bg-inset); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; overflow-x: auto; white-space: pre-wrap; color: var(--text-body);">{{ card.vcard_data }}</pre>
       </div>
       {% endif %}
 
