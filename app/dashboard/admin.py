@@ -20,7 +20,7 @@ def _render(request: Request, template: str, context: dict):
         "CSRF_FORM_FIELD": CSRF_FORM_FIELD,
     }
     ctx.update(context)
-    resp = templates.TemplateResponse(template, ctx)
+    resp = templates.TemplateResponse(request, template, ctx)
     set_csrf_cookie(resp, get_or_create_csrf_token(request))
     return resp
 

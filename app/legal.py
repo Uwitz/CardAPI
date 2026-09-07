@@ -10,15 +10,13 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/privacy", response_class=HTMLResponse)
 async def privacy_policy(request: Request):
-    return templates.TemplateResponse("legal/privacy.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "legal/privacy.html", {
         "brand": "Uwitz Cards",
     })
 
 
 @router.get("/terms", response_class=HTMLResponse)
 async def terms_of_service(request: Request):
-    return templates.TemplateResponse("legal/terms.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "legal/terms.html", {
         "brand": "Uwitz Cards",
     })

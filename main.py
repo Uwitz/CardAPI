@@ -107,7 +107,7 @@ async def health():
 async def landing_page(request: Request):
     from fastapi.templating import Jinja2Templates
     templates = Jinja2Templates(directory="templates")
-    return templates.TemplateResponse("landing.html", {"request": request})
+    return templates.TemplateResponse(request, "landing.html", {})
 
 
 @app.get("/subscribe/{card_id}", include_in_schema=False)
@@ -117,7 +117,7 @@ async def subscription_required(request: Request, card_id: str):
     card = await db["cards"].find_one({"card_id": card_id})
     if not card:
         card = await db["cards"].find_one({"_id": card_id})
-    return templates.TemplateResponse("subscription_required.html", {
+    return templates.TemplateResponse(request, "subscription_required.html", {
         "request": request,
         "card_id": card_id,
         "card": card,
