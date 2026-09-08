@@ -36,7 +36,7 @@
     .nav-brand img { width: 24px; height: 24px; }
     .nav-brand span { font: 600 14px/1 var(--font-mono); letter-spacing: 0.14em; color: var(--fg-0); }
     .nav-links { display: flex; align-items: center; gap: 8px; }
-    .nav-links a { font: 500 13px/1 var(--font-sans); color: var(--fg-2); padding: 6px 14px; border-radius: 7px; transition: all 0.15s; }
+    .nav-links a { font: 500 13px/1 var(--font-sans); color: var(--fg-1); padding: 6px 14px; border-radius: 7px; transition: all 0.15s; }
     .nav-links a:hover { color: var(--fg-0); background: var(--bg-3); text-decoration: none; }
     .nav-cta { display: inline-flex; align-items: center; height: 34px; padding: 0 18px; border-radius: var(--radius-pill); background: var(--red-500); color: #fff; font: 600 12.5px/1 var(--font-sans); text-decoration: none; transition: all 0.15s; }
     .nav-cta:hover { background: var(--red-400); transform: translateY(-1px); text-decoration: none; color: #fff; }
@@ -52,21 +52,6 @@
     .btn-primary:hover { background: var(--red-400); transform: translateY(-2px); text-decoration: none; color: #fff; }
     .btn-ghost { display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: var(--radius-pill); background: transparent; border: 1px solid var(--line-2); color: var(--fg-0); font: 600 14px/1 var(--font-mono); text-decoration: none; transition: all 0.15s; }
     .btn-ghost:hover { border-color: var(--fg-3); background: rgba(255,255,255,0.03); transform: translateY(-2px); text-decoration: none; color: var(--fg-0); }
-
-    /* ── Card Preview ── */
-    .card-preview { max-width: 420px; margin: 60px auto 0; perspective: 1000px; }
-    .card-face { background: linear-gradient(135deg, var(--bg-2) 0%, var(--bg-3) 100%); border: 1px solid var(--line-2); border-radius: 16px; padding: 32px; box-shadow: 0 20px 60px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.04); transform: rotateX(2deg) rotateY(-1deg); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
-    .card-face:hover { transform: rotateX(0deg) rotateY(0deg) translateY(-4px); }
-    .card-face-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-    .card-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--red-500), var(--red-400)); display: flex; align-items: center; justify-content: center; font: 700 18px/1 var(--font-mono); color: #fff; flex-shrink: 0; }
-    .card-name { font: 600 18px/1.2 var(--font-sans); color: var(--fg-0); }
-    .card-title { font: 400 13px/1.3 var(--font-sans); color: var(--fg-2); margin-top: 2px; }
-    .card-fields { display: flex; flex-direction: column; gap: 10px; }
-    .card-field { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-1); border: 1px solid var(--line-1); border-radius: 10px; }
-    .card-field svg { width: 16px; height: 16px; color: var(--fg-3); flex-shrink: 0; }
-    .card-field span { font: 400 13px/1 var(--font-sans); color: var(--fg-1); }
-    .card-nfc { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; padding: 10px; border-radius: 10px; background: rgba(218,42,28,0.08); border: 1px solid rgba(218,42,28,0.15); font: 500 11px/1 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--red-400); }
-    .card-nfc svg { width: 14px; height: 14px; }
 
     /* ── Section ── */
     .sec { padding: 80px 24px; border-top: 1px solid var(--line-1); }
@@ -142,36 +127,6 @@
     <a href="#features" class="btn-ghost">Learn More</a>
   </div>
 
-  <!-- Card Preview -->
-  <div class="card-preview">
-    <div class="card-face">
-      <div class="card-face-header">
-        <div class="card-avatar">JD</div>
-        <div>
-          <div class="card-name">Jane Doe</div>
-          <div class="card-title">Product Designer</div>
-        </div>
-      </div>
-      <div class="card-fields">
-        <div class="card-field">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          <span>jane@example.com</span>
-        </div>
-        <div class="card-field">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-          <span>+60 12 345 6789</span>
-        </div>
-        <div class="card-field">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-          <span>example.com</span>
-        </div>
-      </div>
-      <div class="card-nfc">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6z"/></svg>
-        NTAG 215 · Tap to share
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- Stats -->
