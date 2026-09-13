@@ -13,3 +13,4 @@ structlog>=23.0
 bcrypt>=4.0
 pillow>=10.0
 httpx>=0.27
+qrcode[pil]>=7.4

@@ -119,6 +119,7 @@
         {% endif %}
       </div>
     </aside>
+    <div class="sidebar-overlay" onclick="document.getElementById('sidebar').classList.remove('open')"></div>
     <div class="main-area">
       <header class="topbar">
         <button class="topbar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
@@ -140,6 +141,12 @@
     document.addEventListener('htmx:configRequest', (e) => {
       const token = document.querySelector('meta[name="csrf-token"]')?.content;
       if (token) e.detail.headers['X-CSRF-Token'] = token;
+    });
+    // Close sidebar on nav link click (mobile)
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('open');
+      });
     });
   </script>
 </body>

@@ -66,8 +66,9 @@ async def get_preview(template_id: str, request: Request):
     """Render a card preview with user-provided field values."""
     data = await request.json()
     fields = data.get("fields", {})
+    qr_data = data.get("qr_data", "")
     try:
-        png = render_template_preview(template_id, fields)
+        png = render_template_preview(template_id, fields, qr_data)
     except ValueError:
         raise HTTPException(status_code=404, detail={"error": "template_not_found"})
     return Response(content=png, media_type="image/png")

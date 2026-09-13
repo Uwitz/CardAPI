@@ -4,8 +4,8 @@ from pydantic import EmailStr
 
 from app.auth import get_api_user, hash_password, verify_password
 from app.database import db, now_iso
-from app.models import UserRegister, UserLogin, UserUpdate
-from app.idgen import gen_user_id, gen_token, gen_referral
+from app.models import UserRegister, UserLogin, UserUpdate, CardCreate
+from app.idgen import gen_user_id, gen_token, gen_referral, gen_card_id
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 
@@ -88,3 +88,37 @@ async def my_cards(user: dict = Depends(get_api_user)):
         {"pin": 0},
     ).sort("created_at", -1).to_list(100)
     return cards
+
+
+@router.post("/me/cards")
+async def create_card(data: CardCreate, user: dict = Depends(get_api_user)):
+    from app.card_templates import build_vcard_from_fields
+
+    card_id = gen_card_id()
+    now = now_iso()
+
+    vcard_data = data.vcard_data
+    if data.template_fields:
+        vcard_data = build_vcard_from_fields(data.template_fields)
+
+    card = {
+        "_id": card_id,
+        "card_id": card_id,
+        "owner_id": user["_id"],
+        "org_id": user.get("org_id"),
+        "card_type": data.card_type,
+        "card_tier": data.card_tier,
+        "vcard_data": vcard_data,
+        "redirect_url": data.redirect_url,
+        "plain_text": data.plain_text,
+        "template_id": data.template_id,
+        "template_fields": data.template_fields,
+        "status": "active",
+        "views": 0,
+        "image_url": None,
+        "created_at": now,
+        "updated_at": now,
+    }
+    await db["cards"].insert_one(card)
+
+    return {"card_id": card_id, "status": "created"}

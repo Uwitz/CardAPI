@@ -15,6 +15,8 @@ import math
 from dataclasses import dataclass, field
 from typing import Callable
 
+import qrcode
+import qrcode.constants
 from PIL import Image, ImageDraw, ImageFont
 
 # ── Card dimensions (ISO/IEC 7810 ID-1 @ 300 DPI) ──────────────────────────
@@ -98,6 +100,29 @@ def _text_size(draw: ImageDraw.ImageDraw, text: str, font) -> tuple[int, int]:
     return bbox[2] - bbox[0], bbox[3] - bbox[1]
 
 
+def _draw_qr(draw: ImageDraw.ImageDraw, x: int, y: int, size: int, data: str):
+    """Draw a real QR code from data, falling back to placeholder if no data."""
+    if not data:
+        _draw_qr_placeholder(draw, x, y, size)
+        return
+
+    qr = qrcode.QRCode(
+        version=None,
+        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        box_size=10,
+        border=1,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color=BG, back_color=FG_0).convert("RGB")
+    qr_img = qr_img.resize((size, size), Image.Resampling.NEAREST)
+
+    # Paste QR code onto card
+    # We need to composite since draw doesn't support paste directly on the draw object
+    # Instead, we'll return the QR image and let callers paste it
+    return qr_img
+
+
 def _draw_qr_placeholder(draw: ImageDraw.ImageDraw, x: int, y: int, size: int):
     """Draw a decorative QR-code placeholder."""
     draw.rectangle([x, y, x + size, y + size], fill=FG_0, outline=LINE_2, width=1)
@@ -133,7 +158,7 @@ def _draw_watermark(draw: ImageDraw.ImageDraw):
 
 # ── Template renderers ───────────────────────────────────────────────────────
 
-def _render_business(fields: dict) -> Image.Image:
+def _render_business(fields: dict, qr_data: str = "") -> Image.Image:
     """Business card matching the exact front.svg layout."""
     img, draw = _card_bg()
 
@@ -170,7 +195,9 @@ def _render_business(fields: dict) -> Image.Image:
 
     # ── Top-right: QR code ──
     qr_size = 80
-    _draw_qr_placeholder(draw, CARD_W - qr_size - 30, 30, qr_size)
+    qr_img = _draw_qr(draw, CARD_W - qr_size - 30, 30, qr_size, qr_data)
+    if qr_img:
+        img.paste(qr_img, (CARD_W - qr_size - 30, 30))
 
     # ── Bottom: Watermark ──
     _draw_watermark(draw)
@@ -178,7 +205,7 @@ def _render_business(fields: dict) -> Image.Image:
     return img
 
 
-def _render_emergency(fields: dict) -> Image.Image:
+def _render_emergency(fields: dict, qr_data: str = "") -> Image.Image:
     """Emergency / ICE card."""
     img, draw = _card_bg()
 
@@ -230,13 +257,15 @@ def _render_emergency(fields: dict) -> Image.Image:
             ry += 38
 
     # ── QR ──
-    _draw_qr_placeholder(draw, CARD_W - 80 - 30, CARD_H - 80 - 50, 80)
+    qr_img = _draw_qr(draw, CARD_W - 80 - 30, CARD_H - 80 - 50, 80, qr_data)
+    if qr_img:
+        img.paste(qr_img, (CARD_W - 80 - 30, CARD_H - 80 - 50))
 
     _draw_watermark(draw)
     return img
 
 
-def _render_student(fields: dict) -> Image.Image:
+def _render_student(fields: dict, qr_data: str = "") -> Image.Image:
     """Student ID card."""
     img, draw = _card_bg()
 
@@ -282,7 +311,7 @@ def _render_student(fields: dict) -> Image.Image:
     return img
 
 
-def _render_event_badge(fields: dict) -> Image.Image:
+def _render_event_badge(fields: dict, qr_data: str = "") -> Image.Image:
     """Event / conference badge."""
     img, draw = _card_bg()
 
@@ -326,7 +355,9 @@ def _render_event_badge(fields: dict) -> Image.Image:
             cy += 28
 
     # ── QR ──
-    _draw_qr_placeholder(draw, CARD_W - 90 - 30, CARD_H - 90 - 50, 90)
+    qr_img = _draw_qr(draw, CARD_W - 90 - 30, CARD_H - 90 - 50, 90, qr_data)
+    if qr_img:
+        img.paste(qr_img, (CARD_W - 90 - 30, CARD_H - 90 - 50))
 
     _draw_watermark(draw)
     return img
@@ -491,7 +522,7 @@ def _render_taglink(fields: dict) -> Image.Image:
     return img
 
 
-def _render_corporate(fields: dict) -> Image.Image:
+def _render_corporate(fields: dict, qr_data: str = "") -> Image.Image:
     """Corporate / branded team card."""
     img, draw = _card_bg()
 
@@ -526,7 +557,9 @@ def _render_corporate(fields: dict) -> Image.Image:
             ry += 40
 
     # ── QR ──
-    _draw_qr_placeholder(draw, CARD_W - 90 - 30, CARD_H - 90 - 50, 90)
+    qr_img = _draw_qr(draw, CARD_W - 90 - 30, CARD_H - 90 - 50, 90, qr_data)
+    if qr_img:
+        img.paste(qr_img, (CARD_W - 90 - 30, CARD_H - 90 - 50))
 
     _draw_watermark(draw)
     return img
@@ -734,12 +767,12 @@ def list_templates() -> list[dict]:
     ]
 
 
-def render_template_preview(template_id: str, fields: dict) -> bytes:
+def render_template_preview(template_id: str, fields: dict, qr_data: str = "") -> bytes:
     """Render a full card preview from template + field values."""
     tpl = get_template(template_id)
     if not tpl:
         raise ValueError(f"Unknown template: {template_id}")
-    img = tpl.render(fields)
+    img = tpl.render(fields, qr_data)
     buf = io.BytesIO()
     img.save(buf, format="PNG", optimize=True)
     return buf.getvalue()

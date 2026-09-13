@@ -9,7 +9,7 @@
     <span class="badge badge-info">{{ card.card_type }}</span>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="card-detail-grid">
     <!-- Card info -->
     <div class="card">
       <div class="flex items-center gap-3 mb-4">
@@ -48,7 +48,7 @@
       </div>
       {% endif %}
 
-      <div class="flex gap-2 mt-4">
+      <div class="flex gap-2 mt-4" style="flex-wrap: wrap;">
         {% if card.status == 'active' %}
           <button class="btn btn-ghost btn-sm" onclick="freezeCard()">Freeze</button>
         {% elif card.status == 'frozen' %}
@@ -59,7 +59,7 @@
 
       {% if card.card_type in ('social', 'taglink') %}
       <div class="mt-4 pt-4" style="border-top: 1px solid var(--border-faint);">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between" style="gap: 12px;">
           <div>
             <div class="text-sm font-semibold">Convert Card Type</div>
             <div class="text-xs text-muted">
@@ -125,6 +125,7 @@
       <h3 style="font-weight: 600;">TagLink API Keys</h3>
       <button class="btn btn-primary btn-sm" onclick="createKey()">+ New Key</button>
     </div>
+    <div class="table-wrap" style="border: none; box-shadow: none;">
     <table class="table">
       <thead><tr><th>Name</th><th>Prefix</th><th>Status</th><th>Last Used</th><th></th></tr></thead>
       <tbody>
@@ -143,6 +144,7 @@
         {% endfor %}
       </tbody>
     </table>
+    </div>
   </div>
   {% endif %}
 

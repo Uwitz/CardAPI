@@ -47,6 +47,8 @@ class CardCreate(BaseModel):
     vcard_data: Optional[str] = None
     redirect_url: Optional[str] = None
     plain_text: Optional[str] = None
+    template_id: Optional[str] = None
+    template_fields: Optional[dict] = None
 
 
 class CardUpdate(BaseModel):

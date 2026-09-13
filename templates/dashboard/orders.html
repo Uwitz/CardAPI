@@ -8,7 +8,8 @@
 </div>
 
 {% if orders %}
-<table class="table card" style="overflow: hidden;">
+<div class="table-wrap">
+<table class="table">
   <thead><tr><th>Order ID</th><th>Type</th><th>Tier</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
   <tbody>
     {% for o in orders %}
@@ -23,6 +24,7 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% else %}
 <div class="empty-state">
   <p class="font-semibold">No orders yet</p>

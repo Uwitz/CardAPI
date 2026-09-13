@@ -11,7 +11,8 @@
 </div>
 
 {% if cards %}
-<table class="table card" style="overflow: hidden;">
+<div class="table-wrap">
+<table class="table">
   <thead>
     <tr>
       <th>Card ID</th>
@@ -39,6 +40,7 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% else %}
 <div class="empty-state">
   <p class="font-semibold mb-2">No cards yet</p>

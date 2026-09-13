@@ -5,7 +5,8 @@
 <h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Subscriptions</h1>
 
 {% if subscriptions %}
-<table class="table card" style="overflow: hidden;">
+<div class="table-wrap">
+<table class="table">
   <thead><tr><th>Plan</th><th>Amount</th><th>Status</th><th>Period End</th><th></th></tr></thead>
   <tbody>
     {% for sub in subscriptions %}
@@ -26,6 +27,7 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% else %}
 <div class="empty-state">
   <p class="font-semibold">No active subscriptions</p>

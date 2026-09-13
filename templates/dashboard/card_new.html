@@ -7,7 +7,7 @@
   <!-- Step 1: Choose creation method -->
   <div id="step-method" class="card" style="margin-bottom: var(--space-4);">
     <h3 style="margin-bottom: var(--space-3);">How would you like to create your card?</h3>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div class="method-grid">
       <button class="method-btn active" data-method="template" onclick="selectMethod('template')" style="background: var(--surface-card); border: 2px solid var(--accent); border-radius: var(--radius-lg); padding: 24px; cursor: pointer; text-align: left; transition: all 0.15s;">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="margin-bottom: 8px;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
         <div style="font: var(--fw-semibold) 14px/1.3 var(--font-sans); color: var(--text-strong);">Use a Template</div>
@@ -36,7 +36,7 @@
   <!-- Step 2b: Upload method (shown when upload method selected) -->
   <div id="step-upload" class="card" style="display: none; margin-bottom: var(--space-4);">
     <h3 style="margin-bottom: var(--space-3);">Card type</h3>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: var(--space-6);">
+    <div class="method-grid" style="margin-bottom: var(--space-6);">
       <button class="card-type-btn active" data-type="social" onclick="selectType(this)" style="background: var(--surface-card); border: 2px solid var(--accent); border-radius: var(--radius-lg); padding: 20px; cursor: pointer; text-align: left; transition: all 0.15s;">
         <div style="font: var(--fw-semibold) 14px/1.3 var(--font-sans); color: var(--text-strong);">Social Card</div>
         <div style="font: 400 12px/1.4 var(--font-sans); color: var(--text-muted); margin-top: 4px;">vCard contact sharing</div>
@@ -51,11 +51,11 @@
     <div id="upload-vcard-fields" style="margin-bottom: var(--space-4);">
       <div style="font: var(--fw-semibold) 12px/1 var(--font-sans); color: var(--text-faint); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: var(--space-3);">Contact Information</div>
       <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="u-fn" placeholder="John Doe"></div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div class="field-grid">
         <div class="form-group"><label class="form-label">Organisation</label><input type="text" id="u-org" placeholder="Company Ltd"></div>
         <div class="form-group"><label class="form-label">Title</label><input type="text" id="u-title" placeholder="Software Engineer"></div>
       </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div class="field-grid">
         <div class="form-group"><label class="form-label">Email</label><input type="email" id="u-email" placeholder="john@example.com"></div>
         <div class="form-group"><label class="form-label">Phone</label><input type="tel" id="u-phone" placeholder="+60 12 345 6789"></div>
       </div>
@@ -71,7 +71,7 @@
 
   <!-- Step 3: Template form + live preview -->
   <div id="step-form" class="card" style="display: none;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);">
+    <div class="card-form-grid">
       <!-- Left: Form fields -->
       <div>
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: var(--space-4);">
@@ -272,6 +272,25 @@ async function updatePreview() {
     return;
   }
 
+  // Build QR data: vCard for social templates, URL for taglink
+  let qr_data = '';
+  const isSocial = ['business', 'emergency', 'student', 'event', 'real_estate', 'medical', 'minimalist', 'corporate'].includes(selectedTemplate.id);
+  if (isSocial) {
+    try {
+      const vcRes = await fetch(`/api/card-templates/${selectedTemplate.id}/build-vcard`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields }),
+      });
+      if (vcRes.ok) {
+        const vcData = await vcRes.json();
+        qr_data = vcData.vcard_data || '';
+      }
+    } catch {}
+  } else if (fields.url) {
+    qr_data = fields.url;
+  }
+
   document.getElementById('preview-loading').textContent = 'Generating preview…';
   document.getElementById('preview-loading').style.display = '';
   document.getElementById('preview-img').style.display = 'none';
@@ -280,7 +299,7 @@ async function updatePreview() {
     const res = await fetch(`/api/card-templates/${selectedTemplate.id}/preview`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields }),
+      body: JSON.stringify({ fields, qr_data }),
     });
     if (res.ok) {
       const blob = await res.blob();
@@ -320,14 +339,18 @@ async function submitTemplateCard() {
 
   let body = { card_type: isSocial ? 'social' : 'taglink', card_tier: tier };
   if (isSocial) {
-    // Build vCard from template fields
-    const vcFields = { name: fields.name, email: fields.email, phone: fields.phone, website: fields.website, company: fields.company || fields.university, title: fields.title };
-    let vcard = 'BEGIN:VCARD\nVERSION:4.0\n';
-    for (const [key, val] of Object.entries(vcFields)) {
-      if (val) vcard += `${key.toUpperCase()}:${val}\n`;
-    }
-    vcard += 'END:VCARD\n';
-    body.vcard_data = vcard;
+    // Build vCard server-side from template fields
+    try {
+      const vcRes = await fetch(`/api/card-templates/${selectedTemplate.id}/build-vcard`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields }),
+      });
+      if (vcRes.ok) {
+        const vcData = await vcRes.json();
+        body.vcard_data = vcData.vcard_data;
+      }
+    } catch {}
     body.template_id = selectedTemplate.id;
     body.template_fields = fields;
   } else {
@@ -348,10 +371,17 @@ async function submitTemplateCard() {
     // If physical card, also render and store the template preview as the card image
     if (tier === 'physical') {
       try {
+        // Build QR data for the preview
+        let qr_data = '';
+        if (isSocial && body.vcard_data) {
+          qr_data = body.vcard_data;
+        } else if (!isSocial && fields.url) {
+          qr_data = fields.url;
+        }
         const imgRes = await fetch(`/api/card-templates/${selectedTemplate.id}/preview`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fields }),
+          body: JSON.stringify({ fields, qr_data }),
         });
         if (imgRes.ok) {
           const blob = await imgRes.blob();
@@ -391,20 +421,26 @@ async function submitUploadCard() {
 
   let body = { card_type: type, card_tier: tier };
   if (type === 'social') {
+    // Build vCard server-side
     const fields = {
-      'FN': document.getElementById('u-fn').value,
-      'ORG': document.getElementById('u-org').value,
-      'TITLE': document.getElementById('u-title').value,
-      'EMAIL': document.getElementById('u-email').value,
-      'TEL': document.getElementById('u-phone').value,
-      'URL': document.getElementById('u-url').value,
+      name: document.getElementById('u-fn').value,
+      company: document.getElementById('u-org').value,
+      title: document.getElementById('u-title').value,
+      email: document.getElementById('u-email').value,
+      phone: document.getElementById('u-phone').value,
+      website: document.getElementById('u-url').value,
     };
-    let vcard = 'BEGIN:VCARD\nVERSION:4.0\n';
-    for (const [key, val] of Object.entries(fields)) {
-      if (val) vcard += `${key}:${val}\n`;
-    }
-    vcard += 'END:VCARD\n';
-    body.vcard_data = vcard;
+    try {
+      const vcRes = await fetch('/api/card-templates/business/build-vcard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields }),
+      });
+      if (vcRes.ok) {
+        const vcData = await vcRes.json();
+        body.vcard_data = vcData.vcard_data;
+      }
+    } catch {}
   } else {
     body.redirect_url = document.getElementById('u-tl-url').value || null;
     body.plain_text = document.getElementById('u-tl-text').value || null;

@@ -98,3 +98,19 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* Mobile utilities */
+@media (max-width: 768px) {
+  .md\:hidden { display: none !important; }
+  .md\:block { display: block !important; }
+  .md\:flex { display: flex !important; }
+  .md\:grid { display: grid !important; }
+  .md\:flex-col { flex-direction: column !important; }
+  .md\:gap-4 { gap: var(--space-4) !important; }
+  .md\:p-4 { padding: var(--space-4) !important; }
+}
+@media (max-width: 480px) {
+  .sm\:hidden { display: none !important; }
+  .sm\:block { display: block !important; }
+  .sm\:flex-col { flex-direction: column !important; }
+}
