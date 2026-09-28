@@ -132,7 +132,8 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Content-Security-Policy"] = csp
         
         # Remove server header
-        response.headers.pop("Server", None)
+        if "Server" in response.headers:
+            del response.headers["Server"]
         
         return response
     
