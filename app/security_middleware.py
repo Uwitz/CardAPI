@@ -139,8 +139,9 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     
     def _build_csp(self, request: Request) -> str:
         """Build Content Security Policy."""
-        # Allow inline styles/scripts for HTMX and dev tools in non-production
-        style_src = "'self' 'unsafe-inline'" if not self.is_production else "'self'"
+        # Allow inline styles/scripts for HTMX and dev tools
+        # Note: 'unsafe-inline' required for inline <style> tags in templates
+        style_src = "'self' 'unsafe-inline'"
         script_src = "'self' 'unsafe-inline' 'unsafe-eval'" if not self.is_production else "'self'"
         
         # Allow images from self and data URIs
