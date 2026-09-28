@@ -2,21 +2,51 @@
 {% block title %}Orders — Admin{% endblock %}
 {% block page_title %}Order Management{% endblock %}
 {% block content %}
-<h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">All Orders</h1>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>All Orders</h1>
+    <p class="page-head-sub">{{ orders | length }} order{{ 's' if orders | length != 1 }} in the system</p>
+  </div>
+</div>
 
-<table class="table card" style="overflow: hidden;">
-  <thead><tr><th>Order ID</th><th>User</th><th>Type</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
-  <tbody>
-    {% for o in orders %}
-    <tr>
-      <td class="font-mono font-semibold">{{ o._id }}</td>
-      <td class="font-mono text-sm">{{ o.user_id }}</td>
-      <td>{{ o.card_type }} / {{ o.card_tier }}</td>
-      <td>RM {{ '%.2f' | format(o.amount_total) }}</td>
-      <td><span class="badge {% if o.status == 'paid' %}badge-success{% elif o.status == 'pending' %}badge-warning{% else %}badge-neutral{% endif %}">{{ o.status }}</span></td>
-      <td class="text-sm text-muted">{{ o.created_at[:10] }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% if orders %}
+<div class="card-grid">
+  {% for o in orders %}
+  <div class="data-card">
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ o._id }}</div>
+        <div class="data-card-sub">User {{ o.user_id[:8] }}...</div>
+      </div>
+      <span class="badge {% if o.status == 'paid' %}badge-success{% elif o.status == 'pending' %}badge-warning{% else %}badge-neutral{% endif %}">{{ o.status }}</span>
+    </div>
+
+    <div class="data-card-body">
+      <div>
+        <div class="meta-label">Product</div>
+        <div class="meta-value strong">{{ o.card_type }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Tier</div>
+        <div class="meta-value strong">{{ o.card_tier }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Placed</div>
+        <div class="meta-value strong">{{ o.created_at[:10] }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Stripe Ref</div>
+        <div class="meta-value mono">{{ o.stripe_payment_intent or '—' }}</div>
+      </div>
+    </div>
+
+    <div class="data-card-foot">
+      <div class="amount">RM {{ '%.2f' | format(o.amount_total) }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><p class="font-semibold">No orders</p></div>
+{% endif %}
 {% endblock %}

@@ -2,9 +2,11 @@
 {% block title %}Dashboard — {{ brand }}{% endblock %}
 {% block page_title %}Dashboard{% endblock %}
 {% block content %}
-<div class="page-header animate-fade-up">
-  <h1>Welcome back, {{ user.display_name }}</h1>
-  <p>Manage your NFC cards and subscriptions</p>
+<div class="page-head animate-fade-up">
+  <div class="page-head-main">
+    <h1>Welcome back, {{ user.display_name }}</h1>
+    <p class="page-head-sub">Manage your NFC cards and subscriptions</p>
+  </div>
 </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -22,37 +24,182 @@
   </div>
   <div class="metric-card">
     <div class="metric-card-label">Account</div>
-    <div class="metric-card-value text-sm font-semibold" style="margin-top: 0.5rem;">{{ user.role | capitalize }}</div>
+    <div class="metric-card-value text-sm font-semibold" style="margin-top: 0.5rem;">{{ account_label }}</div>
+    <div class="metric-card-sub text-xs" style="color: var(--text-muted);">{% if account_sub %}{{ account_sub }}{% else %}{{ user.role | capitalize }}{% endif %}</div>
   </div>
 </div>
 
-<div class="flex items-center justify-between mb-4">
-  <h2 style="font-size: 1.125rem; font-weight: 600;">Recent Cards</h2>
+<!-- Card Lifecycle Tracking -->
+{% set lifecycle_stages = ['pending', 'processing', 'shipped', 'activate', 'active'] %}
+{% set user_cards_with_orders = [] %}
+{% for card in cards %}
+  {% set order = card.order %}
+  {% if order %}
+    {% set user_cards_with_orders = user_cards_with_orders + [{"card": card, "order": order}] %}
+  {% else %}
+    {% set user_cards_with_orders = user_cards_with_orders + [{"card": card, "order": None}] %}
+  {% endif %}
+{% endfor %}
+
+{% if user_cards_with_orders %}
+<div class="section-head">
+  <h2 class="section-title">Card Lifecycle</h2>
+  <a href="/dashboard/cards" class="btn btn-ghost btn-sm">View All</a>
+</div>
+
+<div style="margin-bottom: 24px;">
+  {% for item in user_cards_with_orders %}
+  {% set card = item.card %}
+  {% set order = item.order %}
+  {% set current_stage = 'active' %}
+  {% set stage_index = 4 %}
+  {% if card.status == 'pending' %}
+    {% set current_stage = 'pending' %}
+    {% set stage_index = 0 %}
+  {% elif order and order.status == 'paid' %}
+    {% set current_stage = 'processing' %}
+    {% set stage_index = 1 %}
+  {% elif order and order.status == 'printing' %}
+    {% set current_stage = 'processing' %}
+    {% set stage_index = 1 %}
+  {% elif order and order.status == 'shipped' %}
+    {% set current_stage = 'shipped' %}
+    {% set stage_index = 2 %}
+  {% elif order and order.status == 'delivered' and card.status == 'pending' %}
+    {% set current_stage = 'activate' %}
+    {% set stage_index = 3 %}
+  {% elif card.status == 'active' %}
+    {% set current_stage = 'active' %}
+    {% set stage_index = 4 %}
+  {% endif %}
+  
+  <div class="card" style="margin-bottom: 16px;">
+    <div class="lifecycle-card" style="padding: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+        <div>
+          <div style="font-weight: 600; font-size: 16px; color: var(--text-strong);">{{ card.card_id }}</div>
+          <div style="font-size: 13px; color: var(--text-muted);">{{ card.card_type | capitalize }} · {{ card.card_tier | capitalize }}</div>
+        </div>
+        <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'pending' %}badge-warning{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status | capitalize }}</span>
+      </div>
+      
+      <!-- Lifecycle Timeline -->
+      <div class="lifecycle-timeline" style="position: relative; padding-left: 16px;">
+        <div style="position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: var(--border);"></div>
+        {% for stage in lifecycle_stages %}
+        {% set loop_index = loop.index0 %}
+        {% set is_completed = loop_index < stage_index %}
+        {% set is_current = loop_index == stage_index %}
+        <div style="position: relative; display: flex; align-items: flex-start; gap: 16px; margin-bottom: {% if not loop.last %}20px{% else %}0{% endif %};">
+          <div style="position: relative; z-index: 1; flex-shrink: 0;">
+            <div style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid {% if is_completed %}var(--green-400){% elif is_current %}var(--accent){% else %}var(--border){% endif %}; background: {% if is_completed %}var(--green-400){% elif is_current %}var(--accent){% else %}var(--surface-card){% endif %}; display: flex; align-items: center; justify-content: center;">
+              {% if is_completed %}
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              {% endif %}
+            </div>
+          </div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 600; font-size: 13px; color: {% if is_completed %}var(--green-400){% elif is_current %}var(--accent){% else %}var(--text-muted){% endif %};">{{ stage | capitalize }}</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+              {% if stage == 'pending' %}Card created, awaiting logistics
+              {% elif stage == 'processing' %}{% if order %}Order {{ order.status | capitalize }}{% else %}Processing{% endif %}
+              {% elif stage == 'shipped' %}Card shipped, check email for activation
+              {% elif stage == 'activate' %}Tap card or use activation link
+              {% elif stage == 'active' %}Card active and ready to use{% endif %}
+            </div>
+            {% if stage == 'shipped' and order and order.status == 'shipped' %}
+            <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+              <a href="/activate/{{ card.card_id }}" class="btn btn-primary btn-sm">Activate Now</a>
+              {% if order.tracking_number %}
+              <span class="badge badge-info" style="font-size: 11px; align-self: center;">Tracking: {{ order.tracking_number }}</span>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Email Alerts Panel -->
+<div class="section-head">
+  <h2 class="section-title">Email Notifications</h2>
+  <a href="/dashboard/email-logs" class="btn btn-ghost btn-sm">View All</a>
+</div>
+
+{% if email_logs %}
+<div class="card" style="overflow: hidden;">
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+      <thead>
+        <tr style="background: var(--bg-inset); border-bottom: 1px solid var(--border);">
+          <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-strong);">Subject</th>
+          <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-strong);">Status</th>
+          <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-strong);">Sent</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in email_logs %}
+        <tr style="border-bottom: 1px solid var(--border-faint);">
+          <td style="padding: 12px 16px; color: var(--text-strong);">{{ log.subject }}</td>
+          <td style="padding: 12px 16px;">
+            <span class="badge {% if log.status == 'sent' %}badge-success{% elif log.status == 'failed' %}badge-error{% else %}badge-neutral{% endif %}">{{ log.status | capitalize }}</span>
+          </td>
+          <td style="padding: 12px 16px; color: var(--text-muted);">{{ log.created_at[:16].replace('T', ' ') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="empty-state" style="padding: 2rem;">
+  <p class="font-semibold mb-2">No email notifications yet</p>
+  <p class="text-sm text-muted">Email alerts will appear here when you receive notifications.</p>
+</div>
+{% endif %}
+
+<div class="section-head">
+  <h2 class="section-title">Recent Cards<span class="section-count">{{ cards | length }}</span></h2>
   <a href="/dashboard/cards/new" class="btn btn-primary btn-sm">+ New Card</a>
 </div>
 
 {% if cards %}
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+<div class="card-grid">
   {% for card in cards %}
-  <a href="/dashboard/cards/{{ card.card_id }}" class="card card-hover" style="text-decoration: none;">
+  <a href="/dashboard/cards/{{ card.card_id }}" class="data-card data-card-hover" style="text-decoration: none;">
     {% if card.image_url %}
-      <img src="{{ card.image_url }}" class="card-image-preview mb-4" alt="Card face">
+      <img src="{{ card.image_url }}" class="card-image-preview" alt="Card face">
     {% endif %}
-    <div class="flex items-center justify-between mb-3">
-      <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
-      <span class="tier-badge tier-{{ card.card_type }} {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type }}</span>
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ card.card_id }}</div>
+        <div class="card-mini-label" style="position: static;">{{ card.card_tier }}</div>
+      </div>
+      <div class="data-card-badges">
+        <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
+        <span class="tier-badge tier-{{ card.card_type }} {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type }}</span>
+      </div>
     </div>
-    <div class="font-semibold text-sm" style="margin-top: 0.5rem;">{{ card.card_id }}</div>
-    <div class="text-xs text-muted" style="margin-top: 0.25rem;">
-      {% if card.card_type == 'taglink' %}
-        {{ card.redirect_url or card.plain_text or 'No content' }}
-      {% else %}
-        {{ card.vcard_data[:50] if card.vcard_data else 'No vCard' }}...
-      {% endif %}
-    </div>
-    <div class="flex items-center justify-between text-xs text-muted" style="margin-top: 0.75rem;">
-      <span>{{ card.views }} views</span>
-      <span class="text-faint">{{ card.card_tier }}</span>
+    <div class="data-card-body">
+      <div>
+        <div class="meta-label">Content</div>
+        <div class="meta-value">
+          {% if card.card_type == 'taglink' %}
+            {{ card.redirect_url or card.plain_text or 'No content' }}
+          {% else %}
+            {{ card.vcard_data[:50] if card.vcard_data else 'No vCard' }}...
+          {% endif %}
+        </div>
+      </div>
+      <div>
+        <div class="meta-label">Views</div>
+        <div class="meta-value strong">{{ card.views }}</div>
+      </div>
     </div>
   </a>
   {% endfor %}

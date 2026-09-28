@@ -7,14 +7,23 @@
     <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Order a Physical Card</h2>
     <form id="order-form" onsubmit="placeOrder(event)">
       <div class="form-group">
-        <label class="form-label">Card Type</label>
-        <select id="order-type" class="form-input" onchange="updatePrice()">
-          <option value="social">Social Card — RM 35.00</option>
-          <option value="corporate">Corporate Card — RM 50.00</option>
-          <option value="taglink">TagLink Card — RM 15.00</option>
+        <label class="form-label" for="order-type">Card Type</label>
+        <select id="order-type" name="card_type" class="form-input" onchange="updatePrice()">
+          <option value="social">Social Card</option>
+          <option value="corporate">Corporate Card</option>
+          <option value="taglink">TagLink Card</option>
         </select>
       </div>
-      <div id="price-summary" class="card" style="background: var(--neutral-50); margin-bottom: 1rem;">
+      <div class="form-group">
+        <label class="form-label" for="order-material">Material</label>
+        <select id="order-material" name="material" class="form-input" onchange="updatePrice()">
+          <option value="plastic">Plastic — printed to order</option>
+          <option value="aluminium">Aluminium — pre-order</option>
+        </select>
+        <p class="form-hint" id="material-hint" style="margin-top:6px;">Standard printing on ISO/IEC 7810 stock.</p>
+        <p class="form-hint" id="material-taglink-hint" style="display:none;margin-top:2px;">Aluminium isn't offered for TagLink cards.</p>
+      </div>
+      <div id="price-summary" class="card" style="background: var(--surface-inset); margin-bottom: 1rem;">
         <div class="flex justify-between text-sm mb-1"><span>Card price</span><span id="price-base">RM 35.00</span></div>
         <div class="flex justify-between text-sm mb-1"><span>Stripe fee</span><span id="price-fee">RM 1.05</span></div>
         <div class="flex justify-between font-bold"><span>Total</span><span id="price-total">RM 36.05</span></div>
@@ -26,29 +35,49 @@
 {% endblock %}
 {% block head %}
 <script>
-const prices = { social: 35, corporate: 50, taglink: 15 };
+const prices = {
+  social:   { plastic: 35, aluminium: 75 },
+  corporate:{ plastic: 50, aluminium: 90 },
+  taglink:  { plastic: 15 },
+};
 const feeRate = 0.03, feeMin = 0.50;
 
 function calcFee(amt) { return Math.max(amt * feeRate, feeMin).toFixed(2); }
 
 function updatePrice() {
   const type = document.getElementById('order-type').value;
-  const base = prices[type];
+  const materialSel = document.getElementById('order-material');
+  const taglinkHint = document.getElementById('material-taglink-hint');
+  const aluOption = materialSel.querySelector('option[value="aluminium"]');
+  if (type === 'taglink') {
+    aluOption.disabled = true;
+    if (materialSel.value === 'aluminium') materialSel.value = 'plastic';
+    taglinkHint.style.display = '';
+  } else {
+    aluOption.disabled = false;
+    taglinkHint.style.display = 'none';
+  }
+  const material = materialSel.value;
+  const base = prices[type][material];
   const fee = calcFee(base);
   const total = (base + parseFloat(fee)).toFixed(2);
   document.getElementById('price-base').textContent = `RM ${base.toFixed(2)}`;
   document.getElementById('price-fee').textContent = `RM ${fee}`;
   document.getElementById('price-total').textContent = `RM ${total}`;
+  document.getElementById('material-hint').textContent = material === 'aluminium'
+    ? 'Premium aluminium card — pre-order only, ships when produced.'
+    : 'Standard printing on ISO/IEC 7810 stock.';
 }
 
 async function placeOrder(e) {
   e.preventDefault();
   const token = localStorage.getItem('token');
   const type = document.getElementById('order-type').value;
+  const material = document.getElementById('order-material').value;
   const res = await fetch('/api/orders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-    body: JSON.stringify({ card_type: type, card_tier: 'physical' }),
+    body: JSON.stringify({ card_type: type, card_tier: 'physical', material }),
   });
   const data = await res.json();
   if (res.ok && data.checkout_url) {
@@ -59,6 +88,6 @@ async function placeOrder(e) {
     alert(data.detail?.error || 'Order failed');
   }
 }
-updatePrice();
+document.addEventListener('DOMContentLoaded', updatePrice);
 </script>
 {% endblock %}

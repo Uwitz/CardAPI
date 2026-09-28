@@ -97,3 +97,17 @@ async def corporate_orders(request: Request):
 
     orders = await db["orders"].find({"org_id": user.get("org_id")}).sort("created_at", -1).to_list(200)
     return _render(request, "corporate/orders.html", {"user": user, "orders": orders, "corp_accent": True})
+
+
+@router.get("/corporate/settings", response_class=HTMLResponse)
+async def corporate_settings(request: Request):
+    try:
+        from app.auth import get_dashboard_corporate_admin
+        user = await get_dashboard_corporate_admin(request)
+    except (NotAuthenticated, NotCorporateAdmin):
+        return RedirectResponse(url="/dashboard/login", status_code=303)
+
+    org = await db["organisations"].find_one({"_id": user.get("org_id")})
+    return _render(request, "corporate/settings.html", {
+        "user": user, "org": org, "corp_accent": True,
+    })

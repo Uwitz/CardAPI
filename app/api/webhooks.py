@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Request
 from app.config import get_settings
 from app.database import db, now_iso
 from app.logging_config import logger
-from app.idgen import gen_short_hex, gen_order_id
+from app.idgen import gen_short_hex, gen_order_id, gen_card_id
 
 router = APIRouter(tags=["webhooks"])
 settings = get_settings()
@@ -61,9 +61,18 @@ async def _handle_checkout_completed(session):
     if not order:
         return
 
+    payment_intent = session.get("payment_intent")
+    invoice_id = session.get("invoice")
+
     await db["orders"].update_one(
         {"_id": order_id},
-        {"$set": {"status": "paid", "stripe_session_id": session.get("id"), "updated_at": now}},
+        {"$set": {
+            "status": "paid",
+            "stripe_session_id": session.get("id"),
+            "stripe_payment_intent": payment_intent or order.get("stripe_payment_intent"),
+            "stripe_invoice_id": invoice_id,
+            "updated_at": now,
+        }},
     )
 
     # Create card
@@ -102,14 +111,22 @@ async def _handle_checkout_completed(session):
     )
 
     from app.email import send_email
+    from app.sync import ensure_stripe_customer, link_payment
     user = await db["users"].find_one({"_id": order["user_id"]})
     if user:
+        cu_id = await ensure_stripe_customer(user)
+        if cu_id and not order.get("stripe_customer_id"):
+            await db["orders"].update_one({"_id": order_id}, {"$set": {"stripe_customer_id": cu_id, "updated_at": now}})
         await send_email(user["email"], "Payment Received", "payment_received", {
             "display_name": user.get("display_name", ""),
             "order_id": order_id,
             "amount": order.get("amount_total", 0),
             "card_type": card_type,
         })
+    if payment_intent:
+        await link_payment(order_id, payment_intent=payment_intent)
+    if invoice_id:
+        await link_payment(order_id, invoice_id=invoice_id)
 
 
 async def _handle_checkout_expired(session):

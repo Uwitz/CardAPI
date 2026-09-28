@@ -2,8 +2,11 @@ import re
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse, Response
 
-from app.auth import get_api_user
+from app.auth import get_api_user, verify_activation_token, mark_activation_used
 from app.database import db, now_iso
+from app.config import get_settings
+from app.models import UserActivate
+from app.sanitize import sanitize_vcard_data, validate_redirect_url, sanitize_string
 
 router = APIRouter(prefix="/api/cards", tags=["cards"])
 root_router = APIRouter(tags=["cards-serve"])
@@ -98,9 +101,17 @@ async def update_card(card_id: str, request: Request, user: dict = Depends(get_a
     if not card or card["owner_id"] != user["_id"]:
         raise HTTPException(status_code=404, detail={"error": "not_found"})
     updates = {}
-    for field in ("vcard_data", "redirect_url", "plain_text"):
-        if field in data:
-            updates[field] = data[field]
+    
+    if "vcard_data" in data and data["vcard_data"]:
+        updates["vcard_data"] = sanitize_vcard_data(data["vcard_data"])
+    if "redirect_url" in data and data["redirect_url"]:
+        valid, error = validate_redirect_url(data["redirect_url"])
+        if not valid:
+            raise HTTPException(status_code=400, detail={"error": "invalid_redirect_url", "detail": error})
+        updates["redirect_url"] = sanitize_string(data["redirect_url"], max_length=2048)
+    if "plain_text" in data and data["plain_text"]:
+        updates["plain_text"] = sanitize_string(data["plain_text"], max_length=500)
+    
     if updates:
         updates["updated_at"] = now_iso()
         await db["cards"].update_one({"_id": card["_id"]}, {"$set": updates})
@@ -115,6 +126,22 @@ async def delete_card(card_id: str, user: dict = Depends(get_api_user)):
     await db["cards"].delete_one({"_id": card["_id"]})
     await db["taglink_api_keys"].delete_many({"card_id": card["_id"]})
     return {"status": "deleted"}
+
+
+@router.get("/{card_id}/back", response_class=Response)
+async def get_card_back(card_id: str, user: dict = Depends(get_api_user)):
+    """Render the card back face from stored template data."""
+    card = await db["cards"].find_one({"card_id": card_id})
+    if not card or card["owner_id"] != user["_id"]:
+        raise HTTPException(status_code=404, detail={"error": "not_found"})
+    template_id = card.get("template_id")
+    if not template_id:
+        raise HTTPException(status_code=404, detail={"error": "no_template"})
+    from app.card_templates import render_template_back
+    fields = card.get("template_fields") or {}
+    qr_data = card.get("vcard_data") or fields.get("url") or ""
+    png = render_template_back(template_id, fields, qr_data, card_id)
+    return Response(content=png, media_type="image/png")
 
 
 @router.post("/{card_id}/freeze")
@@ -144,20 +171,86 @@ async def unfreeze_card(card_id: str, user: dict = Depends(get_api_user)):
 
 @router.post("/{card_id}/activate")
 async def activate_card(card_id: str, request: Request):
+    """Activate card with activation token (secure flow only - legacy PIN removed)."""
     data = await request.json()
-    pin = data.get("pin", "")
-    card = await db["cards"].find_one({"card_id": card_id})
-    if not card:
-        raise HTTPException(status_code=404, detail={"error": "not_found"})
+    
+    # Only support token-based activation (secure flow)
+    token = data.get("token") or request.query_params.get("token")
+    password = data.get("password")
+    
+    if not token:
+        raise HTTPException(status_code=400, detail={"error": "activation_token_required", "message": "Activation token is required. Use the link sent via email."})
+    
+    # New activation flow with token
+    valid, card = await verify_activation_token(card_id, token)
+    if not valid or not card:
+        raise HTTPException(status_code=400, detail={"error": "invalid_or_expired_token"})
+    
     if card.get("status") != "pending":
-        raise HTTPException(status_code=400, detail={"error": "not_pending"})
-    if card.get("pin") != pin:
-        raise HTTPException(status_code=400, detail={"error": "invalid_pin"})
+        raise HTTPException(status_code=400, detail={"error": "card_not_pending"})
+    
+    # If password provided, this is user activation (not just card activation)
+    if password:
+        # Get the user and activate them
+        owner_id = card.get("owner_id")
+        if not owner_id:
+            raise HTTPException(status_code=400, detail={"error": "no_owner"})
+        
+        user = await db["users"].find_one({"_id": owner_id})
+        if not user:
+            raise HTTPException(status_code=404, detail={"error": "user_not_found"})
+        
+        if user.get("status") != "pending":
+            raise HTTPException(status_code=400, detail={"error": "user_not_pending"})
+        
+        # Hash new password and activate user
+        from app.auth import hash_password
+        await db["users"].update_one(
+            {"_id": owner_id},
+            {"$set": {"password_hash": hash_password(password), "status": "active", "updated_at": now_iso()}}
+        )
+        
+        # Mark activation token as used
+        await mark_activation_used(card_id)
+        
+        # Activate card
+        await db["cards"].update_one(
+            {"_id": card["_id"]},
+            {"$set": {"status": "active", "pin": None, "updated_at": now_iso()}}
+        )
+        
+        # Send activation complete email
+        from app.sync import sync_user_activation
+        await sync_user_activation(user, card)
+        
+        return {"status": "activated", "user_activated": True}
+    
+    # Just card activation (admin use - no user account to activate)
     await db["cards"].update_one(
         {"_id": card["_id"]},
-        {"$set": {"status": "active", "pin": None}},
+        {"$set": {"status": "active", "pin": None, "updated_at": now_iso()}}
     )
     return {"status": "activated"}
+
+
+@router.get("/activate/{card_id}")
+async def get_activation_page(card_id: str, token: str = None):
+    """Serve activation page for pending cards - redirects to frontend activation page."""
+    card = await db["cards"].find_one({"card_id": card_id})
+    if not card:
+        card = await db["cards"].find_one({"_id": card_id})
+    if not card:
+        raise HTTPException(status_code=404, detail={"error": "not_found"})
+    
+    if card.get("status") == "pending":
+        # Redirect to frontend activation page with token
+        activation_url = f"/activate/{card_id}"
+        if token:
+            activation_url += f"?token={token}"
+        return RedirectResponse(url=activation_url)
+    
+    # If card is active, serve normally
+    return await _serve_card(card_id)
 
 
 @router.post("/{card_id}/convert")

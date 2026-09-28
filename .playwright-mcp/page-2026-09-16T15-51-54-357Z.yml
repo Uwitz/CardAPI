@@ -1,0 +1,55 @@
+- generic [ref=f1e3]:
+  - main [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - generic [ref=f1e6]:
+        - link "UWITZ CARDS" [ref=f1e9] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f1e11]:
+          - text: Get started in minutes
+          - heading "Your NFC card awaits." [level=1] [ref=f1e12]
+          - paragraph [ref=f1e13]: Create an account, choose your card type, and start sharing in seconds. Your digital card is live the moment you subscribe.
+        - generic [ref=f1e14]:
+          - generic [ref=f1e15]:
+            - generic [ref=f1e16]: "3"
+            - generic [ref=f1e17]: Card Types
+          - generic [ref=f1e18]:
+            - generic [ref=f1e19]: 9 Template
+            - generic [ref=f1e20]: Card Designs
+          - generic [ref=f1e21]:
+            - generic [ref=f1e22]: NFC
+            - generic [ref=f1e23]: Tap to Share
+      - generic [ref=f1e26]:
+        - text: Step 1 of 3
+        - heading "Create your account" [level=2] [ref=f1e31]
+        - paragraph [ref=f1e32]: Choose a sign-in method or create an account with email.
+        - generic [ref=f1e33]:
+          - button "Continue with Irys" [ref=f1e34] [cursor=pointer]
+          - button "Continue with Entra ID" [ref=f1e37] [cursor=pointer]
+        - generic [ref=f1e43]: or sign up with email
+        - generic [ref=f1e46]:
+          - generic [ref=f1e47]:
+            - generic [ref=f1e48]: Display Name
+            - textbox "Jane Doe" [ref=f1e49]
+          - generic [ref=f1e50]:
+            - generic [ref=f1e51]:
+              - generic [ref=f1e52]: Username
+              - textbox "jane" [ref=f1e53]
+            - generic [ref=f1e54]:
+              - generic [ref=f1e55]: Email
+              - textbox "jane@example.com" [ref=f1e56]
+          - generic [ref=f1e57]:
+            - generic [ref=f1e58]: Password
+            - textbox "Min 8 characters" [ref=f1e59]
+          - button "Continue" [ref=f1e60] [cursor=pointer]
+        - generic [ref=f1e61]:
+          - text: Already have an account?
+          - link "Sign in" [ref=f1e62] [cursor=pointer]:
+            - /url: /dashboard/login
+  - contentinfo [ref=f1e63]:
+    - paragraph [ref=f1e64]:
+      - text: © 2026 Uwitz Cards ·
+      - link "Privacy" [ref=f1e65] [cursor=pointer]:
+        - /url: /privacy
+      - text: ·
+      - link "Terms" [ref=f1e66] [cursor=pointer]:
+        - /url: /terms

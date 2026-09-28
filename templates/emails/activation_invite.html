@@ -1,0 +1,16 @@
+{% extends "emails/base.html" %}
+{% block content %}
+<h1 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Activate Your Uwitz Card</h1>
+<p style="color: #525252; font-size: 14px;">Hi {{ display_name }},</p>
+<p style="color: #525252; font-size: 14px;">Your physical card <code>{{ card_id }}</code> has been prepared and is ready for activation.</p>
+<p style="color: #525252; font-size: 14px;">An account has been created for you. Click the button below to set your password and activate your card:</p>
+
+<div style="text-align: center; margin: 24px 0;">
+  <a href="{{ activation_url }}" style="display: inline-block; padding: 12px 28px; background: #dc2626; color: white; border-radius: 8px; font-weight: 500; font-size: 14px; text-decoration: none;">Activate Your Card</a>
+</div>
+
+<p style="color: #525252; font-size: 14px;">Or copy this link into your browser:</p>
+<p style="color: #dc2626; font-size: 13px; font-family: monospace; word-break: break-all;">{{ activation_url }}</p>
+
+<p style="color: #525252; font-size: 14px; margin-top: 24px;">This link expires in 7 days. If you didn't expect this email, please contact support.</p>
+{% endblock %}

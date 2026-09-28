@@ -1,0 +1,15 @@
+{
+  "cookies": [
+    {
+      "name": "uwitz_csrf",
+      "value": "f6657c7d0ac5a9cd8a2e175149bb5094c7f048e49572f8a2e577188af4a9d3cb",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1790242100.312952,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Processing Addendum — {{ brand }}</title>
+  <meta name="theme-color" content="#09090A">
+  <link rel="icon" type="image/png" href="/static/assets/NFCCard.png">
+  <link rel="stylesheet" href="/static/css/base.css">
+  <link rel="stylesheet" href="/static/css/components.css">
+  <link rel="stylesheet" href="/static/css/utilities.css">
+  <style>
+    .legal-layout { max-width: 800px; margin: 0 auto; padding: 48px 24px 80px; }
+    .legal-layout h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .legal-layout h2 { font-size: 1.25rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.75rem; color: var(--text-strong); }
+    .legal-layout h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-strong); }
+    .legal-layout p { font: 400 14px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 1rem; }
+    .legal-layout ul { margin: 0 0 1rem 1.25rem; }
+    .legal-layout li { font: 400 14px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 0.25rem; }
+    .legal-layout table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 13px; }
+    .legal-layout th, .legal-layout td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; }
+    .legal-layout th { background: var(--bg-inset); font-weight: 600; }
+    .legal-meta { font: 500 12px/1 var(--font-mono); color: var(--text-muted); margin-bottom: 2rem; }
+    .signature-block { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+    .signature-field { margin-bottom: 1.5rem; }
+    .signature-field label { display: block; font: 500 13px/1 var(--font-sans); margin-bottom: 4px; }
+    .signature-field input { width: 100%; padding: 10px 12px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-md); font: 400 13px/1 var(--font-sans); }
+  </style>
+</head>
+<body style="background: var(--bg-1); min-height: 100vh;">
+  <main class="legal-layout">
+    <a href="/" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; margin-bottom: 24px;">
+      <img src="/static/assets/NFCCard.png" alt="" style="width: 24px; height: auto;">
+      <span style="font: 600 12px/1 var(--font-mono); letter-spacing: 0.1em; color: var(--text-strong);">UWITZ CARDS</span>
+    </a>
+
+    <h1>Data Processing Addendum (DPA)</h1>
+    <div class="legal-meta">
+      Version 1.0 · Effective 7 September 2026<br>
+      Compliant with GDPR Art. 28, nFADP Art. 9, PDPA s.24
+    </div>
+
+    <div style="padding: 14px 16px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 2rem;">
+      <p style="margin: 0; font: 400 12px/1.6 var(--font-sans); color: var(--text-muted);">
+        <strong>Purpose:</strong> This Data Processing Addendum forms part of the Terms of Service between Uwitz Cards ("Processor") and the Customer ("Controller") and sets out the terms under which the Processor processes personal data on behalf of the Controller in compliance with GDPR Art. 28, nFADP Art. 9, and PDPA s.24.
+      </p>
+    </div>
+
+    <h2>1. Definitions</h2>
+    <p>The terms "Personal Data", "Processing", "Controller", "Processor", "Data Subject", "Supervisory Authority", and "Sub-processor" have the meanings given in GDPR Art. 4. "Customer" means the entity using Uwitz Cards services. "Services" means the NFC card management platform provided by Uwitz Cards.</p>
+
+    <h2>2. Scope and Duration</h2>
+    <ul>
+      <li><strong>Subject Matter:</strong> Processing of personal data for account management, card creation, order fulfillment, payment processing, and communications.</li>
+      <li><strong>Duration:</strong> The term of the agreement between Controller and Processor, plus 30 days after termination for data deletion.</li>
+      <li><strong>Categories of Data Subjects:</strong> Customers' users, employees, and card recipients.</li>
+      <li><strong>Categories of Personal Data:</strong> Account data, card content, order/shipping data, payment data, usage data, security logs.</li>
+      <li><strong>Special Categories:</strong> None processed.</li>
+    </ul>
+
+    <h2>3. Processor's Obligations (GDPR Art. 28(3), nFADP Art. 9, PDPA s.24)</h2>
+    <h3>3.1 Processing Instructions</h3>
+    <p>The Processor shall process personal data only on documented instructions from the Controller, including transfers to third countries, unless required by EU or Member State law. The Processor shall inform the Controller if an instruction infringes GDPR or other applicable law.</p>
+
+    <h3>3.2 Confidentiality</h3>
+    <p>The Processor ensures that persons authorized to process personal data have committed to confidentiality or are under statutory obligation of confidentiality.</p>
+
+    <h3>3.3 Security Measures (GDPR Art. 32)</h3>
+    <p>The Processor implements appropriate technical and organizational measures:</p>
+    <ul>
+      <li>Encryption in transit (TLS 1.3) and at rest (AES-256)</li>
+      <li>Access controls (role-based, least privilege, MFA for admin)</li>
+      <li>Regular security testing and vulnerability assessments</li>
+      <li>Incident response and breach notification procedures</li>
+      <li>Data backup and disaster recovery</li>
+    </ul>
+
+    <h3>3.4 Sub-processors</h3>
+    <p>The Processor engages the following sub-processors. The Controller provides general written authorization:</p>
+    <table>
+      <thead>
+        <tr><th>Sub-processor</th><th>Service</th><th>Location</th><th>Safeguards</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Stripe Inc.</td><td>Payment processing</td><td>USA</td><td>SCCs, PCI DSS Level 1</td></tr>
+        <tr><td>SMTP2Go</td><td>Email delivery</td><td>New Zealand / USA</td><td>SCCs</td></tr>
+        <tr><td>MongoDB Atlas</td><td>Database hosting</td><td>EU / USA</td><td>SCCs, BCRs, SOC 2</td></tr>
+        <tr><td>Entra ID (Microsoft)</td><td>Identity provider</td><td>Global</td><td>Standard Contractual Clauses</td></tr>
+      </tbody>
+    </table>
+    <p>The Processor shall notify the Controller of any intended changes to sub-processors at least 30 days in advance, giving the Controller the right to object.</p>
+
+    <h3>3.5 Data Subject Rights</h3>
+    <p>The Processor shall assist the Controller in fulfilling data subject rights requests (access, rectification, erasure, restriction, portability, objection) within the timeframes required by law, by providing the technical means via the compliance API endpoints.</p>
+
+    <h3>3.6 Breach Notification</h3>
+    <p>The Processor shall notify the Controller without undue delay after becoming aware of a personal data breach, and in any event within 24 hours, providing details sufficient for the Controller to meet its notification obligations under GDPR Art. 33-34.</p>
+
+    <h3>3.7 Deletion and Return of Data</h3>
+    <p>Upon termination, the Processor shall delete or return all personal data to the Controller and delete existing copies, unless storage is required by law. The Processor shall provide written certification of deletion.</p>
+
+    <h3>3.8 Audit Rights</h3>
+    <p>The Controller may audit the Processor's compliance with this DPA upon reasonable notice, or require the Processor to provide a SOC 2 Type II report or equivalent certification. The Processor shall make available all information necessary to demonstrate compliance.</p>
+
+    <h2>4. International Data Transfers (GDPR Ch. V, nFADP Art. 16-17, PDPA s.26)</h2>
+    <p>Personal data may be transferred to countries outside the EEA/Switzerland/Singapore. Transfers rely on:</p>
+    <ul>
+      <li>Adequacy decisions (where applicable)</li>
+      <li>Standard Contractual Clauses (SCCs) approved by the European Commission</li>
+      <li>Binding Corporate Rules (BCRs) where applicable</li>
+      <li>Derogations under GDPR Art. 49 (explicit consent, contract necessity)</li>
+    </ul>
+    <p>Current sub-processor locations: USA (Stripe), New Zealand (SMTP2Go), Global (Microsoft Entra ID). SCCs are in place for all non-adequate jurisdictions.</p>
+
+    <h2>5. Liability and Indemnification</h2>
+    <p>Each party's liability is governed by the main agreement. The Processor's total liability for data protection breaches shall not exceed the fees paid by the Controller in the 12 months preceding the claim, except for willful misconduct or gross negligence.</p>
+
+    <h2>6. Term and Termination</h2>
+    <ul>
+      <li>This DPA takes effect upon acceptance of the Terms of Service.</li>
+      <li>It terminates automatically upon termination of the main agreement.</li>
+      <li>Upon termination, the Processor shall delete or return all personal data within 30 days.</li>
+    </ul>
+
+    <h2>7. Governing Law and Jurisdiction</h2>
+    <p>This DPA is governed by the laws of Estonia (intended jurisdiction). Disputes arising from this DPA shall be resolved in the courts of Estonia, unless mandatory data protection law provides otherwise.</p>
+
+    <h2>8. General Provisions</h2>
+    <ul>
+      <li>This DPA constitutes the entire agreement between the parties regarding data processing.</li>
+      <li>Amendments require written agreement from both parties.</li>
+      <li>If any provision is invalid, the remaining provisions remain in force.</li>
+      <li>This DPA may be executed in counterparts, each of which is an original.</li>
+    </ul>
+
+    <div class="signature-block">
+      <h3>Execution</h3>
+      <p>This Data Processing Addendum is executed electronically upon acceptance of the Terms of Service.</p>
+      
+      <div class="signature-field">
+        <label>Controller (Customer) — Authorized Signatory</label>
+        <input type="text" placeholder="Full Name" readonly value="[Customer Legal Entity Name]">
+        <input type="text" placeholder="Title" readonly value="[Title]">
+        <input type="text" placeholder="Date" readonly value="[Date]">
+      </div>
+      
+      <div class="signature-field">
+        <label>Processor (Uwitz Cards) — Authorized Signatory</label>
+        <input type="text" placeholder="Full Name" readonly value="Uwitz Cards">
+        <input type="text" placeholder="Title" readonly value="Data Protection Officer">
+        <input type="text" placeholder="Date" readonly value="7 September 2026">
+      </div>
+      
+      <p style="margin-top: 2rem; font: 400 12px/1.5 var(--font-sans); color: var(--text-muted);">
+        This DPA is incorporated by reference into the Terms of Service. Acceptance of the Terms of Service constitutes acceptance of this DPA.
+      </p>
+    </div>
+
+    <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-faint);">
+      <a href="/privacy" style="color: var(--text-link); margin-right: 1rem; text-decoration: underline;">Privacy Policy</a>
+      <a href="/terms" style="color: var(--text-link); text-decoration: underline;">Terms of Service</a>
+    </div>
+  </main>
+</body>
+</html>

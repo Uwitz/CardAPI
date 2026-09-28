@@ -1,0 +1,47 @@
+- generic [ref=f3e3]:
+  - main [ref=f3e4]:
+    - generic [ref=f3e5]:
+      - generic [ref=f3e6]:
+        - link "UWITZ CARDS" [ref=f3e9] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f3e11]:
+          - text: NFC Card Platform
+          - heading "Manage your cards, your way." [level=1] [ref=f3e12]
+          - paragraph [ref=f3e13]: Create, order, and manage NFC business cards. Social cards, corporate cards, and dynamic TagLink cards.
+        - generic [ref=f3e14]:
+          - generic [ref=f3e15]:
+            - generic [ref=f3e16]: NFC
+            - generic [ref=f3e17]: NTAG 215
+          - generic [ref=f3e18]:
+            - generic [ref=f3e19]: API
+            - generic [ref=f3e20]: TagLink
+          - generic [ref=f3e21]:
+            - generic [ref=f3e22]: vCard
+            - generic [ref=f3e23]: Contact
+      - generic [ref=f3e25]:
+        - text: Secure sign-in
+        - heading "Sign in to continue" [level=2] [ref=f3e26]
+        - paragraph [ref=f3e27]: Choose your sign-in method below.
+        - generic [ref=f3e28]:
+          - button "Sign in with Irys" [ref=f3e29] [cursor=pointer]
+          - button "Sign in with Entra ID" [ref=f3e32] [cursor=pointer]
+        - generic [ref=f3e38]: or sign in with email
+        - generic [ref=f3e39]:
+          - textbox "Email address" [active] [ref=f3e41]
+          - textbox "Password" [ref=f3e43]
+          - button "Sign in with email" [ref=f3e44] [cursor=pointer]
+        - generic [ref=f3e45]:
+          - text: Don't have an account?
+          - link "Register" [ref=f3e46] [cursor=pointer]:
+            - /url: /register
+          - text: ·
+          - link "Back to site" [ref=f3e47] [cursor=pointer]:
+            - /url: /
+  - contentinfo [ref=f3e48]:
+    - paragraph [ref=f3e49]:
+      - text: © 2026 Uwitz Cards ·
+      - link "Privacy" [ref=f3e50] [cursor=pointer]:
+        - /url: /privacy
+      - text: ·
+      - link "Terms" [ref=f3e51] [cursor=pointer]:
+        - /url: /terms

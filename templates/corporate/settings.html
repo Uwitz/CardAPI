@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block body_class %}corporate-accent{% endblock %}
+{% block title %}Org Settings — {{ brand }}{% endblock %}
+{% block page_title %}Org Settings{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>Organisation Settings</h1>
+    <p class="page-head-sub">Manage your org profile, slug, and custom domain</p>
+  </div>
+  <div class="page-head-actions">
+    <a href="/corporate" class="btn-ghost btn-sm">← Back to Dashboard</a>
+  </div>
+</div>
+
+{% if not org %}
+<div class="empty-state">
+  <p class="font-semibold">No organisation yet</p>
+  <p class="text-sm text-muted" style="margin-top: 4px;">Create one to start issuing corporate cards.</p>
+  <button class="btn-primary btn-sm" style="margin-top: 12px;" onclick="createOrg()">Create Organisation</button>
+  <div id="org-create-result" style="margin-top: 12px; font-size: 12px; display: none; text-align: center;"></div>
+</div>
+{% else %}
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+  <div class="card">
+    <h3 style="font-weight: 600; margin-bottom: 1rem;">Profile</h3>
+    <div class="form-group" style="margin-bottom: 16px;">
+      <label class="form-label" for="org-name">Organisation Name</label>
+      <input type="text" id="org-name" class="form-input" value="{{ org.name or '' }}">
+    </div>
+    <div class="form-group" style="margin-bottom: 16px;">
+      <label class="form-label" for="org-slug">Slug</label>
+      <input type="text" id="org-slug" class="form-input" value="{{ org.slug or '' }}" pattern="[a-z0-9-]+">
+      <div class="text-xs text-muted" style="margin-top: 4px;">Used in URLs. Lowercase letters, numbers, hyphens.</div>
+    </div>
+    <div class="form-group" style="margin-bottom: 16px;">
+      <label class="form-label" for="org-domain">Custom Domain</label>
+      <input type="text" id="org-domain" class="form-input" value="{{ org.custom_domain or '' }}" placeholder="cards.yourcompany.com">
+      <div class="text-xs text-muted" style="margin-top: 4px;">Optional. You'll verify ownership with a TXT record.</div>
+    </div>
+    <button class="btn-primary btn-sm" onclick="saveSettings()">Save Changes</button>
+    <div id="settings-result" style="margin-top: 12px; font-size: 12px; display: none; text-align: center;"></div>
+  </div>
+
+  <div class="card">
+    <div class="flex items-center justify-between mb-4">
+      <h3 style="font-weight: 600;">Domain Verification</h3>
+      <span id="domain-status" class="tag {% if org.domain_verified %}tag-success{% else %}tag-neutral{% endif %}">
+        {% if org.domain_verified %}Verified{% else %}Not verified{% endif %}
+      </span>
+    </div>
+    {% if org.custom_domain %}
+      {% if not org.domain_verified %}
+      <p class="text-sm text-muted" style="margin-bottom: 12px;">
+        Add this TXT record to <span class="font-mono">{{ org.custom_domain }}</span>'s DNS, then verify below.
+        The token is generated when you save a new domain.
+      </p>
+      {% if org.domain_token %}
+      <div class="text-sm" style="margin-bottom: 16px;">
+        <div style="margin-bottom: 4px; color: var(--text-muted);">TXT record:</div>
+        <div class="font-mono text-xs" style="background: var(--bg-inset); padding: 10px; border-radius: 8px; word-break: break-all;">
+          <span class="text-muted">_uwitz-cards.{{ org.custom_domain }} &nbsp;→&nbsp; </span><span>uwitz-domain-verify={{ org.domain_token }}</span>
+        </div>
+      </div>
+      {% else %}
+      <p class="text-sm text-muted" style="margin-bottom: 16px;">Save the domain first to generate a verification token.</p>
+      {% endif %}
+      <button class="btn-primary btn-sm" onclick="verifyDomain()">Verify Domain</button>
+      <button class="btn-ghost btn-sm" onclick="removeDomain()">Remove Domain</button>
+      {% else %}
+      <p class="text-sm text-muted" style="margin-bottom: 12px;">✅ <span class="font-mono">{{ org.verified_domain or org.custom_domain }}</span> is verified.</p>
+      <button class="btn-ghost btn-sm" onclick="removeDomain()">Remove Domain</button>
+      {% endif %}
+    {% else %}
+      <p class="text-sm text-muted">No custom domain set. Add one in the Profile card.</p>
+    {% endif %}
+    <div id="domain-result" style="margin-top: 12px; font-size: 12px; display: none; text-align: center;"></div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+{% block head %}
+<script>
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+function showResult(id, ok, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'block';
+  el.style.color = ok ? 'var(--green-400)' : 'var(--red-400)';
+  el.textContent = msg;
+}
+
+async function createOrg() {
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = 'Creating…';
+  const res = await fetch('/api/corporate/org', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    body: JSON.stringify({}),
+  });
+  if (res.ok) { location.reload(); }
+  else {
+    const data = await res.json();
+    btn.disabled = false; btn.textContent = 'Create Organisation';
+    showResult('org-create-result', false, data.detail?.error || 'Failed');
+  }
+}
+
+async function saveSettings() {
+  const name = document.getElementById('org-name')?.value?.trim();
+  const slug = document.getElementById('org-slug')?.value?.trim();
+  const domain = document.getElementById('org-domain')?.value?.trim();
+  if (!name) { showResult('settings-result', false, 'Name is required'); return; }
+  showResult('settings-result', true, 'Saving…');
+  const res = await fetch('/api/corporate/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    body: JSON.stringify({ name, slug, custom_domain: domain || null }),
+  });
+  const data = await res.json();
+  if (res.ok) { showResult('settings-result', true, 'Saved. Reloading…'); setTimeout(() => location.reload(), 800); }
+  else { showResult('settings-result', false, data.detail?.error || 'Failed'); }
+}
+
+async function verifyDomain() {
+  showResult('domain-result', true, 'Checking DNS…');
+  const res = await fetch('/api/corporate/settings/domain/verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    body: '{}',
+  });
+  const data = await res.json();
+  if (res.ok && data.verified) { showResult('domain-result', true, 'Verified! Reloading…'); setTimeout(() => location.reload(), 800); }
+  else { const msg = data.detail?.error || data.error || 'Not found'; showResult('domain-result', false, msg); }
+}
+
+async function removeDomain() {
+  if (!confirm('Remove the custom domain?')) return;
+  const res = await fetch('/api/corporate/settings', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    body: JSON.stringify({ remove_domain: true }),
+  });
+  if (res.ok) location.reload();
+}
+</script>
+{% endblock %}

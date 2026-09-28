@@ -1,0 +1,78 @@
+- generic [ref=f36e2]:
+  - complementary [ref=f36e3]:
+    - link "UWITZ CARDS" [ref=f36e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f36e7]:
+      - generic [ref=f36e8]: Overview
+      - link "Dashboard" [ref=f36e9] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f36e16] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f36e20] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f36e25] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+      - generic [ref=f36e30]: Corporate
+      - link "Org Dashboard" [ref=f36e31] [cursor=pointer]:
+        - /url: /corporate
+      - link "Org Cards" [ref=f36e35] [cursor=pointer]:
+        - /url: /corporate/cards
+      - link "Members" [ref=f36e39] [cursor=pointer]:
+        - /url: /corporate/members
+      - link "Org Orders" [ref=f36e46] [cursor=pointer]:
+        - /url: /corporate/orders
+      - link "Org Settings" [ref=f36e51] [cursor=pointer]:
+        - /url: /corporate/settings
+      - generic [ref=f36e56]:
+        - generic [ref=f36e57]: Logistics
+        - link "Logistics" [ref=f36e58] [cursor=pointer]:
+          - /url: /logistics
+        - link "Orders" [ref=f36e65] [cursor=pointer]:
+          - /url: /logistics/orders
+      - generic [ref=f36e70]:
+        - generic [ref=f36e71]: Admin
+        - link "Admin Panel" [ref=f36e72] [cursor=pointer]:
+          - /url: /admin
+        - link "Users" [ref=f36e76] [cursor=pointer]:
+          - /url: /admin/users
+        - link "All Cards" [ref=f36e83] [cursor=pointer]:
+          - /url: /admin/cards
+        - link "All Orders" [ref=f36e87] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Subscriptions" [ref=f36e92] [cursor=pointer]:
+          - /url: /admin/subscriptions
+        - link "Pricing" [ref=f36e96] [cursor=pointer]:
+          - /url: /admin/pricing
+        - link "Unassigned Cards" [ref=f36e100] [cursor=pointer]:
+          - /url: /admin/orphans
+        - link "Email Logs" [ref=f36e104] [cursor=pointer]:
+          - /url: /admin/email-logs
+    - generic [ref=f36e109]:
+      - generic [ref=f36e110]:
+        - generic [ref=f36e111]: E
+        - generic [ref=f36e112]:
+          - generic [ref=f36e113]: Edward Paxton
+          - generic [ref=f36e114]: admin
+      - button "Sign out" [ref=f36e116] [cursor=pointer]
+  - generic [ref=f36e119]:
+    - banner [ref=f36e120]:
+      - generic [ref=f36e121]: Org Settings
+    - main [ref=f36e122]:
+      - generic [ref=f36e123]:
+        - generic [ref=f36e124]:
+          - heading "Organisation Settings" [level=1] [ref=f36e125]
+          - paragraph [ref=f36e126]: Manage your org profile, slug, and custom domain
+        - link "← Back to Dashboard" [ref=f36e128] [cursor=pointer]:
+          - /url: /corporate
+      - generic [ref=f36e129]:
+        - paragraph [ref=f36e130]: No organisation yet
+        - paragraph [ref=f36e131]: Create one to start issuing corporate cards.
+        - button "Create Organisation" [ref=f36e132] [cursor=pointer]
+    - contentinfo [ref=f36e133]:
+      - paragraph [ref=f36e134]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f36e135] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f36e136] [cursor=pointer]:
+          - /url: /terms

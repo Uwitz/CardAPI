@@ -1,0 +1,47 @@
+- main [ref=f3e2]:
+  - link "UWITZ CARDS" [ref=f3e3] [cursor=pointer]:
+    - /url: /
+  - heading "Terms of Service" [level=1] [ref=f3e5]
+  - generic [ref=f3e6]: Effective 7 September 2026 · Last updated 7 September 2026
+  - paragraph [ref=f3e8]:
+    - strong [ref=f3e9]: "Legal status:"
+    - text: Uwitz is currently unincorporated. We are preparing to legally register and operate under Estonia in the foreseeable future.
+  - heading "1. Acceptance of terms" [level=2] [ref=f3e10]
+  - paragraph [ref=f3e11]: By creating an account or using Uwitz Cards, you agree to these terms. If you don't agree, don't use the service.
+  - heading "2. Service description" [level=2] [ref=f3e12]
+  - paragraph [ref=f3e13]: Uwitz Cards provides NFC business card management, including digital card creation, physical card ordering and printing, TagLink dynamic redirects, and corporate card management.
+  - heading "3. Accounts" [level=2] [ref=f3e14]
+  - list [ref=f3e15]:
+    - listitem [ref=f3e16]: You must provide accurate information when creating an account.
+    - listitem [ref=f3e17]: You're responsible for securing your account credentials.
+    - listitem [ref=f3e18]: SSO accounts (Entra ID, Irys) are subject to the respective provider's authentication policies.
+    - listitem [ref=f3e19]: We may suspend accounts that violate these terms.
+  - heading "4. Cards and content" [level=2] [ref=f3e20]
+  - list [ref=f3e21]:
+    - listitem [ref=f3e22]: You retain ownership of the content you put on your cards.
+    - listitem [ref=f3e23]: You grant us a limited license to store and render your card content as part of the service.
+    - listitem [ref=f3e24]: You're responsible for ensuring your card content is lawful and doesn't infringe third-party rights.
+    - listitem [ref=f3e25]: Card images must meet ISO/IEC 7810 ID-1 specifications (85.6mm × 54mm @ 300 DPI minimum).
+  - heading "5. Physical cards" [level=2] [ref=f3e26]
+  - list [ref=f3e27]:
+    - listitem [ref=f3e28]: Physical cards are printed on ISO/IEC 7810 ID-1 compliant stock with embedded NTAG 215 NFC chips.
+    - listitem [ref=f3e29]: Printing and shipping are handled by our logistics team. Delivery times are estimates, not guarantees.
+    - listitem [ref=f3e30]: Card designs are your responsibility — we print what you upload.
+  - heading "6. Payments" [level=2] [ref=f3e31]
+  - list [ref=f3e32]:
+    - listitem [ref=f3e33]: All payments are processed via Stripe. We never store your payment card details.
+    - listitem [ref=f3e34]: Subscriptions auto-renew unless cancelled before the renewal date.
+    - listitem [ref=f3e35]: Refund requests are handled on a case-by-case basis within 14 days of purchase.
+  - heading "7. TagLink API" [level=2] [ref=f3e36]
+  - list [ref=f3e37]:
+    - listitem [ref=f3e38]: TagLink API keys are your responsibility. Rotate them if compromised.
+    - listitem [ref=f3e39]: API usage is rate-limited to 60 requests per minute per key.
+    - listitem [ref=f3e40]: We reserve the right to throttle or revoke keys that abuse the service.
+  - heading "8. Termination" [level=2] [ref=f3e41]
+  - paragraph [ref=f3e42]: You can delete your account at any time. We may terminate accounts that violate these terms. Upon termination, your data will be handled per our Privacy Policy.
+  - heading "9. Limitation of liability" [level=2] [ref=f3e43]
+  - paragraph [ref=f3e44]: Uwitz Cards is provided "as is" without warranties. We're not liable for indirect, incidental, or consequential damages. Our total liability doesn't exceed the amount you paid us in the last 12 months.
+  - heading "10. Changes" [level=2] [ref=f3e45]
+  - paragraph [ref=f3e46]: We may update these terms. Continued use after changes constitutes acceptance. Material changes will be communicated via email or platform notice.
+  - link "← Back to Uwitz Cards" [ref=f3e48] [cursor=pointer]:
+    - /url: /

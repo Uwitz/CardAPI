@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Subscription Required — {{ brand }}</title>
   <meta name="theme-color" content="#09090A">
-  <link rel="icon" type="image/svg+xml" href="/static/assets/uwitz_logo.svg">
+  <link rel="icon" type="image/png" href="/static/assets/NFCCard.png">
   <link rel="stylesheet" href="/static/css/base.css">
   <link rel="stylesheet" href="/static/css/components.css">
   <link rel="stylesheet" href="/static/css/utilities.css">
@@ -25,7 +25,7 @@
     }
     .sub-icon svg { width: 32px; height: 32px; color: var(--accent); }
     .sub-title { font: var(--fw-semibold) 22px/1.2 var(--font-hero); color: var(--text-strong); letter-spacing: -0.02em; margin-bottom: 8px; }
-    .sub-desc { font: 400 14px/1.6 var(--font-sans); color: var(--text-muted); margin-bottom: 24px; }
+    .sub-desc { font: 400 14px/1.6 var(--font-sans); color: var(--text-body); margin-bottom: 24px; }
     .sub-plan { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 16px; }
     .sub-plan-name { font: var(--fw-medium) 14px/1 var(--font-sans); color: var(--text-strong); }
     .sub-plan-price { font: var(--fw-bold) 16px/1 var(--font-mono); color: var(--accent); }
@@ -33,11 +33,11 @@
   </style>
 </head>
 <body>
-  <div class="sub-card animate-fade-up">
+  <main class="sub-card animate-fade-up">
     <div class="sub-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
     </div>
-    <div class="sub-title">Subscription Required</div>
+    <h1 class="sub-title" style="margin:0 0 8px;">Subscription Required</h1>
     <div class="sub-desc">This card needs an active subscription to function. Choose a plan below to activate it.</div>
 
     {% if card %}
@@ -54,8 +54,8 @@
     <div class="sub-actions">
       <a href="/dashboard/login" class="btn-primary" style="text-decoration: none;">Sign in to Subscribe</a>
       <a href="/register" class="btn-ghost" style="text-decoration: none;">Create Account</a>
-      <a href="/" style="font: 400 12px/1 var(--font-sans); color: var(--text-faint); text-decoration: none; margin-top: 8px;">Back to site</a>
+      <a href="/" style="font: 400 12px/1 var(--font-sans); color: var(--text-body); text-decoration: none; margin-top: 8px;">Back to site</a>
     </div>
-  </div>
+  </main>
 </body>
 </html>

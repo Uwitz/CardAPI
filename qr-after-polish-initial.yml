@@ -1,0 +1,94 @@
+- group [ref=e211]:
+  - generic [ref=e212]: Shape & style
+  - generic [ref=e213]:
+    - generic [ref=e214]: Square style
+    - combobox "Square style" [ref=e215] [cursor=pointer]:
+      - option "0" [selected]
+      - option "1"
+      - option "2"
+      - option "3"
+      - option "4"
+      - option "5"
+      - option "6"
+      - option "7"
+      - option "8"
+      - option "9"
+      - option "10"
+      - option "11"
+      - option "12"
+      - option "13"
+      - option "14"
+      - option "15"
+      - option "16"
+      - option "17"
+      - option "18"
+      - option "19"
+      - option "20"
+      - option "21"
+      - option "22"
+      - option "23"
+      - option "24"
+  - generic [ref=e216]:
+    - generic [ref=e217]: Inner eye style
+    - combobox "Inner eye style" [ref=e218] [cursor=pointer]:
+      - option "0" [selected]
+      - option "1"
+      - option "2"
+      - option "3"
+      - option "4"
+      - option "5"
+      - option "6"
+      - option "7"
+  - generic [ref=e219]:
+    - generic [ref=e220]: Outer eye style
+    - combobox "Outer eye style" [ref=e221] [cursor=pointer]:
+      - option "0" [selected]
+      - option "1"
+      - option "2"
+      - option "3"
+      - option "4"
+      - option "5"
+      - option "6"
+  - generic [ref=e222]: Frame
+  - generic [ref=e223]:
+    - generic [ref=e224]: Frame style
+    - combobox "Frame style" [ref=e225] [cursor=pointer]:
+      - option "0" [selected]
+      - option "1"
+      - option "2"
+      - option "3"
+      - option "4"
+      - option "5"
+      - option "6"
+      - option "7"
+      - option "8"
+      - option "9"
+      - option "10"
+      - option "11"
+      - option "12"
+      - option "13"
+      - option "14"
+      - option "15"
+  - generic [ref=e226]:
+    - generic [ref=e227]: Frame text
+    - textbox "Frame text" [ref=e228]: SCAN ME
+  - generic [ref=e229]:
+    - generic [ref=e230]: Frame icon
+    - combobox "Frame icon" [ref=e231] [cursor=pointer]:
+      - option "None" [selected]
+      - option "Comment"
+      - option "Comment (outline)"
+      - option "Address book"
+      - option "Address book (outline)"
+      - option "Calendar check"
+      - option "Calendar check (outline)"
+      - option "Calendar"
+      - option "Calendar (outline)"
+      - option "User"
+      - option "User (outline)"
+      - option "ID card"
+      - option "ID card (outline)"
+      - option "Image"
+      - option "Image (outline)"
+      - option "Mobile"
+      - option "Wi-Fi"

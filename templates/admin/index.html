@@ -2,9 +2,11 @@
 {% block title %}Admin — {{ brand }}{% endblock %}
 {% block page_title %}Admin Panel{% endblock %}
 {% block content %}
-<div class="page-header page-header-admin animate-fade-up">
-  <h1>Admin Panel</h1>
-  <p>System overview and management</p>
+<div class="page-head animate-fade-up">
+  <div class="page-head-main">
+    <h1>Admin Panel</h1>
+    <p class="page-head-sub">System overview and management</p>
+  </div>
 </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -26,30 +28,40 @@
   </div>
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-  <a href="/admin/users" class="card" style="text-decoration: none;">
-    <div class="font-semibold">Manage Users</div>
-    <div class="text-sm text-muted mt-1">Create, edit, suspend users</div>
+<div class="section-head">
+  <h2 class="section-title">Management</h2>
+</div>
+
+<div class="card-grid">
+  <a href="/admin/users" class="data-card data-card-hover" style="text-decoration: none;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent);"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    <div class="data-card-title" style="margin-top: var(--space-3);">Manage Users</div>
+    <div class="data-card-sub">Create, edit, suspend users</div>
   </a>
-  <a href="/admin/cards" class="card" style="text-decoration: none;">
-    <div class="font-semibold">Manage Cards</div>
-    <div class="text-sm text-muted mt-1">View and manage all cards</div>
+  <a href="/admin/cards" class="data-card data-card-hover" style="text-decoration: none;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--corp-accent);"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+    <div class="data-card-title" style="margin-top: var(--space-3);">Manage Cards</div>
+    <div class="data-card-sub">View and manage all cards</div>
   </a>
-  <a href="/admin/orders" class="card" style="text-decoration: none;">
-    <div class="font-semibold">Manage Orders</div>
-    <div class="text-sm text-muted mt-1">View all orders and status</div>
+  <a href="/admin/orders" class="data-card data-card-hover" style="text-decoration: none;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--green-400);"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    <div class="data-card-title" style="margin-top: var(--space-3);">Manage Orders</div>
+    <div class="data-card-sub">View all orders and status</div>
   </a>
-  <a href="/admin/subscriptions" class="card" style="text-decoration: none;">
-    <div class="font-semibold">Subscriptions</div>
-    <div class="text-sm text-muted mt-1">All active subscriptions</div>
+  <a href="/admin/subscriptions" class="data-card data-card-hover" style="text-decoration: none;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--amber-400);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    <div class="data-card-title" style="margin-top: var(--space-3);">Subscriptions</div>
+    <div class="data-card-sub">All active subscriptions</div>
   </a>
-  <a href="/admin/pricing" class="card" style="text-decoration: none;">
-    <div class="font-semibold">Pricing</div>
-    <div class="text-sm text-muted mt-1">View and configure pricing</div>
+  <a href="/admin/pricing" class="data-card data-card-hover" style="text-decoration: none;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--info);"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    <div class="data-card-title" style="margin-top: var(--space-3);">Pricing</div>
+    <div class="data-card-sub">View and configure pricing</div>
   </a>
-  <a href="/admin/email-logs" class="card" style="text-decoration: none;">
-    <div class="font-semibold">Email Logs</div>
-    <div class="text-sm text-muted mt-1">Sent email history</div>
+  <a href="/admin/email-logs" class="data-card data-card-hover" style="text-decoration: none;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--blue-400);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    <div class="data-card-title" style="margin-top: var(--space-3);">Email Logs</div>
+    <div class="data-card-sub">Sent email history</div>
   </a>
 </div>
 {% endblock %}

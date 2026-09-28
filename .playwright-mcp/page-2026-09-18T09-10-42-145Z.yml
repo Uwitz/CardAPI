@@ -1,0 +1,331 @@
+- generic [ref=f6e2]:
+  - complementary [ref=f6e3]:
+    - link "UWITZ CARDS" [ref=f6e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f6e7]:
+      - generic [ref=f6e8]: Overview
+      - link "Dashboard" [ref=f6e9] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f6e16] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f6e20] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f6e25] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+      - generic [ref=f6e30]: Corporate
+      - link "Org Dashboard" [ref=f6e31] [cursor=pointer]:
+        - /url: /corporate
+      - link "Org Cards" [ref=f6e35] [cursor=pointer]:
+        - /url: /corporate/cards
+      - link "Members" [ref=f6e39] [cursor=pointer]:
+        - /url: /corporate/members
+      - link "Org Orders" [ref=f6e46] [cursor=pointer]:
+        - /url: /corporate/orders
+      - link "Org Settings" [ref=f6e51] [cursor=pointer]:
+        - /url: /corporate/settings
+      - generic [ref=f6e56]:
+        - generic [ref=f6e57]: Logistics
+        - link "Logistics" [ref=f6e58] [cursor=pointer]:
+          - /url: /logistics
+        - link "Orders" [ref=f6e65] [cursor=pointer]:
+          - /url: /logistics/orders
+      - generic [ref=f6e70]:
+        - generic [ref=f6e71]: Admin
+        - link "Admin Panel" [ref=f6e72] [cursor=pointer]:
+          - /url: /admin
+        - link "Users" [ref=f6e76] [cursor=pointer]:
+          - /url: /admin/users
+        - link "All Cards" [ref=f6e83] [cursor=pointer]:
+          - /url: /admin/cards
+        - link "All Orders" [ref=f6e87] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Subscriptions" [ref=f6e92] [cursor=pointer]:
+          - /url: /admin/subscriptions
+        - link "Pricing" [ref=f6e96] [cursor=pointer]:
+          - /url: /admin/pricing
+        - link "Unassigned Cards" [ref=f6e100] [cursor=pointer]:
+          - /url: /admin/orphans
+        - link "Email Logs" [ref=f6e104] [cursor=pointer]:
+          - /url: /admin/email-logs
+    - generic [ref=f6e109]:
+      - generic [ref=f6e110]:
+        - generic [ref=f6e111]: E
+        - generic [ref=f6e112]:
+          - generic [ref=f6e113]: Edward Paxton
+          - generic [ref=f6e114]: admin
+      - button "Sign out" [ref=f6e116] [cursor=pointer]
+  - generic [ref=f6e119]:
+    - banner [ref=f6e120]:
+      - generic [ref=f6e121]: Card thGSUO
+    - main [ref=f6e122]:
+      - generic [ref=f6e123]:
+        - generic [ref=f6e124]:
+          - link "← Back" [ref=f6e125] [cursor=pointer]:
+            - /url: /dashboard/cards
+          - generic [ref=f6e126]: active
+          - generic [ref=f6e127]: social
+        - generic [ref=f6e128]:
+          - generic [ref=f6e129]:
+            - generic [ref=f6e130]:
+              - heading "Card Details" [level=3] [ref=f6e131]
+              - generic [ref=f6e132]: Social · physical ↗
+            - generic [ref=f6e133]:
+              - generic [ref=f6e134]: Card ID (Public URL)
+              - generic [ref=f6e135]: thGSUO
+              - generic [ref=f6e136]: uwitz.cards/thGSUO
+            - generic [ref=f6e137]:
+              - generic [ref=f6e138]: Views
+              - generic [ref=f6e139]: "0"
+            - generic [ref=f6e140]: Subscription
+            - generic [ref=f6e143]:
+              - generic [ref=f6e144]: vCard Content
+              - generic [ref=f6e145]: BEGIN:VCARD VERSION:4.0 FN:Edward Paxton ORG:Uwitz Labs EMAIL:ed@uwitz.org END:VCARD
+            - generic [ref=f6e146]:
+              - button "Freeze" [ref=f6e147] [cursor=pointer]
+              - button "Delete" [ref=f6e148] [cursor=pointer]
+            - generic [ref=f6e150]:
+              - generic [ref=f6e151]:
+                - generic [ref=f6e152]: Convert Card Type
+                - generic [ref=f6e153]: Downgrade to TagLink (subscription will transfer)
+              - button "Convert" [ref=f6e154] [cursor=pointer]
+          - generic [ref=f6e155]:
+            - heading "Card Faces" [level=3] [ref=f6e156]
+            - generic [ref=f6e157]:
+              - img "Card face" [ref=f6e158]
+              - generic [ref=f6e159]:
+                - generic [ref=f6e160]: 1011x638px
+                - generic [ref=f6e161]: 300 DPI
+            - generic [ref=f6e162]:
+              - generic [ref=f6e163] [cursor=pointer]: Replace Image
+              - button "Remove" [ref=f6e164] [cursor=pointer]
+            - generic [ref=f6e165]:
+              - generic [ref=f6e166]: Card Back
+              - generic [ref=f6e167]: Rendering back face…
+              - generic [ref=f6e172]: Generated from your saved card details.
+        - generic [ref=f6e173]:
+          - generic [ref=f6e174]:
+            - heading "QR Code" [level=3] [ref=f6e175]
+            - generic [ref=f6e176]: Physical card
+          - paragraph [ref=f6e177]: Print this QR on your card image. Scanning it will open the card and serve its content.
+          - generic [ref=f6e178]:
+            - generic [ref=f6e179]: Link to encode
+            - generic [ref=f6e180]:
+              - textbox [ref=f6e181]: http://localhost:8000/thGSUO
+              - button "Copy" [ref=f6e182] [cursor=pointer]
+            - generic [ref=f6e183]: Scanning the QR serves the vCard.
+          - generic [ref=f6e184]:
+            - generic [ref=f6e185]:
+              - generic [ref=f6e186]: Generator
+              - button "Generate QR" [ref=f6e187] [cursor=pointer]
+            - generic [ref=f6e188]:
+              - generic [ref=f6e189]:
+                - generic [ref=f6e190]:
+                  - generic [ref=f6e191]: QR type
+                  - combobox "QR type" [ref=f6e192] [cursor=pointer]:
+                    - option "Text / URL" [selected]
+                    - option "Wi-Fi"
+                    - option "SMS"
+                    - option "Email"
+                    - option "Phone"
+                    - option "Crypto"
+                    - option "vCard"
+                    - option "WhatsApp"
+                    - option "vEvent (calendar)"
+                    - option "Geo location"
+                - generic [ref=f6e194]:
+                  - generic [ref=f6e195]: Text or URL
+                  - textbox "Text or URL" [ref=f6e196]
+                - generic [ref=f6e198] [cursor=pointer]:
+                  - checkbox "Use fast QR (plain, 1/50 token)" [ref=f6e199]
+                  - text: Use fast QR (plain, 1/50 token)
+                - generic [ref=f6e200]:
+                  - generic [ref=f6e201]: Image format
+                  - combobox "Image format" [ref=f6e202] [cursor=pointer]:
+                    - option "PNG" [selected]
+                    - option "SVG"
+                    - option "JPEG"
+                    - option "WEBP"
+                    - option "EPS"
+                    - option "TIFF"
+                    - option "GIF"
+                    - option "OBJ (3D)"
+                    - option "STL (3D)"
+                    - option "3MF (3D)"
+                    - option "USDZ (3D)"
+                - generic [ref=f6e203]:
+                  - generic [ref=f6e204]: Width (px)
+                  - spinbutton "Width (px)" [ref=f6e205]: "1011"
+                - generic [ref=f6e206]:
+                  - generic [ref=f6e207]: Error correction
+                  - combobox "Error correction" [ref=f6e208] [cursor=pointer]:
+                    - option "L — low (7%)"
+                    - option "M — medium (15%)" [selected]
+                    - option "Q — quartile (25%)"
+                    - option "H — high (30%)"
+                - generic [ref=f6e209]:
+                  - generic [ref=f6e210]: Border size
+                  - spinbutton "Border size" [ref=f6e211]: "4"
+                - generic [ref=f6e212]:
+                  - generic [ref=f6e213]: Shape & style
+                  - generic [ref=f6e214]:
+                    - generic [ref=f6e215]: Square style
+                    - combobox "Square style" [ref=f6e216] [cursor=pointer]:
+                      - option "0" [selected]
+                      - option "1"
+                      - option "2"
+                      - option "3"
+                      - option "4"
+                      - option "5"
+                      - option "6"
+                      - option "7"
+                      - option "8"
+                      - option "9"
+                      - option "10"
+                      - option "11"
+                      - option "12"
+                      - option "13"
+                      - option "14"
+                      - option "15"
+                      - option "16"
+                      - option "17"
+                      - option "18"
+                      - option "19"
+                      - option "20"
+                      - option "21"
+                      - option "22"
+                      - option "23"
+                      - option "24"
+                  - generic [ref=f6e217]:
+                    - generic [ref=f6e218]: Inner eye style
+                    - combobox "Inner eye style" [ref=f6e219] [cursor=pointer]:
+                      - option "0" [selected]
+                      - option "1"
+                      - option "2"
+                      - option "3"
+                      - option "4"
+                      - option "5"
+                      - option "6"
+                      - option "7"
+                  - generic [ref=f6e220]:
+                    - generic [ref=f6e221]: Outer eye style
+                    - combobox "Outer eye style" [ref=f6e222] [cursor=pointer]:
+                      - option "0" [selected]
+                      - option "1"
+                      - option "2"
+                      - option "3"
+                      - option "4"
+                      - option "5"
+                      - option "6"
+                  - generic [ref=f6e223]: Frame
+                  - generic [ref=f6e224]:
+                    - generic [ref=f6e225]: Frame style
+                    - combobox "Frame style" [ref=f6e226] [cursor=pointer]:
+                      - option "0" [selected]
+                      - option "1"
+                      - option "2"
+                      - option "3"
+                      - option "4"
+                      - option "5"
+                      - option "6"
+                      - option "7"
+                      - option "8"
+                      - option "9"
+                      - option "10"
+                      - option "11"
+                      - option "12"
+                      - option "13"
+                      - option "14"
+                      - option "15"
+                  - generic [ref=f6e227]:
+                    - generic [ref=f6e228]: Frame text
+                    - textbox "Frame text" [ref=f6e229]: SCAN ME
+                  - generic [ref=f6e230]:
+                    - generic [ref=f6e231]: Frame icon
+                    - combobox "Frame icon" [ref=f6e232] [cursor=pointer]:
+                      - option "None" [selected]
+                      - option "Comment"
+                      - option "Comment (outline)"
+                      - option "Address book"
+                      - option "Address book (outline)"
+                      - option "Calendar check"
+                      - option "Calendar check (outline)"
+                      - option "Calendar"
+                      - option "Calendar (outline)"
+                      - option "User"
+                      - option "User (outline)"
+                      - option "ID card"
+                      - option "ID card (outline)"
+                      - option "Image"
+                      - option "Image (outline)"
+                      - option "Mobile"
+                      - option "Wi-Fi"
+              - generic [ref=f6e233]:
+                - generic [ref=f6e234]: Colors
+                - generic [ref=f6e235]:
+                  - generic [ref=f6e236]:
+                    - generic [ref=f6e237]:
+                      - generic [ref=f6e238]: QR color
+                      - textbox "QR color" [ref=f6e239]: "#0d0d0d"
+                    - generic [ref=f6e240]:
+                      - generic [ref=f6e241]: Background
+                      - textbox "Background" [ref=f6e242]: "#ffffff"
+                    - generic [ref=f6e243]:
+                      - generic [ref=f6e244]: Inner eye color
+                      - textbox "Inner eye color" [ref=f6e245]: "#0d0d0d"
+                    - generic [ref=f6e246]:
+                      - generic [ref=f6e247]: Outer eye color
+                      - textbox "Outer eye color" [ref=f6e248]: "#0d0d0d"
+                    - generic [ref=f6e249]:
+                      - generic [ref=f6e250]: Frame color
+                      - textbox "Frame color" [ref=f6e251]: "#da2a1c"
+                    - generic [ref=f6e252]:
+                      - generic [ref=f6e253]: Frame background
+                      - textbox "Frame background" [ref=f6e254]: "#ffffff"
+                    - generic [ref=f6e255]:
+                      - generic [ref=f6e256]: Frame text color
+                      - textbox "Frame text color" [ref=f6e257]: "#ffffff"
+                    - generic [ref=f6e258]:
+                      - generic [ref=f6e259]: Frame icon color
+                      - textbox "Frame icon color" [ref=f6e260]: "#000000"
+                  - generic [ref=f6e261]:
+                    - generic [ref=f6e262]: Color pattern
+                    - textbox "Color pattern" [ref=f6e263]:
+                      - /placeholder: e.g. 1,1,2,2,3,3,4,4
+                    - generic [ref=f6e264]: Enter a comma-separated hex list in “QR color” and a pattern of position indices above to alternate module colors.
+                - generic [ref=f6e265]: Logo
+                - generic [ref=f6e266]:
+                  - generic [ref=f6e267]:
+                    - generic [ref=f6e268]: Logo
+                    - combobox "Logo" [ref=f6e269] [cursor=pointer]:
+                      - option "None" [selected]
+                      - option "GenQRCode"
+                      - option "YouTube"
+                      - option "Instagram"
+                      - option "LinkedIn"
+                      - option "Facebook"
+                      - option "X (Twitter)"
+                      - option "Twitter"
+                      - option "Threads"
+                      - option "Spotify"
+                      - option "Snapchat"
+                      - option "Google Maps"
+                      - option "Google Drive"
+                      - option "Reddit"
+                      - option "Zoom"
+                      - option "Skype"
+                      - option "Airbnb"
+                      - option "Wi-Fi"
+                  - generic [ref=f6e270]:
+                    - generic [ref=f6e271]: Custom logo
+                    - button "Custom logo" [ref=f6e272]
+                  - generic [ref=f6e274] [cursor=pointer]:
+                    - checkbox "Remove background behind logo" [ref=f6e275]
+                    - text: Remove background behind logo
+    - contentinfo [ref=f6e276]:
+      - paragraph [ref=f6e277]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f6e278] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f6e279] [cursor=pointer]:
+          - /url: /terms

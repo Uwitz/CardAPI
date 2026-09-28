@@ -1,0 +1,31 @@
+- generic [ref=f5e3]:
+  - main [ref=f5e4]:
+    - generic [ref=f5e6]:
+      - link "UWITZ CARDS" [ref=f5e7] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f5e9]: Administrator
+      - heading "Admin sign-in" [level=1] [ref=f5e11]
+      - paragraph [ref=f5e12]: Restricted area. Administrative credentials required.
+      - generic [ref=f5e13]:
+        - generic [ref=f5e14]:
+          - generic [ref=f5e15]: Email address
+          - textbox "Email address" [active] [ref=f5e16]:
+            - /placeholder: admin@uwitz.cards
+        - generic [ref=f5e17]:
+          - generic [ref=f5e18]: Password
+          - textbox "Password" [ref=f5e19]
+        - button "Sign in to Admin" [ref=f5e20] [cursor=pointer]
+      - generic [ref=f5e21]:
+        - link "User sign-in" [ref=f5e22] [cursor=pointer]:
+          - /url: /dashboard/login
+        - text: ·
+        - link "Back to site" [ref=f5e23] [cursor=pointer]:
+          - /url: /
+  - contentinfo [ref=f5e24]:
+    - paragraph [ref=f5e25]:
+      - text: © 2026 Uwitz Cards ·
+      - link "Privacy" [ref=f5e26] [cursor=pointer]:
+        - /url: /privacy
+      - text: ·
+      - link "Terms" [ref=f5e27] [cursor=pointer]:
+        - /url: /terms

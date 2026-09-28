@@ -1,0 +1,106 @@
+- generic [ref=f31e2]:
+  - complementary [ref=f31e3]:
+    - link "UWITZ CARDS" [ref=f31e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f31e7]:
+      - generic [ref=f31e8]: Overview
+      - link "Dashboard" [ref=f31e9] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f31e16] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f31e20] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f31e25] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+      - generic [ref=f31e30]: Corporate
+      - link "Org Dashboard" [ref=f31e31] [cursor=pointer]:
+        - /url: /corporate
+      - link "Org Cards" [ref=f31e35] [cursor=pointer]:
+        - /url: /corporate/cards
+      - link "Members" [ref=f31e39] [cursor=pointer]:
+        - /url: /corporate/members
+      - link "Org Orders" [ref=f31e46] [cursor=pointer]:
+        - /url: /corporate/orders
+      - generic [ref=f31e51]:
+        - generic [ref=f31e52]: Logistics
+        - link "Logistics" [ref=f31e53] [cursor=pointer]:
+          - /url: /logistics
+        - link "Orders" [ref=f31e60] [cursor=pointer]:
+          - /url: /logistics/orders
+      - generic [ref=f31e65]:
+        - generic [ref=f31e66]: Admin
+        - link "Admin Panel" [ref=f31e67] [cursor=pointer]:
+          - /url: /admin
+        - link "Users" [ref=f31e71] [cursor=pointer]:
+          - /url: /admin/users
+        - link "All Cards" [ref=f31e78] [cursor=pointer]:
+          - /url: /admin/cards
+        - link "All Orders" [ref=f31e82] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Subscriptions" [ref=f31e87] [cursor=pointer]:
+          - /url: /admin/subscriptions
+        - link "Pricing" [ref=f31e91] [cursor=pointer]:
+          - /url: /admin/pricing
+        - link "Unassigned Cards" [ref=f31e95] [cursor=pointer]:
+          - /url: /admin/orphans
+        - link "Email Logs" [ref=f31e99] [cursor=pointer]:
+          - /url: /admin/email-logs
+    - generic [ref=f31e104]:
+      - generic [ref=f31e105]:
+        - generic [ref=f31e106]: E
+        - generic [ref=f31e107]:
+          - generic [ref=f31e108]: Edward Paxton
+          - generic [ref=f31e109]: admin
+      - button "Sign out" [ref=f31e111] [cursor=pointer]
+  - generic [ref=f31e114]:
+    - banner [ref=f31e115]
+    - main [ref=f31e116]:
+      - generic [ref=f31e117]:
+        - generic [ref=f31e118]: Step 2 of 2
+        - heading "Fill in your card" [level=2] [ref=f31e119]
+        - paragraph [ref=f31e120]: Complete the details below — your card preview updates live.
+        - generic [ref=f31e121]:
+          - generic [ref=f31e122]:
+            - generic [ref=f31e123]:
+              - button "← Back" [ref=f31e124] [cursor=pointer]
+              - heading "Business Card" [level=3] [ref=f31e125]
+            - paragraph [ref=f31e126]: Professional card with avatar, contact details, and QR code
+            - generic [ref=f31e127]:
+              - generic [ref=f31e128]: Tier
+              - combobox [ref=f31e129] [cursor=pointer]:
+                - option "Digital Card"
+                - option "Physical Card" [selected]
+            - generic [ref=f31e130]:
+              - generic [ref=f31e131]:
+                - generic [ref=f31e132]: Full Name *
+                - textbox "Edward Paxton" [ref=f31e133]
+              - generic [ref=f31e134]:
+                - generic [ref=f31e135]: Job Title
+                - textbox "Software Engineer" [ref=f31e136]
+              - generic [ref=f31e137]:
+                - generic [ref=f31e138]: Company
+                - textbox "Uwitz" [ref=f31e139]: Uwitz Labs
+              - generic [ref=f31e140]:
+                - generic [ref=f31e141]: Email *
+                - textbox "ed@uwitz.org" [active] [ref=f31e142]
+              - generic [ref=f31e143]:
+                - generic [ref=f31e144]: Phone
+                - textbox "+60 19 906 6530" [ref=f31e145]
+              - generic [ref=f31e146]:
+                - generic [ref=f31e147]: Website
+                - textbox "https://uwitz.org" [ref=f31e148]
+              - generic [ref=f31e149]:
+                - generic [ref=f31e150]: Address
+                - textbox "Kuala Lumpur, MY" [ref=f31e151]
+            - button "Create Card" [ref=f31e153] [cursor=pointer]
+          - generic [ref=f31e154]:
+            - generic [ref=f31e155]: Live Preview
+            - img "Card preview" [ref=f31e162]
+    - contentinfo [ref=f31e158]:
+      - paragraph [ref=f31e159]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f31e160] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f31e161] [cursor=pointer]:
+          - /url: /terms

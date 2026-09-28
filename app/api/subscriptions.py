@@ -81,6 +81,9 @@ async def create_subscription(data: SubscriptionCreate, user: dict = Depends(get
         {"$set": {"subscription_id": sub_id, "subscription_status": "active"}},
     )
 
+    from app.sync import sync_subscription
+    await sync_subscription(sub_doc, user, "subscription_created")
+
     return {"subscription_id": sub_id, "status": "active"}
 
 
@@ -99,6 +102,11 @@ async def cancel_subscription(sub_id: str, user: dict = Depends(get_api_user)):
         {"_id": sub["card_id"]},
         {"$set": {"subscription_status": "expired"}},
     )
+
+    from app.sync import sync_subscription
+    updated_sub = {**sub, "status": "cancelled", "cancel_at_period_end": True}
+    await sync_subscription(updated_sub, user, "subscription_expired")
+
     return {"status": "cancelled"}
 
 
@@ -120,4 +128,9 @@ async def renew_subscription(sub_id: str, user: dict = Depends(get_api_user)):
         {"_id": sub["card_id"]},
         {"$set": {"subscription_status": "active"}},
     )
+
+    from app.sync import sync_subscription
+    renewed_sub = {**sub, "status": "active", "expires_at": end.isoformat(), "current_period_end": end.isoformat()}
+    await sync_subscription(renewed_sub, user, "subscription_renewed")
+
     return {"status": "renewed", "expires_at": end.isoformat()}

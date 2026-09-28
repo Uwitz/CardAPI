@@ -40,6 +40,10 @@ async def logistics_index(request: Request):
     printing_queue = await db["orders"].count_documents({"status": "paid"})
     shipped = await db["orders"].count_documents({"status": "shipped"})
     total_orders = await db["orders"].count_documents({})
+    
+    # Pending cards needing NFC writing
+    pending_cards = await db["cards"].count_documents({"status": "pending"})
+    cards_needing_nfc = await db["cards"].count_documents({"status": "pending", "card_tier": "physical"})
 
     return _render(request, "logistics/index.html", {
         "user": user,
@@ -48,6 +52,8 @@ async def logistics_index(request: Request):
             "printing": printing_queue,
             "shipped": shipped,
             "total": total_orders,
+            "pending_cards": pending_cards,
+            "cards_needing_nfc": cards_needing_nfc,
         },
     })
 
@@ -64,16 +70,20 @@ async def logistics_orders(request: Request):
 
     # Enrich with card and user info
     enriched = []
+    from app.config import get_settings
+    settings = get_settings()
     for order in orders:
         card = await db["cards"].find_one({"_id": order.get("card_id")}) if order.get("card_id") else None
         usr = await db["users"].find_one({"_id": order.get("user_id")}, {"password_hash": 0}) if order.get("user_id") else None
         image = await db["card_images"].find_one({"card_id": card["_id"]}) if card else None
+        card_url = f"{settings.SITE_URL.rstrip('/')}/{card.get('card_id', '')}" if card else None
         enriched.append({
             **order,
             "card": card,
             "user_info": usr,
             "has_image": bool(image),
             "image": image,
+            "card_url": card_url,
         })
 
     return _render(request, "logistics/orders.html", {
@@ -97,6 +107,10 @@ async def logistics_order_detail(order_id: str, request: Request):
     card = await db["cards"].find_one({"_id": order.get("card_id")}) if order.get("card_id") else None
     usr = await db["users"].find_one({"_id": order.get("user_id")}, {"password_hash": 0}) if order.get("user_id") else None
     image = await db["card_images"].find_one({"card_id": card["_id"]}) if card else None
+    
+    from app.config import get_settings
+    settings = get_settings()
+    card_url = f"{settings.SITE_URL.rstrip('/')}/{card.get('card_id', '')}" if card else None
 
     return _render(request, "logistics/order_detail.html", {
         "user": user,
@@ -104,4 +118,5 @@ async def logistics_order_detail(order_id: str, request: Request):
         "card": card,
         "order_user": usr,
         "image": image,
+        "card_url": card_url,
     })

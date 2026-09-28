@@ -1,0 +1,110 @@
+- generic [ref=f33e2]:
+  - complementary [ref=f33e3]:
+    - link "UWITZ CARDS" [ref=f33e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f33e7]:
+      - generic [ref=f33e8]: Overview
+      - link "Dashboard" [ref=f33e9] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f33e16] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f33e20] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f33e25] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+      - generic [ref=f33e30]: Corporate
+      - link "Org Dashboard" [ref=f33e31] [cursor=pointer]:
+        - /url: /corporate
+      - link "Org Cards" [ref=f33e35] [cursor=pointer]:
+        - /url: /corporate/cards
+      - link "Members" [ref=f33e39] [cursor=pointer]:
+        - /url: /corporate/members
+      - link "Org Orders" [ref=f33e46] [cursor=pointer]:
+        - /url: /corporate/orders
+      - generic [ref=f33e51]:
+        - generic [ref=f33e52]: Logistics
+        - link "Logistics" [ref=f33e53] [cursor=pointer]:
+          - /url: /logistics
+        - link "Orders" [ref=f33e60] [cursor=pointer]:
+          - /url: /logistics/orders
+      - generic [ref=f33e65]:
+        - generic [ref=f33e66]: Admin
+        - link "Admin Panel" [ref=f33e67] [cursor=pointer]:
+          - /url: /admin
+        - link "Users" [ref=f33e71] [cursor=pointer]:
+          - /url: /admin/users
+        - link "All Cards" [ref=f33e78] [cursor=pointer]:
+          - /url: /admin/cards
+        - link "All Orders" [ref=f33e82] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Subscriptions" [ref=f33e87] [cursor=pointer]:
+          - /url: /admin/subscriptions
+        - link "Pricing" [ref=f33e91] [cursor=pointer]:
+          - /url: /admin/pricing
+        - link "Unassigned Cards" [ref=f33e95] [cursor=pointer]:
+          - /url: /admin/orphans
+        - link "Email Logs" [ref=f33e99] [cursor=pointer]:
+          - /url: /admin/email-logs
+    - generic [ref=f33e104]:
+      - generic [ref=f33e105]:
+        - generic [ref=f33e106]: E
+        - generic [ref=f33e107]:
+          - generic [ref=f33e108]: Edward Paxton
+          - generic [ref=f33e109]: admin
+      - button "Sign out" [ref=f33e111] [cursor=pointer]
+  - generic [ref=f33e114]:
+    - banner [ref=f33e115]:
+      - generic [ref=f33e116]: Card thGSUO
+    - main [ref=f33e117]:
+      - generic [ref=f33e118]:
+        - generic [ref=f33e119]:
+          - link "← Back" [ref=f33e120] [cursor=pointer]:
+            - /url: /dashboard/cards
+          - generic [ref=f33e121]: active
+          - generic [ref=f33e122]: social
+        - generic [ref=f33e123]:
+          - generic [ref=f33e124]:
+            - generic [ref=f33e125]:
+              - heading "Card Details" [level=3] [ref=f33e126]
+              - generic [ref=f33e127]: Social · physical ↗
+            - generic [ref=f33e128]:
+              - generic [ref=f33e129]: Card ID (Public URL)
+              - generic [ref=f33e130]: thGSUO
+              - generic [ref=f33e131]: uwitz.cards/thGSUO
+            - generic [ref=f33e132]:
+              - generic [ref=f33e133]: Views
+              - generic [ref=f33e134]: "0"
+            - generic [ref=f33e135]: Subscription
+            - generic [ref=f33e138]:
+              - generic [ref=f33e139]: vCard Content
+              - generic [ref=f33e140]: BEGIN:VCARD VERSION:4.0 FN:Edward Paxton ORG:Uwitz Labs EMAIL:ed@uwitz.org END:VCARD
+            - generic [ref=f33e141]:
+              - button "Freeze" [ref=f33e142] [cursor=pointer]
+              - button "Delete" [ref=f33e143] [cursor=pointer]
+            - generic [ref=f33e145]:
+              - generic [ref=f33e146]:
+                - generic [ref=f33e147]: Convert Card Type
+                - generic [ref=f33e148]: Downgrade to TagLink (subscription will transfer)
+              - button "Convert" [ref=f33e149] [cursor=pointer]
+          - generic [ref=f33e150]:
+            - heading "Card Faces" [level=3] [ref=f33e151]
+            - generic [ref=f33e152]:
+              - img "Card face" [ref=f33e153]
+              - generic [ref=f33e154]:
+                - generic [ref=f33e155]: 1011x638px
+                - generic [ref=f33e156]: 300 DPI
+            - generic [ref=f33e157]:
+              - generic [ref=f33e158] [cursor=pointer]: Replace Image
+              - button "Remove" [ref=f33e159] [cursor=pointer]
+            - generic [ref=f33e160]:
+              - generic [ref=f33e161]: Card Back
+              - generic [ref=f33e162]: Rendering back face…
+              - generic [ref=f33e167]: Generated from your saved card details.
+    - contentinfo [ref=f33e168]:
+      - paragraph [ref=f33e169]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f33e170] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f33e171] [cursor=pointer]:
+          - /url: /terms

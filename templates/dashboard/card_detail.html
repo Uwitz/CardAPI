@@ -2,101 +2,59 @@
 {% block title %}Card {{ card.card_id }} — {{ brand }}{% endblock %}
 {% block page_title %}Card {{ card.card_id }}{% endblock %}
 {% block content %}
-<div class="animate-fade-up">
-  <div class="flex items-center gap-3 mb-6">
-    <a href="/dashboard/cards" class="btn btn-muted btn-sm">← Back</a>
-    <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
-    <span class="badge badge-info">{{ card.card_type }}</span>
-  </div>
-
-  <div class="card-detail-grid">
-    <!-- Card info -->
-    <div class="card">
-      <div class="flex items-center gap-3 mb-4">
-        <h3 style="font-weight: 600; margin: 0;">Card Details</h3>
-        <span class="tier-badge tier-{{ card.card_type }} {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type | capitalize }} · {{ card.card_tier }}</span>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Card ID (Public URL)</label>
-        <div class="font-mono text-lg font-bold">{{ card.card_id }}</div>
-        <div class="text-xs text-muted mt-1">uwitz.cards/{{ card.card_id }}</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Views</label>
-        <div class="text-2xl font-bold">{{ card.views }}</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Subscription</label>
-        <span class="badge {% if card.subscription_status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.subscription_status }}</span>
-      </div>
-
-      {% if card.card_type in ('social', 'corporate') and card.vcard_data %}
-      <div class="form-group">
-        <label class="form-label">vCard Content</label>
-        <pre style="background: var(--bg-inset); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; overflow-x: auto; white-space: pre-wrap; color: var(--text-body);">{{ card.vcard_data }}</pre>
-      </div>
-      {% endif %}
-
-      {% if card.card_type == 'taglink' %}
-      <div class="form-group">
-        <label class="form-label">Redirect URL</label>
-        <div class="text-sm">{{ card.redirect_url or '—' }}</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Plain Text</label>
-        <div class="text-sm">{{ card.plain_text or '—' }}</div>
-      </div>
-      {% endif %}
-
-      <div class="flex gap-2 mt-4" style="flex-wrap: wrap;">
-        {% if card.status == 'active' %}
-          <button class="btn btn-ghost btn-sm" onclick="freezeCard()">Freeze</button>
-        {% elif card.status == 'frozen' %}
-          <button class="btn btn-ghost btn-sm" onclick="unfreezeCard()">Unfreeze</button>
-        {% endif %}
-        <button class="btn btn-danger btn-sm" onclick="deleteCard()">Delete</button>
-      </div>
-
-      {% if card.card_type in ('social', 'taglink') %}
-      <div class="mt-4 pt-4" style="border-top: 1px solid var(--border-faint);">
-        <div class="flex items-center justify-between" style="gap: 12px;">
-          <div>
-            <div class="text-sm font-semibold">Convert Card Type</div>
-            <div class="text-xs text-muted">
-              {% if card.card_type == 'social' %}
-                Downgrade to TagLink (subscription will transfer)
-              {% else %}
-                TagLink cards cannot be upgraded to Social
-              {% endif %}
-            </div>
-          </div>
-          {% if card.card_type == 'social' %}
-            <button class="btn btn-ghost btn-sm" onclick="openConvertModal()">Convert</button>
-          {% endif %}
-        </div>
-      </div>
-      {% endif %}
+<div class="page-head">
+  <div class="page-head-main">
+    <a href="/dashboard/cards" class="back-link">← My Cards</a>
+    <div class="flex items-center gap-3 flex-wrap" style="margin-top: var(--space-2);">
+      <h1>Card {{ card.card_id }}</h1>
+      <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
+      <span class="badge badge-info">{{ card.card_type }}</span>
+      <span class="tier-badge {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_tier or card.card_type }}</span>
     </div>
+    <p class="page-head-sub">
+      <span class="font-mono">{{ qr_link }}</span>
+      · {{ card.views }} views
+      · Subscription {% if card.subscription_status == 'active' %}active{% else %}{{ card.subscription_status or 'none' }}{% endif %}
+    </p>
+  </div>
+  <div class="page-head-actions">
+    {% if card.status == 'active' %}
+      <button class="btn btn-ghost btn-sm" onclick="freezeCard()">Freeze</button>
+    {% elif card.status == 'frozen' %}
+      <button class="btn btn-ghost btn-sm" onclick="unfreezeCard()">Unfreeze</button>
+    {% endif %}
+    <button class="btn btn-ghost btn-sm" onclick="copyCardLink()">Copy link</button>
+  </div>
+</div>
 
-    <!-- Image -->
-    <div class="card">
-      <h3 style="font-weight: 600; margin-bottom: 1rem;">Card Face Image</h3>
+<div class="detail-max">
+
+  <!-- ── Card Faces ─────────────────────────────────────────── -->
+  <details class="collapse" open>
+    <summary>
+      <span class="collapse-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+      <span class="flex flex-col" style="flex: 1; min-width: 0;">
+        <span class="collapse-title">Card faces</span>
+        <span class="collapse-desc">Front artwork and the generated back face</span>
+      </span>
+    </summary>
+    <div class="collapse-body">
       {% if image %}
-        <div style="position: relative; margin-bottom: 12px;">
+        <div style="position: relative; margin-bottom: var(--space-3); max-width: 340px;">
           <img src="/static/uploads/cards/{{ image.filename }}" class="card-image-preview" alt="Card face" id="current-image">
           <div style="position: absolute; bottom: 8px; right: 8px; display: flex; gap: 6px;">
             <span class="badge badge-info" style="font-size: 10px;">{{ image.width_px }}x{{ image.height_px }}px</span>
             <span class="badge badge-neutral" style="font-size: 10px;">{{ image.dpi }} DPI</span>
           </div>
         </div>
-        <div style="display: flex; gap: 8px;">
+        <div class="flex items-center" style="gap: var(--space-2); flex-wrap: wrap;">
           <label for="image-replace" class="btn btn-ghost btn-sm" style="cursor: pointer;">Replace Image</label>
           <input type="file" id="image-replace" accept="image/*" style="display:none;" onchange="uploadImage(this)">
           <button class="btn btn-danger btn-sm" onclick="deleteImage()">Remove</button>
         </div>
       {% else %}
         <div id="upload-zone"
-             style="border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bg-inset);"
+             style="border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bg-inset); max-width: 520px;"
              ondragover="event.preventDefault(); this.style.borderColor='var(--accent)'; this.style.background='var(--accent-soft)';"
              ondragleave="this.style.borderColor='var(--border)'; this.style.background='var(--bg-inset)';"
              ondrop="handleImageDrop(event)"
@@ -107,62 +65,473 @@
         </div>
         <input type="file" id="image-input" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="uploadImage(this)">
       {% endif %}
-      <div id="upload-progress" style="display: none; margin-top: 12px;">
+      <div id="upload-progress" style="display: none; margin-top: var(--space-3); max-width: 520px;">
         <div style="height: 3px; background: var(--bg-inset); border-radius: 2px; overflow: hidden;">
           <div id="upload-bar" style="height: 100%; width: 0%; background: var(--accent); border-radius: 2px; transition: width 0.3s;"></div>
         </div>
         <div id="upload-status" style="font: 400 11px/1 var(--font-sans); color: var(--text-muted); margin-top: 6px;"></div>
       </div>
-      <div id="upload-preview" style="display: none; margin-top: 12px;">
+      <div id="upload-preview" style="display: none; margin-top: var(--space-3);">
         <img id="preview-thumb" style="width: 100%; max-width: 340px; aspect-ratio: 85.6/54; border-radius: var(--radius-md); border: 1px solid var(--border); object-fit: cover;" alt="Upload preview">
       </div>
+
+      {% if card.template_id %}
+      <div style="margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--border-faint);">
+        <div class="eyebrow" style="margin-bottom: var(--space-2);">Card back</div>
+        <div id="back-image-holder" style="min-height: 100px; max-width: 340px; display: flex; align-items: center; justify-content: center; background: var(--bg-inset); border-radius: var(--radius-md);">
+          <div style="color: var(--fg-3); font: 400 12px/1 var(--font-sans);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:block;margin:0 auto 8px;" class="animate-spin"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+            Rendering back face…
+          </div>
+        </div>
+        <img src="" class="card-image-preview" alt="Card back face" id="back-image" style="display: none; background: var(--bg-inset);">
+        <div class="text-xs text-muted mt-2">Generated from your saved card details.</div>
+      </div>
+      {% endif %}
     </div>
-  </div>
+  </details>
+
+  <!-- ── QR Code studio ─────────────────────────────────────── -->
+  <details class="collapse" open>
+    <summary>
+      <span class="collapse-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+      <span class="flex flex-col" style="flex: 1; min-width: 0;">
+        <span class="collapse-title">QR code</span>
+        <span class="collapse-desc">Generate a scannable QR for your card</span>
+      </span>
+      <span class="collapse-head-right">
+        {% if card.card_tier == 'physical' %}<span class="badge badge-info">Physical card</span>{% else %}<span class="badge badge-neutral">Digital</span>{% endif %}
+      </span>
+    </summary>
+    <div class="collapse-body">
+      <div class="form-group">
+        <label class="form-label" for="qr-link">Link to encode</label>
+        <div class="flex" style="gap: 8px;">
+          <input type="text" class="form-input" readonly value="{{ qr_link }}" id="qr-link" style="flex: 1;">
+          <button class="btn btn-outline btn-sm" onclick="copyQRLink()">Copy</button>
+        </div>
+        <div class="text-xs text-muted mt-1">
+          <span id="qr-payload-label"></span>
+          {% if card.card_type in ('social', 'corporate') %}Scanning the QR serves the vCard.{% elif card.card_type == 'taglink' %}Scanning the QR opens the link your TagLink points to.{% elif card.card_type == 'blank' %}Scanning the QR opens this URL.{% endif %}
+        </div>
+      </div>
+
+      <div class="qr-studio">
+        <!-- settings -->
+        <div>
+          <details class="sub-panel" open>
+            <summary>
+              <span class="sub-panel-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+              <span class="sub-panel-title">Content</span>
+            </summary>
+            <div class="sub-panel-body">
+              <div class="form-group">
+                <label class="form-label" for="qr-type">QR type</label>
+                <select id="qr-type" class="form-input" onchange="renderQRTypeFields()">
+                  <option value="0">Text / URL</option>
+                  <option value="1">Wi-Fi</option>
+                  <option value="2">SMS</option>
+                  <option value="3">Email</option>
+                  <option value="4">Phone</option>
+                  <option value="5">Crypto</option>
+                  <option value="6">vCard</option>
+                  <option value="7">WhatsApp</option>
+                  <option value="8">vEvent (calendar)</option>
+                  <option value="9">Geo location</option>
+                </select>
+              </div>
+              <div id="qr-type-fields"></div>
+            </div>
+          </details>
+
+          <details class="sub-panel" open>
+            <summary>
+              <span class="sub-panel-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+              <span class="sub-panel-title">Output</span>
+            </summary>
+            <div class="sub-panel-body">
+              <div class="form-group">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font: var(--fw-medium) var(--fs-2xs)/1 var(--font-sans); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--text-body);">Fast QR</span>
+                  <label class="toggle">
+                    <input type="checkbox" id="qr-fast" onchange="toggleQRFast()">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="text-xs text-muted mt-1">Plain QR, 1/50 credit — styling is skipped.</div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="form-group">
+                  <label class="form-label" for="qr-format">Image format</label>
+                  <select id="qr-format" class="form-input">
+                    <option value="png">PNG</option>
+                    <option value="svg">SVG</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="qr-width">Width (px)</label>
+                  <input type="number" id="qr-width" class="form-input" value="1011" min="1" max="2000" step="1">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="qr-error">Error correction</label>
+                  <select id="qr-error" class="form-input">
+                    <option value="L">L — low (7%)</option>
+                    <option value="M" selected>M — medium (15%)</option>
+                    <option value="Q">Q — quartile (25%)</option>
+                    <option value="H">H — high (30%)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="qr-border">Border size</label>
+                  <input type="number" id="qr-border" class="form-input" value="4" min="0" max="16" step="1">
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <fieldset id="qr-custom-settings">
+            <details class="sub-panel" data-persist="custom">
+              <summary>
+                <span class="sub-panel-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                <span class="sub-panel-title">Style &amp; shape</span>
+              </summary>
+              <div class="sub-panel-body">
+                <div class="form-group">
+                  <label class="form-label" for="qr-square-style">Square style</label>
+                  <select id="qr-square-style" class="form-input">
+                    {% for i in range(25) %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="qr-inner-eye-style">Inner eye style</label>
+                  <select id="qr-inner-eye-style" class="form-input">
+                    {% for i in range(8) %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="qr-outer-eye-style">Outer eye style</label>
+                  <select id="qr-outer-eye-style" class="form-input">
+                    {% for i in range(7) %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
+                  </select>
+                </div>
+              </div>
+            </details>
+
+            <details class="sub-panel" data-persist="frame">
+              <summary>
+                <span class="sub-panel-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                <span class="sub-panel-title">Frame</span>
+              </summary>
+              <div class="sub-panel-body">
+                <div class="form-group">
+                  <label class="form-label" for="qr-frame-style">Frame style</label>
+                  <select id="qr-frame-style" class="form-input">
+                    {% for i in range(16) %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="qr-frame-text">Frame text</label>
+                  <input type="text" id="qr-frame-text" class="form-input" value="SCAN ME" maxlength="40">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="qr-frame-icon">Frame icon</label>
+                  <select id="qr-frame-icon" class="form-input">
+                    <option value="">None</option>
+                    <option value="comment-solid">Comment</option>
+                    <option value="comment-regular">Comment (outline)</option>
+                    <option value="address-book-solid">Address book</option>
+                    <option value="address-book-regular">Address book (outline)</option>
+                    <option value="calendar-check-solid">Calendar check</option>
+                    <option value="calendar-check-regular">Calendar check (outline)</option>
+                    <option value="calendar-solid">Calendar</option>
+                    <option value="calendar-regular">Calendar (outline)</option>
+                    <option value="user-solid">User</option>
+                    <option value="user-regular">User (outline)</option>
+                    <option value="id-card-solid">ID card</option>
+                    <option value="id-card-regular">ID card (outline)</option>
+                    <option value="file-image-solid">Image</option>
+                    <option value="file-image-regular">Image (outline)</option>
+                    <option value="mobile-screen-button-solid">Mobile</option>
+                    <option value="wifi-solid">Wi-Fi</option>
+                  </select>
+                </div>
+              </div>
+            </details>
+          </fieldset>
+
+          <fieldset id="qr-custom-colors">
+            <details class="sub-panel" data-persist="colors">
+              <summary>
+                <span class="sub-panel-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                <span class="sub-panel-title">Colors</span>
+              </summary>
+              <div class="sub-panel-body">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+                  <div class="form-group">
+                    <label class="form-label" for="qr-fg">QR color</label>
+                    <input type="color" id="qr-fg" class="form-input" value="#0D0D0D" style="height: 38px; padding: 4px;">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="qr-bg">Background</label>
+                    <input type="color" id="qr-bg" class="form-input" value="#ffffff" style="height: 38px; padding: 4px;">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="qr-inner-eye-color">Inner eye color</label>
+                    <input type="color" id="qr-inner-eye-color" class="form-input" value="#0D0D0D" style="height: 38px; padding: 4px;">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="qr-outer-eye-color">Outer eye color</label>
+                    <input type="color" id="qr-outer-eye-color" class="form-input" value="#0D0D0D" style="height: 38px; padding: 4px;">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="qr-frame-color">Frame color</label>
+                    <input type="color" id="qr-frame-color" class="form-input" value="#DA2A1C" style="height: 38px; padding: 4px;">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="qr-frame-bg">Frame background</label>
+                    <input type="color" id="qr-frame-bg" class="form-input" value="#ffffff" style="height: 38px; padding: 4px;">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="qr-frame-text-color">Frame text color</label>
+                    <input type="color" id="qr-frame-text-color" class="form-input" value="#ffffff" style="height: 38px; padding: 4px;">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="qr-frame-icon-color">Frame icon color</label>
+                    <input type="color" id="qr-frame-icon-color" class="form-input" value="#000000" style="height: 38px; padding: 4px;">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="qr-pattern">Color pattern</label>
+                  <input type="text" id="qr-pattern" class="form-input" placeholder="e.g. 1,1,2,2,3,3,4,4">
+                  <div class="text-xs text-muted mt-1">Enter a comma-separated hex list in “QR color” and a pattern of position indices above to alternate module colors.</div>
+                </div>
+              </div>
+            </details>
+          </fieldset>
+
+          <fieldset id="qr-custom-logo">
+            <details class="sub-panel" data-persist="logo">
+              <summary>
+                <span class="sub-panel-chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+                <span class="sub-panel-title">Logo</span>
+              </summary>
+              <div class="sub-panel-body">
+                <div class="form-group">
+                  <label class="form-label" for="qr-logo">Logo</label>
+                  <select id="qr-logo" class="form-input">
+                    <option value="">None</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="x-twitter">X (Twitter)</option>
+                    <option value="twitter">Twitter</option>
+                    <option value="threads">Threads</option>
+                    <option value="spotify">Spotify</option>
+                    <option value="snapchat">Snapchat</option>
+                    <option value="google-maps">Google Maps</option>
+                    <option value="google-drive">Google Drive</option>
+                    <option value="reddit">Reddit</option>
+                    <option value="zoom">Zoom</option>
+                    <option value="skype">Skype</option>
+                    <option value="airbnb">Airbnb</option>
+                    <option value="wifi">Wi-Fi</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="qr-logo-upload">Custom logo</label>
+                  <input type="file" id="qr-logo-upload" accept="image/*" class="form-input" onchange="uploadCustomLogo(this)">
+                  <div class="text-xs text-muted mt-1" id="qr-logo-status"></div>
+                </div>
+                <div class="form-group">
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font: var(--fw-medium) var(--fs-2xs)/1 var(--font-sans); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--text-body);">Remove bg</span>
+                    <label class="toggle">
+                      <input type="checkbox" id="qr-logo-remove-bg">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                  <div class="text-xs text-muted mt-1">Strip the background behind the logo.</div>
+                </div>
+              </div>
+            </details>
+          </fieldset>
+        </div>
+
+        <!-- sticky preview rail -->
+        <div class="qr-rail">
+          <div class="qr-rail-card">
+            <span class="rail-label">Preview</span>
+            <div>
+              <button class="btn btn-primary btn-block" onclick="generateQR()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 14h3v3h-3zM14 20h3v1h-3z"/></svg>
+                Generate QR
+              </button>
+            </div>
+            <div id="qr-result" style="display: none; text-align: center; flex-direction: column; gap: var(--space-3);">
+              <div>
+                <img id="qr-image" alt="Generated QR code" class="qr-preview-img" style="display: none;">
+                <div id="qr-file-note" style="display: none; border: 1px dashed var(--border); border-radius: var(--radius-md); padding: 16px;">
+                  <div class="font-mono text-sm" id="qr-file-note-name"></div>
+                  <div class="text-xs text-muted mt-1">3D / vector file — no preview. Download to open it.</div>
+                </div>
+              </div>
+              <a id="qr-download" class="btn btn-outline btn-block" download="card-qr">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download
+              </a>
+            </div>
+            <div id="qr-status" role="status" style="font: 400 11px/1 var(--font-sans); color: var(--fg-3); text-align: center;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ── Card data ──────────────────────────────────────────── -->
+  <details class="collapse" data-persist="carddata">
+    <summary>
+      <span class="collapse-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+      <span class="flex flex-col" style="flex: 1; min-width: 0;">
+        <span class="collapse-title">Card data</span>
+        <span class="collapse-desc">Identity, links and stored payload</span>
+      </span>
+    </summary>
+    <div class="collapse-body">
+      <div class="detail-rows">
+        <div>
+          <div class="detail-label">Card ID (Public URL)</div>
+          <div class="font-mono text-lg font-bold">{{ card.card_id }}</div>
+          <div class="text-xs text-muted mt-1">uwitz.cards/{{ card.card_id }}</div>
+        </div>
+        <div>
+          <div class="detail-label">Views</div>
+          <div class="text-2xl font-bold">{{ card.views }}</div>
+        </div>
+        <div>
+          <div class="detail-label">Subscription</div>
+          <span class="badge {% if card.subscription_status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.subscription_status }}</span>
+        </div>
+      </div>
+
+      {% if card.card_type in ('social', 'corporate') and card.vcard_data %}
+      <div class="form-group" style="margin-top: var(--space-4);">
+        <div class="flex items-center justify-between mb-2">
+          <span class="detail-label">vCard Content</span>
+          <button class="btn btn-ghost btn-sm" onclick="copyText(this, {{ (card.vcard_data | tojson) | safe }})">Copy</button>
+        </div>
+        <pre style="background: var(--bg-inset); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; overflow-x: auto; white-space: pre-wrap; color: var(--text-body);">{{ card.vcard_data }}</pre>
+      </div>
+      {% endif %}
+
+      {% if card.card_type == 'taglink' %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" style="margin-top: var(--space-4);">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="detail-label">Redirect URL</span>
+            <button class="btn btn-ghost btn-sm" onclick="copyText(this, {{ (card.redirect_url or '') | tojson | safe }})">Copy</button>
+          </div>
+          <div class="text-sm">{{ card.redirect_url or '—' }}</div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="detail-label">Plain Text</span>
+            <button class="btn btn-ghost btn-sm" onclick="copyText(this, {{ (card.plain_text or '') | tojson | safe }})">Copy</button>
+          </div>
+          <div class="text-sm">{{ card.plain_text or '—' }}</div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if card.card_type in ('social', 'taglink') and card.card_type == 'social' %}
+      <div style="margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--border-faint);">
+        <div class="flex items-center justify-between" style="gap: 12px; flex-wrap: wrap;">
+          <div>
+            <div class="text-sm font-semibold">Convert Card Type</div>
+            <div class="text-xs text-muted">Downgrade to TagLink (subscription will transfer)</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="openConvertModal()">Convert</button>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </details>
 
   {% if card.card_type == 'taglink' and taglink_keys %}
-  <div class="card mt-6">
-    <div class="flex items-center justify-between mb-4">
-      <h3 style="font-weight: 600;">TagLink API Keys</h3>
-      <button class="btn btn-primary btn-sm" onclick="createKey()">+ New Key</button>
+  <!-- ── TagLink API keys ───────────────────────────────────── -->
+  <details class="collapse" open>
+    <summary>
+      <span class="collapse-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+      <span class="flex flex-col" style="flex: 1; min-width: 0;">
+        <span class="collapse-title">API keys</span>
+        <span class="collapse-desc">Keys for programmatic access to this TagLink</span>
+      </span>
+      <span class="collapse-head-right">
+        <button class="btn btn-primary btn-sm" onclick="createKey()">+ New Key</button>
+      </span>
+    </summary>
+    <div class="collapse-body">
+      <div class="table-wrap" style="border: none; box-shadow: none; padding: 0;">
+      <table class="table">
+        <thead><tr><th>Name</th><th>Prefix</th><th>Status</th><th>Last Used</th><th></th></tr></thead>
+        <tbody>
+          {% for key in taglink_keys %}
+          <tr>
+            <td class="font-medium">{{ key.name }}</td>
+            <td class="font-mono text-sm">{{ key.key_prefix }}...</td>
+            <td><span class="badge {% if key.status == 'active' %}badge-success{% else %}badge-error{% endif %}">{{ key.status }}</span></td>
+            <td class="text-sm text-muted">{{ key.last_used_at[:10] if key.last_used_at else 'Never' }}</td>
+            <td>
+              {% if key.status == 'active' %}
+                <button class="btn btn-outline btn-sm" onclick="revokeKey('{{ key._id }}')">Revoke</button>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
     </div>
-    <div class="table-wrap" style="border: none; box-shadow: none;">
-    <table class="table">
-      <thead><tr><th>Name</th><th>Prefix</th><th>Status</th><th>Last Used</th><th></th></tr></thead>
-      <tbody>
-        {% for key in taglink_keys %}
-        <tr>
-          <td class="font-medium">{{ key.name }}</td>
-          <td class="font-mono text-sm">{{ key.key_prefix }}...</td>
-          <td><span class="badge {% if key.status == 'active' %}badge-success{% else %}badge-error{% endif %}">{{ key.status }}</span></td>
-          <td class="text-sm text-muted">{{ key.last_used_at[:10] if key.last_used_at else 'Never' }}</td>
-          <td>
-            {% if key.status == 'active' %}
-              <button class="btn btn-outline btn-sm" onclick="revokeKey('{{ key._id }}')">Revoke</button>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    </div>
-  </div>
+  </details>
   {% endif %}
 
-  <div class="modal-overlay" id="convert-modal">
-    <div class="modal-box">
-      <h3>Convert Card</h3>
-      <p>Convert your {{ card.card_type }} card to TagLink</p>
-      <div class="form-group" style="text-align: left; margin-bottom: 20px;">
-        <label class="form-label">Target Tier</label>
-        <select id="convert-tier">
-          <option value="digital">Digital</option>
-          <option value="physical">Physical</option>
-        </select>
+  <!-- ── Danger zone ────────────────────────────────────────── -->
+  <details class="collapse danger-zone" data-persist="danger">
+    <summary>
+      <span class="collapse-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></span>
+      <span class="flex flex-col" style="flex: 1; min-width: 0;">
+        <span class="collapse-title">Danger zone</span>
+        <span class="collapse-desc">Destructive actions are tucked away here</span>
+      </span>
+    </summary>
+    <div class="collapse-body">
+      <div class="flex items-center justify-between" style="gap: 12px; flex-wrap: wrap;">
+        <div>
+          <div class="text-sm font-semibold">Delete this card</div>
+          <div class="text-xs text-muted">This permanently removes the card and its content. This cannot be undone.</div>
+        </div>
+        <button class="btn btn-danger btn-sm" onclick="deleteCard()">Delete card</button>
       </div>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="closeConvertModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="convertCard()">Convert</button>
-      </div>
+    </div>
+  </details>
+
+</div>
+
+<div class="modal-overlay" id="convert-modal">
+  <div class="modal-box">
+    <h3>Convert Card</h3>
+    <p>Convert your {{ card.card_type }} card to TagLink</p>
+    <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+      <label class="form-label">Target Tier</label>
+      <select id="convert-tier">
+        <option value="digital">Digital</option>
+        <option value="physical">Physical</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeConvertModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="convertCard()">Convert</button>
     </div>
   </div>
 </div>
@@ -171,6 +540,22 @@
 <script>
 const token = localStorage.getItem('token');
 const cardId = '{{ card.card_id }}';
+
+async function loadBackFace() {
+  const holder = document.getElementById('back-image-holder');
+  const img = document.getElementById('back-image');
+  if (!holder || !img) return;
+  try {
+    const r = await fetch(`/api/cards/${cardId}/back`, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!r.ok) throw new Error('back render failed');
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    img.onload = () => { holder.style.display = 'none'; img.style.display = 'inline'; URL.revokeObjectURL(url); };
+    img.src = url;
+  } catch {
+    holder.innerHTML = '<div style="color: var(--fg-3); font: 400 12px/1 var(--font-sans); padding: 20px;">Back face unavailable.</div>';
+  }
+}
 
 async function freezeCard() {
   if (!confirm('Freeze this card? It will no longer be accessible.')) return;
@@ -196,9 +581,61 @@ async function deleteCard() {
   window.location.href = '/dashboard/cards';
 }
 
+const CARD_ISO_RATIO = 85.6 / 54;          // ISO/IEC 7810 ID-1
+const CARD_RATIO_TOLERANCE = 0.01;
+const CARD_MIN_W = 1011;
+const CARD_MIN_H = 638;
+
+function checkCardAspectRatio(file) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const ratio = img.naturalWidth / img.naturalHeight;
+      const ok =
+        img.naturalWidth >= CARD_MIN_W &&
+        img.naturalHeight >= CARD_MIN_H &&
+        Math.abs(ratio - CARD_ISO_RATIO) <= CARD_RATIO_TOLERANCE;
+      resolve({
+        ok,
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+        ratio: ratio.toFixed(4),
+        message: ok ? '' :
+          (img.naturalWidth < CARD_MIN_W || img.naturalHeight < CARD_MIN_H)
+            ? `Image is ${img.naturalWidth}x${img.naturalHeight}px. Minimum is ${CARD_MIN_W}x${CARD_MIN_H}px (300 DPI for ISO/IEC 7810 ID-1).`
+            : `Aspect ratio is 1:${ratio.toFixed(3)} but must be 85.6:54 (≈1:1.585, ISO/IEC 7810 ID-1).`,
+      });
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve({ ok: false, width: 0, height: 0, ratio: '?', message: 'Could not read image.' }); };
+    img.src = url;
+  });
+}
+
 async function uploadImage(input) {
   const file = input.files?.[0];
   if (!file) return;
+
+  const progressEl = document.getElementById('upload-progress');
+  const barEl = document.getElementById('upload-bar');
+  const statusEl = document.getElementById('upload-status');
+  if (!progressEl || !barEl || !statusEl) return;
+
+  progressEl.style.display = '';
+  barEl.style.width = '10%';
+  statusEl.textContent = 'Checking dimensions…';
+  statusEl.style.color = '';
+
+  // Client-side ISO/IEC 7810 ID-1 check before upload
+  const dims = await checkCardAspectRatio(file);
+  if (!dims.ok) {
+    barEl.style.width = '0%';
+    statusEl.textContent = dims.message;
+    statusEl.style.color = 'var(--danger)';
+    input.value = '';
+    return;
+  }
 
   // Show preview
   const reader = new FileReader();
@@ -213,10 +650,6 @@ async function uploadImage(input) {
   reader.readAsDataURL(file);
 
   // Show progress
-  const progressEl = document.getElementById('upload-progress');
-  const barEl = document.getElementById('upload-bar');
-  const statusEl = document.getElementById('upload-status');
-  if (progressEl) { progressEl.style.display = ''; }
   if (barEl) { barEl.style.width = '30%'; }
   if (statusEl) { statusEl.textContent = 'Uploading…'; }
 
@@ -233,7 +666,8 @@ async function uploadImage(input) {
       setTimeout(() => location.reload(), 600);
     } else {
       const d = await res.json();
-      if (statusEl) { statusEl.textContent = d.detail?.error || 'Upload failed'; statusEl.style.color = 'var(--danger)'; }
+      const err = d.error || d.detail?.error || 'Upload failed';
+      if (statusEl) { statusEl.textContent = err; statusEl.style.color = 'var(--danger)'; }
       if (barEl) barEl.style.width = '0%';
     }
   } catch {
@@ -307,6 +741,342 @@ async function convertCard() {
     const d = await res.json();
     alert(d.detail?.error || 'Conversion failed');
   }
+}
+
+function copyText(btn, text) {
+  navigator.clipboard.writeText(String(text)).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1200);
+  }).catch(() => {});
+}
+
+function copyCardLink() {
+  copyText(document.querySelector('.page-head-actions .btn:last-child'), `{{ qr_link }}`);
+}
+
+function copyQRLink() {
+  const input = document.getElementById('qr-link');
+  if (!input) return;
+  navigator.clipboard.writeText(input.value).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1200);
+  });
+}
+
+/* ---------- Collapse persistence ---------- */
+function bindCollapsePersistence() {
+  document.querySelectorAll('details[data-persist]').forEach((d) => {
+    const key = 'detail:' + d.dataset.persist;
+    const stored = localStorage.getItem(key);
+    if (stored !== null) d.open = stored === '1';
+    d.addEventListener('toggle', () => {
+      localStorage.setItem(key, d.open ? '1' : '0');
+    });
+  });
+}
+
+/* ---------- QR generator (in-house) ---------- */
+const cardFields = {{ (card.template_fields or {}) | tojson }};
+
+// DOM-derived values — resolve lazily (script runs in <head> before #qr-link exists)
+function getQRLink() {
+  return document.getElementById('qr-link')?.value || '';
+}
+
+// Field descriptors per QR content type
+const QR_FIELDS = {
+  0: [{ k: 'text', label: 'Text or URL', type: 'text' }],
+  1: [
+    { k: 'network', label: 'Network name', type: 'text' },
+    { k: 'password', label: 'Password', type: 'text' },
+    { k: 'hidden', label: 'Hidden network', type: 'select', opts: [['false', 'No'], ['true', 'Yes']] },
+    { k: 'encryption', label: 'Encryption', type: 'select', opts: [['wpa', 'WPA'], ['wep', 'WEP'], ['nopass', 'No password']] },
+  ],
+  2: [
+    { k: 'number', label: 'Phone number', type: 'text' },
+    { k: 'text', label: 'Message', type: 'text' },
+  ],
+  3: [
+    { k: 'email', label: 'To', type: 'text' },
+    { k: 'email-cc', label: 'Cc', type: 'text' },
+    { k: 'email-bcc', label: 'Bcc', type: 'text' },
+    { k: 'subject', label: 'Subject', type: 'text' },
+    { k: 'message', label: 'Message', type: 'text' },
+  ],
+  4: [{ k: 'number', label: 'Phone number', type: 'text' }],
+  5: [
+    { k: 'cryptotype', label: 'Crypto type', type: 'text' },
+    { k: 'address', label: 'Address', type: 'text' },
+    { k: 'amount', label: 'Amount', type: 'text' },
+  ],
+  6: [
+    { k: 'vc_first_name', label: 'First name', type: 'text' },
+    { k: 'vc_last_name', label: 'Last name', type: 'text' },
+    { k: 'vc_company', label: 'Company', type: 'text' },
+    { k: 'vc_job', label: 'Job title', type: 'text' },
+    { k: 'vc_street', label: 'Street', type: 'text' },
+    { k: 'vc_city', label: 'City', type: 'text' },
+    { k: 'vc_state', label: 'State / region', type: 'text' },
+    { k: 'vc_zip', label: 'ZIP code', type: 'text' },
+    { k: 'vc_country', label: 'Country', type: 'text' },
+    { k: 'vc_phone', label: 'Phone', type: 'text' },
+    { k: 'vc_mobile', label: 'Mobile', type: 'text' },
+    { k: 'vc_fax', label: 'Fax', type: 'text' },
+    { k: 'vc_website', label: 'Website', type: 'text' },
+    { k: 'vc_email', label: 'Email', type: 'text' },
+    { k: 'vc_note', label: 'Note', type: 'text' },
+  ],
+  7: [
+    { k: 'number', label: 'Phone number', type: 'text' },
+    { k: 'text', label: 'Message', type: 'text' },
+  ],
+  8: [
+    { k: 've_summary', label: 'Summary', type: 'text' },
+    { k: 've_description', label: 'Description', type: 'text' },
+    { k: 've_location', label: 'Location', type: 'text' },
+    { k: 've_timezone', label: 'Timezone', type: 'text' },
+    { k: 've_url', label: 'URL', type: 'text' },
+    { k: 've_start', label: 'Start (YYYYMMDDTHHMMSS)', type: 'text' },
+    { k: 've_end', label: 'End (YYYYMMDDTHHMMSS)', type: 'text' },
+  ],
+  9: [
+    { k: 'ge_latitude', label: 'Latitude', type: 'text' },
+    { k: 'ge_longitude', label: 'Longitude', type: 'text' },
+  ],
+};
+
+// Map card template fields onto vCard / phone / text values for prefill
+function prefillMap(type) {
+  const map = {};
+  if (type === '0') map.text = getQRLink();
+  if (type === '6' || type === '0' || type === '4' || type === '7' || type === '3') {
+    const f = cardFields || {};
+    const name = (f.name || '').split(' ');
+    map.vc_first_name = name[0] || '';
+    map.vc_last_name = name.slice(1).join(' ') || '';
+    map.vc_company = map.vc_company || f.company || '';
+    map.vc_job = map.vc_job || f.title || '';
+    map.vc_phone = map.vc_phone || f.phone || '';
+    map.vc_email = map.vc_email || f.email || '';
+    map.vc_website = map.vc_website || f.website || '';
+    map.vc_street = map.vc_street || f.address || '';
+  }
+  return map;
+}
+
+function renderQRTypeFields() {
+  const type = document.getElementById('qr-type').value;
+  const container = document.getElementById('qr-type-fields');
+  const fields = QR_FIELDS[type] || [];
+  const prefill = prefillMap(type);
+  container.innerHTML = '';
+  if (fields.length > 6) container.classList.add('grid', 'sm:grid-cols-2', 'gap-x-4');
+  else container.classList.remove('grid', 'sm:grid-cols-2', 'gap-x-4');
+  fields.forEach((f) => {
+    const label = document.createElement('label');
+    label.className = 'form-label';
+    label.htmlFor = `qr-f-${f.k}`;
+    label.textContent = f.label;
+    const input = document.createElement(f.type === 'select' ? 'select' : 'input');
+    input.id = `qr-f-${f.k}`;
+    input.className = 'form-input';
+    if (f.type === 'select') {
+      (f.opts || []).forEach(([v, t]) => {
+        const o = document.createElement('option');
+        o.value = v; o.textContent = t;
+        if (v === (prefill[f.k] || '')) o.selected = true;
+        input.appendChild(o);
+      });
+    } else {
+      input.type = 'text';
+      input.value = prefill[f.k] || '';
+      input.placeholder = f.label;
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'form-group';
+    wrap.appendChild(label); wrap.appendChild(input);
+    container.appendChild(wrap);
+  });
+}
+
+function toggleQRFast() {
+  const fast = document.getElementById('qr-fast').checked;
+  ['qr-custom-settings', 'qr-custom-colors', 'qr-custom-logo'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = fast;
+  });
+  document.getElementById('qr-error').disabled = fast;
+}
+
+async function uploadCustomLogo(input) {
+  const file = input.files?.[0];
+  const status = document.getElementById('qr-logo-status');
+  if (!file || !status) return;
+  status.textContent = 'Uploading logo…';
+  const form = new FormData();
+  form.append('file', file);
+  try {
+    const res = await fetch('/api/qr/upload-logo', {
+      method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: form,
+    });
+    const data = await res.json();
+    if (res.ok && data.logo_id) {
+      const sel = document.getElementById('qr-logo');
+      let opt = Array.from(sel.options).find((o) => o.value === data.logo_id);
+      if (!opt) {
+        opt = document.createElement('option');
+        opt.value = data.logo_id;
+        opt.textContent = 'My custom logo';
+        sel.appendChild(opt);
+      }
+      sel.value = data.logo_id;
+      status.textContent = 'Custom logo ready — it will be applied on Generate.';
+    } else {
+      status.textContent = (data.error || 'Logo upload failed');
+    }
+  } catch {
+    status.textContent = 'Network error';
+  }
+}
+
+function collectQRParams() {
+  const type = document.getElementById('qr-type').value;
+  const fast = document.getElementById('qr-fast').checked;
+  const params = { type: parseInt(type, 10) };
+
+  // Content fields for the selected type
+  (QR_FIELDS[type] || []).forEach((f) => {
+    const el = document.getElementById(`qr-f-${f.k}`);
+    if (el && el.value) params[f.k] = el.value;
+  });
+
+  // Geometry (both fast and full support these)
+  params.width = parseInt(document.getElementById('qr-width').value, 10) || 500;
+  params.height = parseInt(document.getElementById('qr-width').value, 10) || 500;
+  params.imageformat = document.getElementById('qr-format').value;
+  params.bordersize = parseInt(document.getElementById('qr-border').value, 10) || 4;
+  if (fast) return params;
+
+  params.error_correction = document.getElementById('qr-error').value;
+
+  // Colors
+  params.color = document.getElementById('qr-fg').value;
+  params.background_color = document.getElementById('qr-bg').value;
+  params.inner_eye_color = document.getElementById('qr-inner-eye-color').value;
+  params.outer_eye_color = document.getElementById('qr-outer-eye-color').value;
+  params.frame_color = document.getElementById('qr-frame-color').value;
+  params.frame_background_color = document.getElementById('qr-frame-bg').value;
+  params.frame_text_color = document.getElementById('qr-frame-text-color').value;
+  params.frame_text_icon_color = document.getElementById('qr-frame-icon-color').value;
+
+  // Color pattern (multi-color alternation)
+  const pattern = document.getElementById('qr-pattern').value.trim();
+  if (pattern) params.custom_color_pattern = pattern;
+
+  // Shape / eyes
+  params.style = parseInt(document.getElementById('qr-square-style').value, 10) || 0;
+  params.inner_eye_style = parseInt(document.getElementById('qr-inner-eye-style').value, 10) || 0;
+  params.outer_eye_style = parseInt(document.getElementById('qr-outer-eye-style').value, 10) || 0;
+
+  // Frame
+  params.frame_style = parseInt(document.getElementById('qr-frame-style').value, 10) || 0;
+  const frameText = document.getElementById('qr-frame-text').value.trim();
+  if (frameText) params.frame_text = frameText;
+  const frameIcon = document.getElementById('qr-frame-icon').value;
+  if (frameIcon) params.frame_text_icon = frameIcon;
+
+  // Logo
+  const logo = document.getElementById('qr-logo').value;
+  if (logo) params.logo = logo;
+  if (document.getElementById('qr-logo-remove-bg').checked) params.logo_remove_background = true;
+
+  return params;
+}
+
+const PREVIEWABLE_FORMATS = ['png', 'svg'];
+const QR_ERROR_MESSAGES = {
+  missing_fields: 'Fill in all required fields for this QR type.',
+  invalid_type: 'This QR type is not supported.',
+  invalid_imageformat: 'This image format is not supported.',
+  invalid_error_correction: 'This error-correction level is not supported.',
+  invalid_color: 'One of the color values is not a valid hex color.',
+};
+
+async function generateQR() {
+  const params = collectQRParams();
+  const fast = document.getElementById('qr-fast').checked;
+  const status = document.getElementById('qr-status');
+  status.textContent = 'Generating…';
+  try {
+    const res = await fetch(fast ? '/api/qr/fastgenerate' : '/api/qr/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify(params),
+    });
+    if (res.ok) {
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const fmt = document.getElementById('qr-format').value;
+      const img = document.getElementById('qr-image');
+      const fileNote = document.getElementById('qr-file-note');
+      const result = document.getElementById('qr-result');
+      if (PREVIEWABLE_FORMATS.includes(fmt)) {
+        img.style.display = '';
+        img.src = url;
+        fileNote.style.display = 'none';
+      } else {
+        img.style.display = 'none';
+        img.src = '';
+        document.getElementById('qr-file-note-name').textContent = `card-qr-${cardId}.${fmt}`;
+        fileNote.style.display = '';
+      }
+      const dl = document.getElementById('qr-download');
+      dl.dataset.href = url;
+      dl.href = url;
+      result.style.display = 'flex';
+      status.textContent = '';
+      const btn = document.querySelector('.qr-rail-card .btn-primary');
+      if (btn) btn.textContent = 'Regenerate';
+      return;
+    }
+    const d = await res.json().catch(() => ({}));
+    const err = d.error || d.detail?.error || 'Generation failed';
+    document.getElementById('qr-file-note').style.display = 'none';
+    status.textContent = QR_ERROR_MESSAGES[err] || err;
+  } catch {
+    document.getElementById('qr-file-note').style.display = 'none';
+    status.textContent = 'Network error';
+  }
+}
+
+document.getElementById('qr-download')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  const blobUrl = document.getElementById('qr-download').dataset.href || document.getElementById('qr-image').src;
+  if (!blobUrl) return;
+  const a = document.createElement('a');
+  a.href = blobUrl;
+  a.download = `card-qr-${cardId}.${document.getElementById('qr-format').value}`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+});
+
+function initCardDetail() {
+  renderQRTypeFields();
+  toggleQRFast();
+  bindCollapsePersistence();
+  const label = document.getElementById('qr-payload-label');
+  if (label) label.textContent = `Scanned link: ${getQRLink()}`;
+  loadBackFace();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCardDetail);
+} else {
+  initCardDetail();
 }
 </script>
 {% endblock %}

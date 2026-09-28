@@ -1,0 +1,133 @@
+- generic [ref=f35e2]:
+  - complementary [ref=f35e3]:
+    - link "UWITZ CARDS" [ref=f35e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f35e7]:
+      - generic [ref=f35e8]: Overview
+      - link "Dashboard" [ref=f35e9] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f35e16] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f35e20] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f35e25] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+      - generic [ref=f35e30]: Corporate
+      - link "Org Dashboard" [ref=f35e31] [cursor=pointer]:
+        - /url: /corporate
+      - link "Org Cards" [ref=f35e35] [cursor=pointer]:
+        - /url: /corporate/cards
+      - link "Members" [ref=f35e39] [cursor=pointer]:
+        - /url: /corporate/members
+      - link "Org Orders" [ref=f35e46] [cursor=pointer]:
+        - /url: /corporate/orders
+      - generic [ref=f35e51]:
+        - generic [ref=f35e52]: Logistics
+        - link "Logistics" [ref=f35e53] [cursor=pointer]:
+          - /url: /logistics
+        - link "Orders" [ref=f35e60] [cursor=pointer]:
+          - /url: /logistics/orders
+      - generic [ref=f35e65]:
+        - generic [ref=f35e66]: Admin
+        - link "Admin Panel" [ref=f35e67] [cursor=pointer]:
+          - /url: /admin
+        - link "Users" [ref=f35e71] [cursor=pointer]:
+          - /url: /admin/users
+        - link "All Cards" [ref=f35e78] [cursor=pointer]:
+          - /url: /admin/cards
+        - link "All Orders" [ref=f35e82] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Subscriptions" [ref=f35e87] [cursor=pointer]:
+          - /url: /admin/subscriptions
+        - link "Pricing" [ref=f35e91] [cursor=pointer]:
+          - /url: /admin/pricing
+        - link "Unassigned Cards" [ref=f35e95] [cursor=pointer]:
+          - /url: /admin/orphans
+        - link "Email Logs" [ref=f35e99] [cursor=pointer]:
+          - /url: /admin/email-logs
+    - generic [ref=f35e104]:
+      - generic [ref=f35e105]:
+        - generic [ref=f35e106]: E
+        - generic [ref=f35e107]:
+          - generic [ref=f35e108]: Edward Paxton
+          - generic [ref=f35e109]: admin
+      - button "Sign out" [ref=f35e111] [cursor=pointer]
+  - generic [ref=f35e114]:
+    - banner [ref=f35e115]
+    - main [ref=f35e116]:
+      - generic [ref=f35e117]:
+        - generic [ref=f35e118]: Step 1 of 2
+        - heading "How would you like to create your card?" [level=2] [ref=f35e119]
+        - paragraph [ref=f35e120]: Start with a template, or upload your own design.
+        - generic [ref=f35e121]:
+          - button "Use a Template Pre-designed layouts — just fill in your info" [ref=f35e122] [cursor=pointer]:
+            - generic [ref=f35e126]:
+              - generic [ref=f35e127]: Use a Template
+              - generic [ref=f35e128]: Pre-designed layouts — just fill in your info
+          - button "Upload Your Design Custom image (85.6 × 54 mm @ 300 DPI) after card creation" [ref=f35e129] [cursor=pointer]:
+            - generic [ref=f35e134]:
+              - generic [ref=f35e135]: Upload Your Design
+              - generic [ref=f35e136]: Custom image (85.6 × 54 mm @ 300 DPI) after card creation
+        - generic [ref=f35e138]:
+          - generic [ref=f35e139] [cursor=pointer]:
+            - img "Emergency Info Card" [ref=f35e141]
+            - generic [ref=f35e142]:
+              - generic [ref=f35e143]: Emergency Info Card
+              - generic [ref=f35e144]: ICE card with blood type, allergies, medical conditions, and emergency contacts
+              - generic [ref=f35e145]: 12 fields
+          - generic [ref=f35e146] [cursor=pointer]:
+            - img "Business Card" [ref=f35e148]
+            - generic [ref=f35e149]:
+              - generic [ref=f35e150]: Business Card
+              - generic [ref=f35e151]: Professional card with avatar, contact details, and QR code
+              - generic [ref=f35e152]: 7 fields
+          - generic [ref=f35e153] [cursor=pointer]:
+            - img "Student ID Card" [ref=f35e155]
+            - generic [ref=f35e156]:
+              - generic [ref=f35e157]: Student ID Card
+              - generic [ref=f35e158]: University student identification card with photo area and faculty info
+              - generic [ref=f35e159]: 8 fields
+          - generic [ref=f35e160] [cursor=pointer]:
+            - img "Event Badge" [ref=f35e162]
+            - generic [ref=f35e163]:
+              - generic [ref=f35e164]: Event Badge
+              - generic [ref=f35e165]: Conference or event attendee badge with badge type and QR
+              - generic [ref=f35e166]: 9 fields
+          - generic [ref=f35e167] [cursor=pointer]:
+            - img "Real Estate Agent" [ref=f35e169]
+            - generic [ref=f35e170]:
+              - generic [ref=f35e171]: Real Estate Agent
+              - generic [ref=f35e172]: Agent card with license number, agency, and specialties
+              - generic [ref=f35e173]: 7 fields
+          - generic [ref=f35e174] [cursor=pointer]:
+            - img "Medical Professional" [ref=f35e176]
+            - generic [ref=f35e177]:
+              - generic [ref=f35e178]: Medical Professional
+              - generic [ref=f35e179]: Doctor or nurse card with license, hospital, and medical ID panel
+              - generic [ref=f35e180]: 10 fields
+          - generic [ref=f35e181] [cursor=pointer]:
+            - img "Minimalist Card" [ref=f35e183]
+            - generic [ref=f35e184]:
+              - generic [ref=f35e185]: Minimalist Card
+              - generic [ref=f35e186]: Clean, simple design focused on name and essential contact
+              - generic [ref=f35e187]: 6 fields
+          - generic [ref=f35e188] [cursor=pointer]:
+            - img "TagLink Card" [ref=f35e190]
+            - generic [ref=f35e191]:
+              - generic [ref=f35e192]: TagLink Card
+              - generic [ref=f35e193]: Dynamic redirect — update where it points anytime via API
+              - generic [ref=f35e194]: 2 fields
+          - generic [ref=f35e195] [cursor=pointer]:
+            - img "Corporate Card" [ref=f35e197]
+            - generic [ref=f35e198]:
+              - generic [ref=f35e199]: Corporate Card
+              - generic [ref=f35e200]: Branded employee card with department and employee ID
+              - generic [ref=f35e201]: 7 fields
+    - contentinfo [ref=f35e202]:
+      - paragraph [ref=f35e203]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f35e204] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f35e205] [cursor=pointer]:
+          - /url: /terms

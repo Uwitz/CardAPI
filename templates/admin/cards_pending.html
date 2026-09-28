@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block title %}Pending Cards — Admin{% endblock %}
+{% block page_title %}Pending Cards{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>Pending Cards</h1>
+    <p class="page-head-sub">{{ cards | length }} card{{ 's' if cards | length != 1 }} awaiting logistics processing</p>
+  </div>
+  <div class="page-head-actions">
+    <a href="/admin/cards/new" class="btn-primary">+ Create Card & Account</a>
+  </div>
+</div>
+
+<div class="filter-bar" role="group" aria-label="Filter pending cards by status">
+  <button class="filter-chip {% if current_status == 'all' %}active{% endif %}" data-status="all" onclick="setFilter('all', this)">All<span class="chip-count">{{ cards | length }}</span></button>
+  <button class="filter-chip {% if current_status == 'pending' %}active{% endif %}" data-status="pending" onclick="setFilter('pending', this)">Pending<span class="chip-count">{{ cards | selectattr('status', 'equalto', 'pending') | list | length }}</span></button>
+  <button class="filter-chip {% if current_status == 'active' %}active{% endif %}" data-status="active" onclick="setFilter('active', this)">Activated<span class="chip-count">{{ cards | selectattr('status', 'equalto', 'active') | list | length }}</span></button>
+</div>
+
+{% if cards %}
+<div class="card-grid" id="pending-grid">
+  {% for card in cards %}
+  <div class="data-card data-card-hover" data-status="{{ card.status }}">
+    <div class="card-mini">
+      {% if card.image_url %}
+      <img src="{{ card.image_url }}" alt="{{ card.card_type }} card preview" loading="lazy">
+      {% else %}
+      <div class="card-mini-chip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      </div>
+      <span class="card-mini-label">{{ card.card_type }}</span>
+      {% endif %}
+    </div>
+
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ card.card_id }}</div>
+        <div class="data-card-sub">{{ card.owner.display_name if card.owner else 'No owner' }}</div>
+      </div>
+      <div class="data-card-badges">
+        <span class="tier-badge {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type }}</span>
+        <span class="tag {% if card.status == 'pending' %}tag-warning{% elif card.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.status }}</span>
+      </div>
+    </div>
+
+    <div class="data-card-body">
+      <div>
+        <div class="meta-label">Tier</div>
+        <div class="meta-value strong">{{ card.card_tier or '—' }}</div>
+      </div>
+      <div>
+        <div class="meta-label">User Status</div>
+        <div class="meta-value">
+          <span class="tag {% if card.owner and card.owner.status == 'pending' %}tag-warning{% elif card.owner and card.owner.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.owner.status if card.owner else '—' }}</span>
+        </div>
+      </div>
+      <div>
+        <div class="meta-label">Created</div>
+        <div class="meta-value strong">{{ card.created_at[:10] }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Activation URL</div>
+        <div class="meta-value">
+          <button class="btn-ghost btn-sm" onclick="copyActivationUrl('{{ card.card_id }}')" title="Copy activation URL">📋 Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="data-card-foot">
+      <button class="btn-ghost btn-sm" onclick="viewCard('{{ card.card_id }}')">View Details</button>
+      {% if card.status == 'pending' %}
+      <button class="btn-primary btn-sm" onclick="generateActivationUrl('{{ card.card_id }}')">Get Activation URL</button>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><p class="font-semibold">No pending cards</p></div>
+{% endif %}
+
+<!-- Card Detail Modal -->
+<div class="modal-overlay" id="card-detail-modal">
+  <div class="modal-box" style="max-width: 700px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="margin: 0;">Card Details</h3>
+      <button class="btn-ghost btn-sm" onclick="closeCardDetail()">Close</button>
+    </div>
+    <div id="card-detail-content"></div>
+  </div>
+</div>
+
+<script>
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+function setFilter(status, btn) {
+  document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#pending-grid .data-card[data-status]').forEach(card => {
+    if (status === 'all' || card.dataset.status === status) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+async function viewCard(cardId) {
+  const res = await fetch(`/api/admin/cards/${cardId}`);
+  const data = await res.json();
+  const c = data.card;
+  const owner = data.owner;
+  const image = data.image;
+
+  const modal = document.getElementById('card-detail-modal');
+  const content = document.getElementById('card-detail-content');
+  content.innerHTML = `
+    <div class="detail-grid">
+      <div><div class="detail-label">Card ID</div><div class="detail-value mono">${c.card_id}</div></div>
+      <div><div class="detail-label">Type</div><div class="detail-value">${c.card_type}</div></div>
+      <div><div class="detail-label">Tier</div><div class="detail-value">${c.card_tier}</div></div>
+      <div><div class="detail-label">Status</div><div class="detail-value"><span class="tag ${c.status === 'pending' ? 'tag-warning' : c.status === 'active' ? 'tag-success' : 'tag-neutral'}">${c.status}</span></div></div>
+      <div><div class="detail-label">Subscription</div><div class="detail-value">${c.subscription_status || 'none'}</div></div>
+      <div><div class="detail-label">Views</div><div class="detail-value">${c.views}</div></div>
+      <div><div class="detail-label">Created</div><div class="detail-value">${c.created_at}</div></div>
+      <div><div class="detail-label">Updated</div><div class="detail-value">${c.updated_at}</div></div>
+    </div>
+    ${owner ? `
+      <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+        <div style="font-weight: 600; margin-bottom: 12px;">Owner</div>
+        <div class="detail-grid">
+          <div><div class="detail-label">Name</div><div class="detail-value">${owner.display_name}</div></div>
+          <div><div class="detail-label">Email</div><div class="detail-value">${owner.email}</div></div>
+          <div><div class="detail-label">User ID</div><div class="detail-value mono">${owner._id}</div></div>
+          <div><div class="detail-label">Role</div><div class="detail-value">${owner.role}</div></div>
+          <div><div class="detail-label">Status</div><div class="detail-value"><span class="tag ${owner.status === 'pending' ? 'tag-warning' : owner.status === 'active' ? 'tag-success' : 'tag-neutral'}">${owner.status}</span></div></div>
+        </div>
+      </div>
+    ` : ''}
+    ${c.vcard_data ? `
+      <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+        <div style="font-weight: 600; margin-bottom: 12px;">vCard Content</div>
+        <pre style="background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px; font-family: var(--font-mono); font-size: 12px; overflow-x: auto; white-space: pre-wrap; color: var(--text-body); max-height: 200px;">${c.vcard_data}</pre>
+      </div>
+    ` : ''}
+    ${c.redirect_url ? `
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+        <div style="font-weight: 600; margin-bottom: 12px;">Redirect URL</div>
+        <div style="font-family: var(--font-mono); font-size: 13px; color: var(--text-link);">${c.redirect_url}</div>
+      </div>
+    ` : ''}
+    ${image ? `
+      <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+        <div style="font-weight: 600; margin-bottom: 12px;">Card Image</div>
+        <img src="/static/uploads/cards/${image.filename}" style="max-width: 340px; aspect-ratio: 85.6/54; border-radius: 8px; border: 1px solid var(--border); object-fit: cover;">
+        <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">${image.width_px}x${image.height_px}px @ ${image.dpi} DPI</div>
+      </div>
+    ` : ''}
+  `;
+  modal.classList.add('open');
+}
+
+function closeCardDetail() {
+  document.getElementById('card-detail-modal').classList.remove('open');
+}
+
+async function copyActivationUrl(cardId) {
+  const res = await fetch(`/api/admin/cards/${cardId}/activation-url`);
+  const data = await res.json();
+  if (data.activation_url) {
+    await navigator.clipboard.writeText(data.activation_url);
+    alert('Activation URL copied to clipboard!');
+  }
+}
+
+async function generateActivationUrl(cardId) {
+  const res = await fetch(`/api/admin/cards/${cardId}/activation-url`, { method: 'GET' });
+  const data = await res.json();
+  if (data.activation_url) {
+    await navigator.clipboard.writeText(data.activation_url);
+    alert('New activation URL generated and copied!');
+  }
+}
+</script>
+{% endblock %}

@@ -3,9 +3,16 @@
 {% block title %}Corporate — {{ brand }}{% endblock %}
 {% block page_title %}Corporate Dashboard{% endblock %}
 {% block content %}
-<div class="page-header animate-fade-up">
-  <h1>{{ org.name if org else 'Organisation' }}</h1>
-  <p>Manage your corporate cards and team members</p>
+<div class="page-head animate-fade-up">
+  <div class="page-head-main">
+    <h1>{{ org.name if org else 'Organisation' }}</h1>
+    <p class="page-head-sub">Manage your corporate cards and team members</p>
+  </div>
+  <div class="page-head-actions">
+    <a href="/corporate/cards" class="btn-primary btn-sm">Manage Cards</a>
+    <a href="/corporate/members" class="btn-ghost btn-sm">Manage Members</a>
+    <a href="/corporate/orders" class="btn-ghost btn-sm">Orders</a>
+  </div>
 </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
@@ -23,23 +30,34 @@
   </div>
 </div>
 
-<div class="flex gap-3 mb-6">
-  <a href="/corporate/cards" class="btn-primary btn-sm">Manage Cards</a>
-  <a href="/corporate/members" class="btn-ghost btn-sm">Manage Members</a>
-  <a href="/corporate/orders" class="btn-ghost btn-sm">Orders</a>
-</div>
-
 {% if cards %}
-<h3 style="margin-bottom: 12px;">Recent Cards</h3>
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+<div class="section-head">
+  <h2 class="section-title">Recent Cards<span class="section-count">{{ cards | length }}</span></h2>
+  <a href="/corporate/cards" class="btn-ghost btn-sm">View all →</a>
+</div>
+<div class="card-grid">
   {% for card in cards[:6] %}
-  <div class="card" style="padding: 16px;">
-    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-      <span class="tag tag-info">{{ card.card_type }}</span>
-      <span class="tag {% if card.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.status }}</span>
+  <div class="data-card">
+    <div class="card-mini">
+      {% if card.image_url %}
+      <img src="{{ card.image_url }}" alt="{{ card.card_type }} card preview" loading="lazy">
+      {% else %}
+      <div class="card-mini-chip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      </div>
+      <span class="card-mini-label">{{ card.card_type }}</span>
+      {% endif %}
     </div>
-    <div style="font-family: var(--font-mono); font-weight: 600; font-size: 14px;">{{ card.card_id }}</div>
-    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">{{ card.views }} views</div>
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ card.card_id }}</div>
+        <div class="data-card-sub">{{ card.views }} views</div>
+      </div>
+      <div class="data-card-badges">
+        <span class="tag tag-info">{{ card.card_type }}</span>
+        <span class="tag {% if card.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.status }}</span>
+      </div>
+    </div>
   </div>
   {% endfor %}
 </div>

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Email Notifications — {{ brand }}{% endblock %}
+{% block page_title %}Email Notifications{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>Email Notifications</h1>
+    <p class="page-head-sub">All email alerts sent to your account</p>
+  </div>
+</div>
+
+{% if logs %}
+<div class="card" style="overflow: hidden;">
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+      <thead>
+        <tr style="background: var(--bg-inset); border-bottom: 1px solid var(--border);">
+          <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-strong);">Subject</th>
+          <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-strong);">Status</th>
+          <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-strong);">Template</th>
+          <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-strong);">Sent</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr style="border-bottom: 1px solid var(--border-faint);">
+          <td style="padding: 12px 16px; color: var(--text-strong);">{{ log.subject }}</td>
+          <td style="padding: 12px 16px;">
+            <span class="badge {% if log.status == 'sent' %}badge-success{% elif log.status == 'failed' %}badge-error{% else %}badge-neutral{% endif %}">{{ log.status | capitalize }}</span>
+          </td>
+          <td style="padding: 12px 16px; color: var(--text-muted); font-family: var(--font-mono); font-size: 12px;">{{ log.template }}</td>
+          <td style="padding: 12px 16px; color: var(--text-muted);">{{ log.created_at[:16].replace('T', ' ') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="empty-state" style="padding: 3rem;">
+  <p class="font-semibold mb-2">No email notifications yet</p>
+  <p class="text-sm text-muted">Email alerts will appear here when you receive notifications.</p>
+</div>
+{% endif %}
+{% endblock %}

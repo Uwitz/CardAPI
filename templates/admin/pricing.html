@@ -8,16 +8,18 @@
   <div class="card">
     <h2 style="font-weight: 600; margin-bottom: 1rem;">Card Prices (Physical)</h2>
     <table class="table">
-      <thead><tr><th>Type</th><th>Price (MYR)</th></tr></thead>
+      <thead><tr><th>Type</th><th>Plastic (MYR)</th><th>Aluminium (MYR)</th></tr></thead>
       <tbody>
         {% for type, prices in card_pricing.items() %}
         <tr>
           <td class="font-medium">{{ type | capitalize }}</td>
-          <td>RM {{ '%.2f' | format(prices.physical) }}</td>
+          <td class="font-mono">RM {{ '%.2f' | format(prices.physical) }}</td>
+          {% set alu = prices.get('aluminium') %}<td class="font-mono">{% if alu is not none %}RM {{ '%.2f' | format(alu) }}{% else %}<span style="color:var(--text-muted)">—</span>{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+    <p style="font: 400 12px/1.5 var(--font-sans); color: var(--text-muted); margin-top: 0.75rem;">Aluminium cards are pre-orders only.</p>
   </div>
 
   <div class="card">
@@ -28,7 +30,7 @@
         {% for plan, info in subscription_pricing.items() %}
         <tr>
           <td class="font-medium">{{ plan }}</td>
-          <td>RM {{ '%.2f' | format(info.amount) }}</td>
+          <td class="font-mono">RM {{ '%.2f' | format(info.amount) }}</td>
           <td>{{ info.interval }}</td>
         </tr>
         {% endfor %}

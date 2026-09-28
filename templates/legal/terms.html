@@ -4,93 +4,266 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terms of Service — {{ brand }}</title>
-  <meta name="description" content="Terms of service for Uwitz Cards.">
+  <meta name="description" content="Terms of Service for Uwitz Cards — compliant with GDPR, nFADP, FADP, PDPA, and consumer protection laws.">
   <meta name="theme-color" content="#09090A">
-  <link rel="icon" type="image/svg+xml" href="/static/assets/uwitz_logo.svg">
+  <link rel="icon" type="image/png" href="/static/assets/NFCCard.png">
   <link rel="stylesheet" href="/static/css/base.css">
   <link rel="stylesheet" href="/static/css/components.css">
   <link rel="stylesheet" href="/static/css/utilities.css">
   <style>
-    .legal-layout { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+    .legal-layout { max-width: 800px; margin: 0 auto; padding: 48px 24px 80px; }
     .legal-layout h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
     .legal-layout h2 { font-size: 1.25rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.75rem; color: var(--text-strong); }
+    .legal-layout h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-strong); }
     .legal-layout p { font: 400 14px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 1rem; }
     .legal-layout ul { margin: 0 0 1rem 1.25rem; }
     .legal-layout li { font: 400 14px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 0.25rem; }
-    .legal-meta { font: 500 12px/1 var(--font-mono); color: var(--text-faint); margin-bottom: 2rem; }
+    .legal-meta { font: 500 12px/1 var(--font-mono); color: var(--text-muted); margin-bottom: 2rem; }
     .legal-notice { padding: 14px 16px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 2rem; }
-    .legal-notice p { font: 400 12px/1.6 var(--font-sans); color: var(--text-faint); margin: 0; }
+    .legal-notice p { font: 400 12px/1.6 var(--font-sans); color: var(--text-muted); margin: 0; }
+    .compliance-badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; margin-right: 6px; }
+    .badge-gdpr { background: #dbeafe; color: #1e40af; }
+    .badge-nfadp { background: #fef3c7; color: #92400e; }
+    .badge-fadp { background: #fce7f3; color: #9d174d; }
+    .badge-pdpa { background: #dcfce7; color: #166534; }
+    .badge-coppa { background: #f3e8ff; color: #7c3aed; }
+    .consumer-rights { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 16px; margin: 1rem 0; }
+    .consumer-rights h4 { margin: 0 0 8px; color: #166534; }
   </style>
 </head>
 <body style="background: var(--bg-1); min-height: 100vh;">
-  <div class="legal-layout">
+  <main class="legal-layout">
     <a href="/" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; margin-bottom: 24px;">
-      <img src="/static/assets/uwitz_logo.svg" alt="Uwitz Cards" style="width: 24px; height: 16px;">
+      <img src="/static/assets/NFCCard.png" alt="" style="width: 24px; height: auto;">
       <span style="font: 600 12px/1 var(--font-mono); letter-spacing: 0.1em; color: var(--text-strong);">UWITZ CARDS</span>
     </a>
 
     <h1>Terms of Service</h1>
-    <div class="legal-meta">Effective 7 September 2026 · Last updated 7 September 2026</div>
-
-    <div class="legal-notice">
-      <p><strong style="color: var(--text-muted);">Legal status:</strong> Uwitz is currently unincorporated. We are preparing to legally register and operate under Estonia in the foreseeable future.</p>
+    <div class="legal-meta">
+      Effective 7 September 2026 · Last updated 7 September 2026
+      <div style="margin-top: 8px;">
+        <span class="compliance-badge badge-gdpr">GDPR (EU)</span>
+        <span class="compliance-badge badge-nfadp">nFADP (CH)</span>
+        <span class="compliance-badge badge-fadp">FADP (CH)</span>
+        <span class="compliance-badge badge-pdpa">PDPA (SG)</span>
+        <span class="compliance-badge badge-coppa">COPPA (US)</span>
+      </div>
     </div>
 
-    <h2>1. Acceptance of terms</h2>
-    <p>By creating an account or using Uwitz Cards, you agree to these terms. If you don't agree, don't use the service.</p>
+    <div class="legal-notice">
+      <p><strong style="color: var(--text-muted);">Legal status:</strong> Uwitz Cards is currently unincorporated. We are preparing to legally register and operate under Estonia in the foreseeable future. These terms comply with EU consumer law, GDPR, Swiss nFADP/FADP, Singapore PDPA, and US COPPA/CCPA where applicable.</p>
+    </div>
 
-    <h2>2. Service description</h2>
-    <p>Uwitz Cards provides NFC business card management, including digital card creation, physical card ordering and printing, TagLink dynamic redirects, and corporate card management.</p>
+    <div class="consumer-rights">
+      <h4>⚖️ Your Consumer Rights</h4>
+      <p style="margin: 0; font-size: 13px;">As a consumer, you have statutory rights that cannot be limited by these terms, including:</p>
+      <ul style="margin: 8px 0 0 1.25rem; font-size: 13px;">
+        <li>Right to withdraw from distance contracts within 14 days (EU Directive 2011/83/EU)</li>
+        <li>Right to clear information before purchase (GDPR Art. 12-14, Swiss CO Art. 3)</li>
+        <li>Right to refund for non-conforming goods (EU Sale of Goods Directive, Swiss CO Art. 197)</li>
+        <li>Right to fair contract terms (EU Unfair Terms Directive 93/13/EEC, Swiss CO Art. 8)</li>
+        <li>Singapore Consumer Protection (Fair Trading) Act protections</li>
+      </ul>
+    </div>
 
-    <h2>3. Accounts</h2>
+    <h2>1. Acceptance of Terms</h2>
+    <p>By creating an account or using Uwitz Cards, you agree to these Terms of Service and our <a href="/privacy" style="color: var(--text-link); text-decoration: underline; text-underline-offset: 2px;">Privacy Policy</a>. If you do not agree, do not use the service. These terms form a binding contract between you and Uwitz Cards.</p>
+
+    <h2>2. Service Description</h2>
+    <p>Uwitz Cards provides NFC business card management services, including:</p>
     <ul>
-      <li>You must provide accurate information when creating an account.</li>
-      <li>You're responsible for securing your account credentials.</li>
-      <li>SSO accounts (Entra ID, Irys) are subject to the respective provider's authentication policies.</li>
-      <li>We may suspend accounts that violate these terms.</li>
+      <li>Digital and physical NFC business card creation and management</li>
+      <li>Card types: Social (vCard), Corporate (branded vCard), TagLink (dynamic redirects)</li>
+      <li>Physical card printing on ISO/IEC 7810 ID-1 compliant stock with NTAG 215 chips</li>
+      <li>Corporate card management for teams</li>
+      <li>TagLink API for dynamic content updates</li>
+      <li>Subscription plans for premium features</li>
     </ul>
 
-    <h2>4. Cards and content</h2>
+    <h2>3. Eligibility and Accounts</h2>
+    <h3>3.1 Age Requirements</h3>
     <ul>
-      <li>You retain ownership of the content you put on your cards.</li>
-      <li>You grant us a limited license to store and render your card content as part of the service.</li>
-      <li>You're responsible for ensuring your card content is lawful and doesn't infringe third-party rights.</li>
-      <li>Card images must meet ISO/IEC 7810 ID-1 specifications (85.6mm × 54mm @ 300 DPI minimum).</li>
+      <li>You must be at least 13 years old to create an account.</li>
+      <li>Users under 13 require verifiable parental consent (COPPA compliance).</li>
+      <li>Users aged 13–17 have enhanced protections.</li>
+      <li>By registering, you represent you meet these age requirements.</li>
     </ul>
 
-    <h2>5. Physical cards</h2>
+    <h3>3.2 Account Registration</h3>
     <ul>
-      <li>Physical cards are printed on ISO/IEC 7810 ID-1 compliant stock with embedded NTAG 215 NFC chips.</li>
-      <li>Printing and shipping are handled by our logistics team. Delivery times are estimates, not guarantees.</li>
-      <li>Card designs are your responsibility — we print what you upload.</li>
+      <li>You must provide accurate, current, and complete information.</li>
+      <li>You are responsible for maintaining the security of your credentials.</li>
+      <li>SSO accounts (Entra ID, Irys) are subject to the respective provider's terms.</li>
+      <li>One account per person; no shared or automated accounts.</li>
     </ul>
 
-    <h2>6. Payments</h2>
+    <h3>3.3 Account Security</h3>
     <ul>
-      <li>All payments are processed via Stripe. We never store your payment card details.</li>
+      <li>You are responsible for all activity under your account.</li>
+      <li>Notify us immediately of unauthorized access at <a href="mailto:security@uwitz.org">security@uwitz.org</a>.</li>
+      <li>We implement rate limiting, account lockout, and CSRF protection.</li>
+    </ul>
+
+    <h2>4. Cards and Content</h2>
+    <h3>4.1 Ownership and License</h3>
+    <ul>
+      <li>You retain ownership of the content you put on your cards (vCard data, redirects, images).</li>
+      <li>You grant us a non-exclusive, worldwide, royalty-free license to store, process, and serve your card content as part of the service.</li>
+      <li>You are responsible for ensuring your card content is lawful, accurate, and does not infringe third-party rights (IP, privacy, etc.).</li>
+    </ul>
+
+    <h3>4.2 Card Specifications</h3>
+    <ul>
+      <li>Physical cards: ISO/IEC 7810 ID-1 (85.6mm × 54mm), NTAG 215 NFC chips, minimum 300 DPI.</li>
+      <li>Digital cards: vCard 3.0/4.0 format, served via HTTPS.</li>
+      <li>TagLink cards: Dynamic redirects served via HTTPS; content updateable via API.</li>
+    </ul>
+
+    <h3>4.3 Prohibited Content</h3>
+    <p>You may not use cards for:</p>
+    <ul>
+      <li>Illegal activities, fraud, phishing, or malware distribution</li>
+      <li>Spam, unsolicited commercial communications</li>
+      <li>Content infringing intellectual property rights</li>
+      <li>Hate speech, harassment, or violence</li>
+      <li>Adult content on cards accessible to minors</li>
+    </ul>
+
+    <h2>5. Physical Cards and Orders</h2>
+    <h3>5.1 Ordering</h3>
+    <ul>
+      <li>Physical cards are printed on demand after payment confirmation.</li>
+      <li>Prices include printing, NFC chip encoding, and standard shipping.</li>
+      <li>Customs/duties for international orders are your responsibility.</li>
+    </ul>
+
+    <h3>5.2 Production and Shipping</h3>
+    <ul>
+      <li>Production time: 3–5 business days after payment.</li>
+      <li>Shipping times are estimates; we are not liable for carrier delays.</li>
+      <li>Risk transfers to you upon delivery to carrier (Incoterms FCA).</li>
+      <li>Trackable shipping provided for all orders.</li>
+    </ul>
+
+    <h3>5.3 Quality and Returns</h3>
+    <ul>
+      <li>Cards are inspected before shipping. Defective cards will be replaced at no cost.</li>
+      <li>Right of withdrawal: 14 days for distance contracts (EU), subject to personalized goods exception (custom-printed cards).</li>
+      <li>Contact support within 7 days of receipt for defects.</li>
+    </ul>
+
+    <h2>6. Subscriptions and Payments</h2>
+    <h3>6.1 Plans and Billing</h3>
+    <ul>
+      <li>Plans: Social Yearly, Corporate Yearly, TagLink Monthly.</li>
+      <li>All payments processed via Stripe; we never store your payment card details.</li>
+      <li>Prices include applicable taxes (VAT/GST shown at checkout).</li>
+    </ul>
+
+    <h3>6.2 Auto-Renewal and Cancellation</h3>
+    <ul>
       <li>Subscriptions auto-renew unless cancelled before the renewal date.</li>
-      <li>Refund requests are handled on a case-by-case basis within 14 days of purchase.</li>
+      <li>Cancel anytime in your dashboard; access continues until period ends.</li>
+      <li>No refunds for partial periods except as required by law (e.g., EU 14-day withdrawal for digital content not yet supplied).</li>
+    </ul>
+
+    <h3>6.3 Refunds</h3>
+    <ul>
+      <li>Physical cards: Refund within 14 days of receipt if defective or not as described.</li>
+      <li>Digital cards: No refunds after card creation (personalized goods exception).</li>
+      <li>Subscription refunds: Prorated refund for unused period if cancelled for cause.</li>
+      <li>Contact billing@uwitz.org for refund requests.</li>
     </ul>
 
     <h2>7. TagLink API</h2>
     <ul>
-      <li>TagLink API keys are your responsibility. Rotate them if compromised.</li>
-      <li>API usage is rate-limited to 60 requests per minute per key.</li>
-      <li>We reserve the right to throttle or revoke keys that abuse the service.</li>
+      <li>API keys are your responsibility; rotate if compromised.</li>
+      <li>Rate limit: 60 requests/minute/key; higher limits on request.</li>
+      <li>We may throttle or revoke keys that abuse the service or violate these terms.</li>
+      <li>API usage subject to Acceptable Use Policy (no scraping, reselling, or competing services).</li>
     </ul>
 
-    <h2>8. Termination</h2>
-    <p>You can delete your account at any time. We may terminate accounts that violate these terms. Upon termination, your data will be handled per our Privacy Policy.</p>
+    <h2>8. Corporate Accounts</h2>
+    <ul>
+      <li>Corporate admins manage team members' cards and billing.</li>
+      <li>Admins can create, modify, or revoke employee cards.</li>
+      <li>Employee card data belongs to the organization (corporate_data flag).</li>
+      <li>Organization responsible for employee consent where required.</li>
+    </ul>
 
-    <h2>9. Limitation of liability</h2>
-    <p>Uwitz Cards is provided "as is" without warranties. We're not liable for indirect, incidental, or consequential damages. Our total liability doesn't exceed the amount you paid us in the last 12 months.</p>
+    <h2>9. Intellectual Property</h2>
+    <ul>
+      <li>Our brand, software, and platform are our property (or licensed).</li>
+      <li>You may not copy, modify, or distribute our platform without permission.</li>
+      <li>Feedback you provide becomes our property to use freely.</li>
+    </ul>
 
-    <h2>10. Changes</h2>
-    <p>We may update these terms. Continued use after changes constitutes acceptance. Material changes will be communicated via email or platform notice.</p>
+    <h2>10. Data Protection and Privacy</h2>
+    <p>Your personal data is processed per our <a href="/privacy" style="color: var(--text-link); text-decoration: underline; text-underline-offset: 2px;">Privacy Policy</a>. Key points:</p>
+    <ul>
+      <li>We process data on lawful bases (contract, consent, legitimate interests, legal obligation).</li>
+      <li>You have rights under GDPR, nFADP, FADP, PDPA, COPPA — see Privacy Policy.</li>
+      <li>Data subject rights requests via <a href="/api/compliance" style="color: var(--text-link);">/api/compliance</a> endpoints.</li>
+      <li>We implement Privacy by Design and Default (GDPR Art. 25).</li>
+    </ul>
+
+    <h2>11. Disclaimers and Limitation of Liability</h2>
+    <div class="consumer-rights" style="background: #fef2f2; border-color: #fecaca;">
+      <h4 style="color: #991b1b;">⚠️ Limitation of Liability</h4>
+      <p style="margin: 0; font-size: 13px;">To the maximum extent permitted by law:</p>
+      <ul style="margin: 8px 0 0 1.25rem; font-size: 13px;">
+        <li>Service provided "as is" without warranties of any kind.</li>
+        <li>Not liable for indirect, incidental, special, or consequential damages.</li>
+        <li>Total liability limited to amount paid in last 12 months (or CHF 100 if none).</li>
+        <li>Statutory rights (consumer protection, data protection) are not limited.</li>
+      </ul>
+    </div>
+
+    <h2>12. Indemnification</h2>
+    <p>You agree to indemnify and hold harmless Uwitz Cards from claims arising from your use of the service, violation of these terms, or infringement of third-party rights.</p>
+
+    <h2>13. Term and Termination</h2>
+    <ul>
+      <li>These terms remain in effect while you use the service.</li>
+      <li>You may delete your account anytime (see Privacy Policy for data deletion).</li>
+      <li>We may suspend or terminate for material breach after notice and opportunity to cure.</li>
+      <li>Upon termination: license ends, subscription stops, data handled per Privacy Policy.</li>
+    </ul>
+
+    <h2>14. Governing Law and Dispute Resolution</h2>
+    <ul>
+      <li>These terms governed by laws of Estonia (intended jurisdiction).</li>
+      <li>Disputes resolved in courts of Estonia, unless mandatory consumer protection laws apply.</li>
+      <li>Consumers may bring claims in their country of residence (EU, CH, SG).</li>
+      <li>Alternative dispute resolution available via EU ODR platform.</li>
+    </ul>
+
+    <h2>15. Changes to Terms</h2>
+    <ul>
+      <li>We may update these terms. Material changes notified 30 days in advance via email/platform notice.</li>
+      <li>Continued use after changes constitutes acceptance.</li>
+      <li>Version history available at <a href="/legal/terms/history" style="color: var(--text-link);">/legal/terms/history</a>.</li>
+    </ul>
+
+    <h2>16. Severability</h2>
+    <p>If any provision is found unenforceable, the remaining provisions continue in full force. Unenforceable provisions will be modified to reflect parties' intent.</p>
+
+    <h2>16. Contact</h2>
+    <p>Questions about these terms? Contact us:</p>
+    <ul>
+      <li>General: <a href="mailto:legal@uwitz.org" style="color: var(--text-link);">legal@uwitz.org</a></li>
+      <li>Privacy: <a href="mailto:privacy@uwitz.org" style="color: var(--text-link);">privacy@uwitz.org</a></li>
+      <li>Security: <a href="mailto:security@uwitz.org" style="color: var(--text-link);">security@uwitz.org</a></li>
+      <li>Billing: <a href="mailto:billing@uwitz.org" style="color: var(--text-link);">billing@uwitz.org</a></li>
+    </ul>
 
     <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-faint);">
       <a href="/" style="color: var(--text-link); font: 500 13px/1 var(--font-sans);">← Back to Uwitz Cards</a>
+      <div style="margin-top: 1rem; font-size: 12px; color: var(--text-muted);">
+        <a href="/privacy" style="color: var(--text-link); margin-right: 1rem;">Privacy Policy</a>
+        <a href="/api/compliance/compliance-status" style="color: var(--text-link);">Compliance Status</a>
+      </div>
     </div>
-  </div>
+  </main>
 </body>
 </html>

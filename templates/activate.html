@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activate Your Card — {{ brand }}</title>
+  <meta name="theme-color" content="#09090A">
+  <link rel="icon" type="image/png" href="/static/assets/NFCCard.png">
+  <link rel="stylesheet" href="/static/css/base.css">
+  <link rel="stylesheet" href="/static/css/components.css">
+  <link rel="stylesheet" href="/static/css/utilities.css">
+  <style>
+    body { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      min-height: 100vh; 
+      padding: 24px; 
+      background: var(--bg);
+    }
+    .activate-card {
+      width: 100%; 
+      max-width: 420px;
+      background: var(--surface-card); 
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl); 
+      box-shadow: var(--shadow-4);
+      padding: 40px 32px; 
+    }
+    .activate-icon {
+      width: 64px; 
+      height: 64px; 
+      margin: 0 auto 20px;
+      border-radius: var(--radius-lg);
+      background: var(--accent-soft);
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+    }
+    .activate-icon svg { 
+      width: 32px; 
+      height: 32px; 
+      color: var(--accent); 
+    }
+    .activate-title { 
+      font: var(--fw-semibold) 22px/1.2 var(--font-hero); 
+      color: var(--text-strong); 
+      letter-spacing: -0.02em; 
+      margin-bottom: 8px; 
+      text-align: center;
+    }
+    .activate-desc { 
+      font: 400 14px/1.6 var(--font-sans); 
+      color: var(--text-body); 
+      margin-bottom: 24px; 
+      text-align: center;
+    }
+    .activate-card-info {
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 14px 16px; 
+      background: var(--bg-inset); 
+      border: 1px solid var(--border); 
+      border-radius: var(--radius-md); 
+      margin-bottom: 24px;
+    }
+    .activate-card-name { 
+      font: var(--fw-medium) 14px/1 var(--font-sans); 
+      color: var(--text-strong); 
+    }
+    .activate-card-id { 
+      font: var(--fw-bold) 14px/1 var(--font-mono); 
+      color: var(--accent); 
+    }
+    .form-group { 
+      margin-bottom: 16px; 
+    }
+    .form-label { 
+      display: block; 
+      font: 500 13px/1 var(--font-sans); 
+      color: var(--text-strong); 
+      margin-bottom: 6px; 
+    }
+    .form-input { 
+      width: 100%; 
+      height: 44px; 
+      padding: 0 12px; 
+      background: var(--bg-inset); 
+      border: 1px solid var(--border); 
+      border-radius: var(--radius-md); 
+      color: var(--text-strong); 
+      font: 400 13px/1 var(--font-sans); 
+      box-sizing: border-box;
+    }
+    .form-input:focus { 
+      outline: none; 
+      border-color: var(--accent); 
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .form-input::placeholder { 
+      color: var(--text-faint); 
+    }
+    .form-error { 
+      color: var(--red-500); 
+      font-size: 12px; 
+      margin-top: 4px; 
+      display: none; 
+    }
+    .form-error.visible { 
+      display: block; 
+    }
+    .btn-primary { 
+      width: 100%; 
+      height: 48px; 
+      background: var(--accent); 
+      color: white; 
+      border: none; 
+      border-radius: var(--radius-md); 
+      font: 600 14px/1 var(--font-sans); 
+      cursor: pointer; 
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { 
+      background: var(--accent-hover); 
+    }
+    .btn-primary:disabled { 
+      opacity: 0.6; 
+      cursor: not-allowed; 
+    }
+    .password-requirements {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.6;
+    }
+    .password-requirements .met { color: var(--green-500); }
+    .password-requirements .unmet { color: var(--text-muted); }
+    .alert-box {
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+      font-size: 13px;
+      display: none;
+    }
+    .alert-box.error {
+      background: var(--red-50);
+      border: 1px solid var(--red-200);
+      color: var(--red-700);
+      display: block;
+    }
+    .alert-box.success {
+      background: var(--green-50);
+      border: 1px solid var(--green-200);
+      color: var(--green-700);
+      display: block;
+    }
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <main class="activate-card animate-fade-up">
+    <div class="activate-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    </div>
+    <h1 class="activate-title">Activate Your Card</h1>
+    
+    {% if card %}
+    <div class="activate-card-info">
+      <span class="activate-card-name">{{ card.card_type | capitalize }} Card</span>
+      <span class="activate-card-id">{{ card.card_id }}</span>
+    </div>
+    {% endif %}
+    
+    <p class="activate-desc" id="desc-text">
+      {% if card and card.status == 'pending' %}
+      Set up your account password to activate your card.
+      {% else %}
+      Your card is already active.
+      {% endif %}
+    </p>
+    
+    <div id="error-alert" class="alert-box error"></div>
+    <div id="success-alert" class="alert-box success"></div>
+    
+    <form id="activate-form" method="POST" action="/api/cards/{{ card.card_id }}/activate">
+      <input type="hidden" name="token" value="{{ token }}">
+      
+      <div class="form-group">
+        <label class="form-label" for="password">New Password <span class="required" aria-hidden="true">*</span></label>
+        <input type="password" id="password" name="password" class="form-input" placeholder="Enter password (min 8 chars)" required autocomplete="new-password" aria-describedby="password-help">
+        <div id="password-help" class="password-requirements">
+          <span class="req unmet" data-req="length">• At least 8 characters</span>
+          <span class="req unmet" data-req="uppercase">• One uppercase letter</span>
+          <span class="req unmet" data-req="lowercase">• One lowercase letter</span>
+          <span class="req unmet" data-req="number">• One number</span>
+        </div>
+        <div class="form-error" id="password-error"></div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="password_confirm">Confirm Password <span class="required" aria-hidden="true">*</span></label>
+        <input type="password" id="password_confirm" name="password_confirm" class="form-input" placeholder="Confirm your password" required autocomplete="new-password">
+        <div class="form-error" id="confirm-error"></div>
+      </div>
+      
+      <button type="submit" class="btn-primary" id="submit-btn">
+        <span class="btn-text">Activate Account</span>
+        <span class="loading-spinner" style="display: none;"></span>
+      </button>
+    </form>
+    
+    <p style="font: 400 12px/1 var(--font-sans); color: var(--text-body); text-align: center; margin-top: 16px;">
+      Didn't request this? <a href="/" style="color: var(--accent); text-decoration: none;">Contact support</a>
+    </p>
+  </main>
+
+  <script>
+    const form = document.getElementById('activate-form');
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('password_confirm');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const spinner = submitBtn.querySelector('.loading-spinner');
+    const errorAlert = document.getElementById('error-alert');
+    const successAlert = document.getElementById('success-alert');
+    const descText = document.getElementById('desc-text');
+    
+    const requirements = {
+      length: /.{8,}/,
+      uppercase: /[A-Z]/,
+      lowercase: /[a-z]/,
+      number: /[0-9]/
+    };
+    
+    function validatePassword(password) {
+      const results = {};
+      for (const [key, regex] of Object.entries(requirements)) {
+        results[key] = regex.test(password);
+        const el = document.querySelector(`.req[data-req="${key}"]`);
+        if (el) {
+          el.classList.toggle('met', results[key]);
+          el.classList.toggle('unmet', !results[key]);
+        }
+      }
+      return Object.values(results).every(v => v);
+    }
+    
+    passwordInput.addEventListener('input', () => {
+      validatePassword(passwordInput.value);
+      document.getElementById('password-error').classList.remove('visible');
+    });
+    
+    confirmInput.addEventListener('input', () => {
+      document.getElementById('confirm-error').classList.remove('visible');
+    });
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      errorAlert.style.display = 'none';
+      successAlert.style.display = 'none';
+      
+      const password = passwordInput.value;
+      const confirm = confirmInput.value;
+      let hasError = false;
+      
+      if (!validatePassword(password)) {
+        document.getElementById('password-error').textContent = 'Password does not meet requirements';
+        document.getElementById('password-error').classList.add('visible');
+        hasError = true;
+      }
+      
+      if (password !== confirm) {
+        document.getElementById('confirm-error').textContent = 'Passwords do not match';
+        document.getElementById('confirm-error').classList.add('visible');
+        hasError = true;
+      }
+      
+      if (hasError) return;
+      
+      // Show loading state
+      submitBtn.disabled = true;
+      btnText.textContent = 'Activating...';
+      spinner.style.display = 'inline-block';
+      
+      try {
+        const formData = new FormData(form);
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(formData))
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+          successAlert.textContent = 'Account activated successfully! Redirecting to dashboard...';
+          successAlert.style.display = 'block';
+          descText.textContent = 'Your card is now active and ready to use.';
+          
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 2000);
+        } else {
+          const error = data.detail?.error || 'Activation failed';
+          errorAlert.textContent = error;
+          errorAlert.style.display = 'block';
+        }
+      } catch (err) {
+        errorAlert.textContent = 'Network error. Please try again.';
+        errorAlert.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Activate Account';
+        spinner.style.display = 'none';
+      }
+    });
+    
+    // Auto-focus password field
+    passwordInput.focus();
+  </script>
+</body>
+</html>

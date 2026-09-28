@@ -1,0 +1,942 @@
+{
+  "test_type": "keyboard_navigation",
+  "timestamp": "2026-09-17T11:24:51.119Z",
+  "url": "http://localhost:8000/dashboard/login",
+  "tab_order": {
+    "actual_order": [
+      {
+        "selector": "input.form-input",
+        "tagName": "INPUT",
+        "text": "",
+        "id": "",
+        "tabIndex": 0
+      },
+      {
+        "selector": "input.form-input",
+        "tagName": "INPUT",
+        "text": "",
+        "id": "",
+        "tabIndex": 0
+      },
+      {
+        "selector": "button.login-btn.login-btn-oidc",
+        "tagName": "BUTTON",
+        "text": "Sign in with email",
+        "id": "",
+        "tabIndex": 0
+      }
+    ],
+    "expected_order": [],
+    "issues": [],
+    "visual_evidence": {
+      "screenshot_path": "test-artifacts/keyboard-tab-order-2026-09-17T11-24-51-473Z.png",
+      "test_component": "tab_order",
+      "context": "Tab Order Navigation Test",
+      "issue_id": "tab-order-overview",
+      "issue_type": "info",
+      "issue_description": "Tab order sequence documentation",
+      "problematic_element": "document",
+      "failure_reason": "",
+      "severity": "low",
+      "annotations": [
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "content": "🔢 Keyboard Tab Navigation Sequence",
+          "color": "#0066cc",
+          "annotation_purpose": "explanation"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 35
+          },
+          "content": "This shows the order keyboard users navigate through interactive elements",
+          "color": "#666666",
+          "annotation_purpose": "context"
+        }
+      ]
+    }
+  },
+  "focus_indicators": {
+    "tested_elements": [
+      {
+        "selector": "a.sidebar-brand",
+        "tagName": "A",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(47, 211, 201) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(47, 211, 201)",
+          "boxShadow": "none",
+          "border": "0px none rgb(47, 211, 201)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(47, 211, 201)",
+          "visibility": "visible",
+          "display": "flex",
+          "opacity": "1",
+          "rect": {
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "left": 0
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "a.sidebar-link",
+        "tagName": "A",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(160, 157, 154) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(160, 157, 154)",
+          "boxShadow": "none",
+          "border": "0px none rgb(160, 157, 154)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(160, 157, 154)",
+          "visibility": "visible",
+          "display": "flex",
+          "opacity": "1",
+          "rect": {
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "left": 0
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "a.sidebar-link",
+        "tagName": "A",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(160, 157, 154) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(160, 157, 154)",
+          "boxShadow": "none",
+          "border": "0px none rgb(160, 157, 154)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(160, 157, 154)",
+          "visibility": "visible",
+          "display": "flex",
+          "opacity": "1",
+          "rect": {
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "left": 0
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "button.topbar-toggle",
+        "tagName": "BUTTON",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(189, 185, 182) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(189, 185, 182)",
+          "boxShadow": "none",
+          "border": "1px solid rgb(44, 44, 48)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(189, 185, 182)",
+          "visibility": "visible",
+          "display": "none",
+          "opacity": "1",
+          "rect": {
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "left": 0
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "a:nth-child(1)",
+        "tagName": "A",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(47, 211, 201) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(47, 211, 201)",
+          "boxShadow": "rgb(13, 13, 15) 0px 0px 0px 2px, rgb(218, 42, 28) 0px 0px 0px 4px",
+          "border": "0px none rgb(47, 211, 201)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(47, 211, 201)",
+          "visibility": "visible",
+          "display": "flex",
+          "opacity": "1",
+          "rect": {
+            "width": 550.609375,
+            "height": 28,
+            "top": 48,
+            "left": 52
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "button.login-btn.login-btn-irys",
+        "tagName": "BUTTON",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(255, 255, 255) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(255, 255, 255)",
+          "boxShadow": "rgba(218, 42, 28, 0.35) 0px 2px 22px 0px",
+          "border": "0px none rgb(255, 255, 255)",
+          "backgroundColor": "rgb(184, 33, 15)",
+          "color": "rgb(255, 255, 255)",
+          "visibility": "visible",
+          "display": "flex",
+          "opacity": "1",
+          "rect": {
+            "width": 360,
+            "height": 52,
+            "top": 225.4375,
+            "left": 787.796875
+          }
+        },
+        "issues": [
+          "Outline color nearly invisible (too light)",
+          "Learn more: https://dequeuniversity.com/rules/axe/4.4/focus-visible"
+        ]
+      },
+      {
+        "selector": "button.login-btn.login-btn-oidc",
+        "tagName": "BUTTON",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(243, 241, 239) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(243, 241, 239)",
+          "boxShadow": "rgba(0, 0, 0, 0.55) 0px 2px 6px -1px, rgba(255, 255, 255, 0.02) 0px 1px 0px 0px inset",
+          "border": "1px solid rgb(44, 44, 48)",
+          "backgroundColor": "rgb(20, 20, 22)",
+          "color": "rgb(243, 241, 239)",
+          "visibility": "visible",
+          "display": "flex",
+          "opacity": "1",
+          "rect": {
+            "width": 360,
+            "height": 52,
+            "top": 289.4375,
+            "left": 787.796875
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "input.form-input",
+        "tagName": "INPUT",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(243, 241, 239) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(243, 241, 239)",
+          "boxShadow": "rgba(218, 42, 28, 0.12) 0px 0px 0px 3px",
+          "border": "1px solid rgb(218, 42, 28)",
+          "backgroundColor": "rgb(6, 6, 7)",
+          "color": "rgb(243, 241, 239)",
+          "visibility": "visible",
+          "display": "inline-block",
+          "opacity": "1",
+          "rect": {
+            "width": 360,
+            "height": 44,
+            "top": 392.4375,
+            "left": 787.796875
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "input.form-input",
+        "tagName": "INPUT",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(243, 241, 239) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(243, 241, 239)",
+          "boxShadow": "rgba(218, 42, 28, 0.12) 0px 0px 0px 3px",
+          "border": "1px solid rgb(218, 42, 28)",
+          "backgroundColor": "rgb(6, 6, 7)",
+          "color": "rgb(243, 241, 239)",
+          "visibility": "visible",
+          "display": "inline-block",
+          "opacity": "1",
+          "rect": {
+            "width": 360,
+            "height": 44,
+            "top": 452.4375,
+            "left": 787.796875
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "button.login-btn.login-btn-oidc",
+        "tagName": "BUTTON",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(243, 241, 239) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(243, 241, 239)",
+          "boxShadow": "rgba(0, 0, 0, 0.55) 0px 2px 6px -1px, rgba(255, 255, 255, 0.02) 0px 1px 0px 0px inset",
+          "border": "1px solid rgb(44, 44, 48)",
+          "backgroundColor": "rgb(20, 20, 22)",
+          "color": "rgb(243, 241, 239)",
+          "visibility": "visible",
+          "display": "flex",
+          "opacity": "1",
+          "rect": {
+            "width": 360,
+            "height": 52,
+            "top": 512.4375,
+            "left": 787.796875
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "a:nth-child(1)",
+        "tagName": "A",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(47, 211, 201) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(47, 211, 201)",
+          "boxShadow": "rgb(13, 13, 15) 0px 0px 0px 2px, rgb(218, 42, 28) 0px 0px 0px 4px",
+          "border": "0px none rgb(47, 211, 201)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(47, 211, 201)",
+          "visibility": "visible",
+          "display": "inline",
+          "opacity": "1",
+          "rect": {
+            "width": 43.296875,
+            "height": 14,
+            "top": 589.4375,
+            "left": 973.140625
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "a:nth-child(2)",
+        "tagName": "A",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(47, 211, 201) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(47, 211, 201)",
+          "boxShadow": "rgb(13, 13, 15) 0px 0px 0px 2px, rgb(218, 42, 28) 0px 0px 0px 4px",
+          "border": "0px none rgb(47, 211, 201)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(47, 211, 201)",
+          "visibility": "visible",
+          "display": "inline",
+          "opacity": "1",
+          "rect": {
+            "width": 61.4375,
+            "height": 14,
+            "top": 589.4375,
+            "left": 1024.125
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "a:nth-child(1)",
+        "tagName": "A",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(160, 157, 154) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(160, 157, 154)",
+          "boxShadow": "none",
+          "border": "0px none rgb(160, 157, 154)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(160, 157, 154)",
+          "visibility": "visible",
+          "display": "inline",
+          "opacity": "1",
+          "rect": {
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "left": 0
+          }
+        },
+        "issues": []
+      },
+      {
+        "selector": "a:nth-child(2)",
+        "tagName": "A",
+        "has_visible_focus": true,
+        "focus_styles": {
+          "outline": "rgb(160, 157, 154) none 3px",
+          "outlineWidth": "3px",
+          "outlineStyle": "none",
+          "outlineColor": "rgb(160, 157, 154)",
+          "boxShadow": "none",
+          "border": "0px none rgb(160, 157, 154)",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(160, 157, 154)",
+          "visibility": "visible",
+          "display": "inline",
+          "opacity": "1",
+          "rect": {
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "left": 0
+          }
+        },
+        "issues": []
+      }
+    ],
+    "issues": [],
+    "visual_evidence": [
+      {
+        "screenshot_path": "test-artifacts/focus-good-0-2026-09-17T11-24-54-690Z.png",
+        "test_component": "focus_indicators",
+        "context": "Focus Indicator Test: A element",
+        "issue_id": "focus-indicator-0",
+        "issue_type": "info",
+        "issue_description": "Focus indicator visible on A element",
+        "problematic_element": "a.sidebar-brand",
+        "failure_reason": "",
+        "severity": "low",
+        "annotations": [
+          {
+            "type": "highlight",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "width": 10,
+              "height": 10
+            },
+            "content": "Focus indicator present",
+            "color": "#28a745",
+            "element_selector": "a.sidebar-brand",
+            "annotation_purpose": "problem-highlight"
+          },
+          {
+            "type": "text",
+            "position": {
+              "x": 10,
+              "y": 10
+            },
+            "content": "🎯 PASS: Focus Indicator",
+            "color": "#28a745",
+            "annotation_purpose": "explanation"
+          },
+          {
+            "type": "text",
+            "position": {
+              "x": 10,
+              "y": 35
+            },
+            "content": "Focus is clearly visible to keyboard users",
+            "color": "#666666",
+            "annotation_purpose": "explanation"
+          }
+        ]
+      },
+      {
+        "screenshot_path": "test-artifacts/focus-good-1-2026-09-17T11-24-55-050Z.png",
+        "test_component": "focus_indicators",
+        "context": "Focus Indicator Test: A element",
+        "issue_id": "focus-indicator-1",
+        "issue_type": "info",
+        "issue_description": "Focus indicator visible on A element",
+        "problematic_element": "a.sidebar-link",
+        "failure_reason": "",
+        "severity": "low",
+        "annotations": [
+          {
+            "type": "highlight",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "width": 10,
+              "height": 10
+            },
+            "content": "Focus indicator present",
+            "color": "#28a745",
+            "element_selector": "a.sidebar-link",
+            "annotation_purpose": "problem-highlight"
+          },
+          {
+            "type": "text",
+            "position": {
+              "x": 10,
+              "y": 10
+            },
+            "content": "🎯 PASS: Focus Indicator",
+            "color": "#28a745",
+            "annotation_purpose": "explanation"
+          },
+          {
+            "type": "text",
+            "position": {
+              "x": 10,
+              "y": 35
+            },
+            "content": "Focus is clearly visible to keyboard users",
+            "color": "#666666",
+            "annotation_purpose": "explanation"
+          }
+        ]
+      },
+      {
+        "screenshot_path": "test-artifacts/focus-good-2-2026-09-17T11-24-55-403Z.png",
+        "test_component": "focus_indicators",
+        "context": "Focus Indicator Test: A element",
+        "issue_id": "focus-indicator-2",
+        "issue_type": "info",
+        "issue_description": "Focus indicator visible on A element",
+        "problematic_element": "a.sidebar-link",
+        "failure_reason": "",
+        "severity": "low",
+        "annotations": [
+          {
+            "type": "highlight",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "width": 10,
+              "height": 10
+            },
+            "content": "Focus indicator present",
+            "color": "#28a745",
+            "element_selector": "a.sidebar-link",
+            "annotation_purpose": "problem-highlight"
+          },
+          {
+            "type": "text",
+            "position": {
+              "x": 10,
+              "y": 10
+            },
+            "content": "🎯 PASS: Focus Indicator",
+            "color": "#28a745",
+            "annotation_purpose": "explanation"
+          },
+          {
+            "type": "text",
+            "position": {
+              "x": 10,
+              "y": 35
+            },
+            "content": "Focus is clearly visible to keyboard users",
+            "color": "#666666",
+            "annotation_purpose": "explanation"
+          }
+        ]
+      },
+      {
+        "screenshot_path": "test-artifacts/focus-good-3-2026-09-17T11-24-55-749Z.png",
+        "test_component": "focus_indicators",
+        "context": "Focus Indicator Test: BUTTON element",
+        "issue_id": "focus-indicator-3",
+        "issue_type": "info",
+        "issue_description": "Focus indicator visible on BUTTON element",
+        "problematic_element": "button.topbar-toggle",
+        "failure_reason": "",
+        "severity": "low",
+        "annotations": [
+          {
+            "type": "highlight",
+            "position": {
+              "x": 0,
+              "y": 0,
+              "width": 10,
+              "height": 10
+            },
+            "content": "Focus indicator present",
+            "color": "#28a745",
+            "element_selector": "button.topbar-toggle",
+            "annotation_purpose": "problem-highlight"
+          },
+          {
+            "type": "text",
+            "position": {
+              "x": 10,
+              "y": 10
+            },
+            "content": "🎯 PASS: Focus Indicator",
+            "color": "#28a745",
+            "annotation_purpose": "explanation"
+          },
+          {
+            "type": "text",
+            "position": {
+              "x": 10,
+              "y": 35
+            },
+            "content": "Focus is clearly visible to keyboard users",
+            "color": "#666666",
+            "annotation_purpose": "explanation"
+          }
+        ]
+      },
+      {
+        "screenshot_path": "test-artifacts/focus-good-4-2026-09-17T11-24-56-130Z.png",
+        "test_component": "focus_indicators",
+        "context": "Focus Indicator Test: A element",
+        "issue_id": "focus-indicator-4",
+        "issue_type": "info",
+        "issue_description": "Focus indicator visible on A element",
+        "problematic_element": "a:nth-child(1)",
+        "failure_reason": "",
+        "severity": "low",
+        "annotations": [
+          {
+            "type": "highlight",
+            "position": {
+              "x": 47,
+              "y": 43,
+              "width": 560.609375,
+              "height": 38
+            },
+            "content": "Focus indicator present",
+            "color": "#28a745",
+            "element_selector": "a:nth-child(1)",
+            "annotation_purpose": "problem-highlight"
+          },
+          {
+            "type": "text",
+            "position": {
+              "x": 10,
+              "y": 10
+            },
+            "content": "🎯 PASS: Focus Indicator",
+            "color": "#28a745",
+            "annotation_purpose": "explanation"
+          },
+          {
+            "type": "text",
+            "position": {
+              "x": 10,
+              "y": 35
+            },
+            "content": "Focus is clearly visible to keyboard users",
+            "color": "#666666",
+            "annotation_purpose": "explanation"
+          }
+        ]
+      }
+    ]
+  },
+  "keyboard_traps": {
+    "traps_found": [],
+    "escape_methods": [],
+    "issues": []
+  },
+  "skip_links": {
+    "skip_links_found": [],
+    "issues": [
+      {
+        "type": "warning",
+        "message": "No skip links found on the page. Learn more: https://dequeuniversity.com/rules/axe/4.4/skip-link",
+        "element": "page"
+      }
+    ],
+    "visual_evidence": null
+  },
+  "visual_evidence": [
+    {
+      "screenshot_path": "test-artifacts/keyboard-tab-order-2026-09-17T11-24-51-473Z.png",
+      "test_component": "tab_order",
+      "context": "Tab Order Testing",
+      "issue_id": "tab-order-overview",
+      "issue_type": "info",
+      "issue_description": "Tab order sequence documentation",
+      "problematic_element": "document",
+      "failure_reason": "",
+      "severity": "low",
+      "annotations": [
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "content": "🔢 Keyboard Tab Navigation Sequence",
+          "color": "#0066cc",
+          "annotation_purpose": "explanation"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 35
+          },
+          "content": "This shows the order keyboard users navigate through interactive elements",
+          "color": "#666666",
+          "annotation_purpose": "context"
+        }
+      ]
+    },
+    {
+      "screenshot_path": "test-artifacts/focus-good-0-2026-09-17T11-24-54-690Z.png",
+      "test_component": "focus_indicators",
+      "context": "Focus Indicator 1",
+      "issue_id": "focus-indicator-0",
+      "issue_type": "info",
+      "issue_description": "Focus indicator visible on A element",
+      "problematic_element": "a.sidebar-brand",
+      "failure_reason": "",
+      "severity": "low",
+      "annotations": [
+        {
+          "type": "highlight",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 10,
+            "height": 10
+          },
+          "content": "Focus indicator present",
+          "color": "#28a745",
+          "element_selector": "a.sidebar-brand",
+          "annotation_purpose": "problem-highlight"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "content": "🎯 PASS: Focus Indicator",
+          "color": "#28a745",
+          "annotation_purpose": "explanation"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 35
+          },
+          "content": "Focus is clearly visible to keyboard users",
+          "color": "#666666",
+          "annotation_purpose": "explanation"
+        }
+      ]
+    },
+    {
+      "screenshot_path": "test-artifacts/focus-good-1-2026-09-17T11-24-55-050Z.png",
+      "test_component": "focus_indicators",
+      "context": "Focus Indicator 2",
+      "issue_id": "focus-indicator-1",
+      "issue_type": "info",
+      "issue_description": "Focus indicator visible on A element",
+      "problematic_element": "a.sidebar-link",
+      "failure_reason": "",
+      "severity": "low",
+      "annotations": [
+        {
+          "type": "highlight",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 10,
+            "height": 10
+          },
+          "content": "Focus indicator present",
+          "color": "#28a745",
+          "element_selector": "a.sidebar-link",
+          "annotation_purpose": "problem-highlight"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "content": "🎯 PASS: Focus Indicator",
+          "color": "#28a745",
+          "annotation_purpose": "explanation"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 35
+          },
+          "content": "Focus is clearly visible to keyboard users",
+          "color": "#666666",
+          "annotation_purpose": "explanation"
+        }
+      ]
+    },
+    {
+      "screenshot_path": "test-artifacts/focus-good-2-2026-09-17T11-24-55-403Z.png",
+      "test_component": "focus_indicators",
+      "context": "Focus Indicator 3",
+      "issue_id": "focus-indicator-2",
+      "issue_type": "info",
+      "issue_description": "Focus indicator visible on A element",
+      "problematic_element": "a.sidebar-link",
+      "failure_reason": "",
+      "severity": "low",
+      "annotations": [
+        {
+          "type": "highlight",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 10,
+            "height": 10
+          },
+          "content": "Focus indicator present",
+          "color": "#28a745",
+          "element_selector": "a.sidebar-link",
+          "annotation_purpose": "problem-highlight"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "content": "🎯 PASS: Focus Indicator",
+          "color": "#28a745",
+          "annotation_purpose": "explanation"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 35
+          },
+          "content": "Focus is clearly visible to keyboard users",
+          "color": "#666666",
+          "annotation_purpose": "explanation"
+        }
+      ]
+    },
+    {
+      "screenshot_path": "test-artifacts/focus-good-3-2026-09-17T11-24-55-749Z.png",
+      "test_component": "focus_indicators",
+      "context": "Focus Indicator 4",
+      "issue_id": "focus-indicator-3",
+      "issue_type": "info",
+      "issue_description": "Focus indicator visible on BUTTON element",
+      "problematic_element": "button.topbar-toggle",
+      "failure_reason": "",
+      "severity": "low",
+      "annotations": [
+        {
+          "type": "highlight",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 10,
+            "height": 10
+          },
+          "content": "Focus indicator present",
+          "color": "#28a745",
+          "element_selector": "button.topbar-toggle",
+          "annotation_purpose": "problem-highlight"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "content": "🎯 PASS: Focus Indicator",
+          "color": "#28a745",
+          "annotation_purpose": "explanation"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 35
+          },
+          "content": "Focus is clearly visible to keyboard users",
+          "color": "#666666",
+          "annotation_purpose": "explanation"
+        }
+      ]
+    },
+    {
+      "screenshot_path": "test-artifacts/focus-good-4-2026-09-17T11-24-56-130Z.png",
+      "test_component": "focus_indicators",
+      "context": "Focus Indicator 5",
+      "issue_id": "focus-indicator-4",
+      "issue_type": "info",
+      "issue_description": "Focus indicator visible on A element",
+      "problematic_element": "a:nth-child(1)",
+      "failure_reason": "",
+      "severity": "low",
+      "annotations": [
+        {
+          "type": "highlight",
+          "position": {
+            "x": 47,
+            "y": 43,
+            "width": 560.609375,
+            "height": 38
+          },
+          "content": "Focus indicator present",
+          "color": "#28a745",
+          "element_selector": "a:nth-child(1)",
+          "annotation_purpose": "problem-highlight"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "content": "🎯 PASS: Focus Indicator",
+          "color": "#28a745",
+          "annotation_purpose": "explanation"
+        },
+        {
+          "type": "text",
+          "position": {
+            "x": 10,
+            "y": 35
+          },
+          "content": "Focus is clearly visible to keyboard users",
+          "color": "#666666",
+          "annotation_purpose": "explanation"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_issues": 1,
+    "critical_issues": 0,
+    "warnings": 1,
+    "passed_tests": 16
+  }
+}

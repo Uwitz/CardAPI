@@ -1,0 +1,20 @@
+- main [ref=f3e4]:
+  - generic [ref=f3e7]:
+    - text: Secure sign-in
+    - heading "Sign in to continue" [level=2] [ref=f3e8]
+    - paragraph [ref=f3e9]: Choose your sign-in method below.
+    - generic [ref=f3e10]:
+      - button "Sign in with Irys" [ref=f3e11] [cursor=pointer]
+      - button "Sign in with Entra ID" [ref=f3e14] [cursor=pointer]
+    - generic [ref=f3e20]: or sign in with email
+    - generic [ref=f3e21]:
+      - textbox "Email address" [active] [ref=f3e23]
+      - textbox "Password" [ref=f3e25]
+      - button "Sign in with email" [ref=f3e26] [cursor=pointer]
+    - generic [ref=f3e27]:
+      - text: Don't have an account?
+      - link "Register" [ref=f3e28] [cursor=pointer]:
+        - /url: /register
+      - text: ·
+      - link "Back to site" [ref=f3e29] [cursor=pointer]:
+        - /url: /

@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+{% block title %}Create Card — Admin{% endblock %}
+{% block page_title %}Create Card & Account{% endblock %}
+{% block head %}
+<style>
+  .step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .step-indicator::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+  }
+  .step-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-inset);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .step.active .step-circle {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+  .step.completed .step-circle {
+    background: var(--green-400);
+    border-color: var(--green-400);
+    color: white;
+  }
+  .step-label {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .step.active .step-label {
+    color: var(--text-strong);
+  }
+  .step.completed .step-label {
+    color: var(--green-400);
+  }
+  
+  .wizard-step {
+    display: none;
+  }
+  .wizard-step.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .template-option {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--surface-card);
+  }
+  .template-option:hover {
+    border-color: var(--accent);
+  }
+  .template-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .template-option input {
+    display: none;
+  }
+  
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 640px) {
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div style="max-width: 800px;">
+  <!-- Step Indicator -->
+  <div class="step-indicator" role="progressbar" aria-valuenow="{{ 1 if step == 'card' else 2 if step == 'user' else 3 }}" aria-valuemin="1" aria-valuemax="3">
+    <div class="step {% if step in ['card', 'user', 'review'] %}completed{% elif step == 'card' %}active{% endif %}">
+      <div class="step-circle">1</div>
+      <div class="step-label">Card Details</div>
+    </div>
+    <div class="step {% if step in ['user', 'review'] %}completed{% elif step == 'user' %}active{% endif %}">
+      <div class="step-circle">2</div>
+      <div class="step-label">User Account</div>
+    </div>
+    <div class="step {% if step == 'review' %}active{% endif %}">
+      <div class="step-circle">3</div>
+      <div class="step-label">Review</div>
+    </div>
+  </div>
+
+  <form method="POST" id="wizard-form">
+    <input type="hidden" name="{{ CSRF_FORM_FIELD }}" value="{{ csrf_token }}">
+    <input type="hidden" name="current_step" value="{{ step }}">
+    
+    <!-- Step 1: Card Details -->
+    <div class="wizard-step {% if step == 'card' %}active{% endif %}" id="step-card" data-step="card">
+      <h3 style="margin-bottom: 8px;">Card Configuration</h3>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Configure the card type, tier, and content</p>
+      
+      <div class="form-group">
+        <label class="form-label">Card Type <span class="required" aria-hidden="true">*</span></label>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+          <label class="template-option {% if not card_type or card_type == 'social' %}selected{% endif %}">
+            <input type="radio" name="card_type" value="social" {% if not card_type or card_type == 'social' %}checked{% endif %} onchange="updateCardType(this)">
+            <div style="font-weight: 600;">Social</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">vCard contact sharing</div>
+            <div style="font-size: 11px; color: var(--accent); margin-top: 8px;">RM {{ card_pricing.social.physical }}</div>
+          </label>
+          <label class="template-option {% if card_type == 'corporate' %}selected{% endif %}">
+            <input type="radio" name="card_type" value="corporate" {% if card_type == 'corporate' %}checked{% endif %} onchange="updateCardType(this)">
+            <div style="font-weight: 600;">Corporate</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Company vCard with branding</div>
+            <div style="font-size: 11px; color: var(--accent); margin-top: 8px;">RM {{ card_pricing.corporate.physical }}</div>
+          </label>
+          <label class="template-option {% if card_type == 'taglink' %}selected{% endif %}">
+            <input type="radio" name="card_type" value="taglink" {% if card_type == 'taglink' %}checked{% endif %} onchange="updateCardType(this)">
+            <div style="font-weight: 600;">TagLink</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Dynamic redirect link</div>
+            <div style="font-size: 11px; color: var(--accent); margin-top: 8px;">RM {{ card_pricing.taglink.physical }}</div>
+          </label>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Tier <span class="required" aria-hidden="true">*</span></label>
+        <select name="card_tier" id="card_tier" class="form-select" style="width: 100%; max-width: 300px;">
+          <option value="physical" {% if card_tier == 'physical' %}selected{% endif %}>Physical Card</option>
+          <option value="digital" {% if card_tier == 'digital' %}selected{% endif %}>Digital Only</option>
+        </select>
+      </div>
+      
+      <div id="template-section">
+        <div class="form-group">
+          <label class="form-label">Template (Optional)</label>
+          <select name="template_id" id="template_id" class="form-select" style="width: 100%; max-width: 400px;" onchange="toggleTemplateFields(this)">
+            <option value="">— Select a template —</option>
+            {% for tpl in templates %}
+            <option value="{{ tpl.id }}" {% if template_id == tpl.id %}selected{% endif %}>{{ tpl.name }} ({{ tpl.fields|length }} fields)</option>
+            {% endfor %}
+          </select>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Select a template to auto-generate vCard/redirect content from structured fields</p>
+        </div>
+        
+        <div id="template-fields" style="display: none; margin-top: 16px; padding: 16px; background: var(--bg-inset); border-radius: var(--radius-md);">
+          <div id="dynamic-fields"></div>
+        </div>
+      </div>
+      
+      <div id="manual-content" style="display: {% if template_id %}none{% else %}block{% endif %};">
+        <div id="social-fields" style="display: {% if card_type in ['social', 'corporate'] %}block{% else %}none{% endif %};">
+          <div class="form-group">
+            <label class="form-label">vCard Data <span class="required" aria-hidden="true">*</span></label>
+            <textarea name="vcard_data" id="vcard_data" rows="8" class="form-textarea" placeholder="BEGIN:VCARD&#10;VERSION:3.0&#10;FN:John Doe&#10;ORG:Company Ltd&#10;TITLE:Software Engineer&#10;EMAIL:john@example.com&#10;TEL:+60123456789&#10;URL:https://example.com&#10;END:VCARD" required></textarea>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Paste or generate vCard 3.0/4.0 format</p>
+          </div>
+        </div>
+        
+        <div id="taglink-fields" style="display: {% if card_type == 'taglink' %}block{% else %}none{% endif %};">
+          <div class="field-row">
+            <div class="form-group">
+              <label class="form-label">Redirect URL <span class="required" aria-hidden="true">*</span></label>
+              <input type="url" name="redirect_url" id="redirect_url" class="form-input" placeholder="https://example.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Plain Text (Fallback)</label>
+              <input type="text" name="plain_text" id="plain_text" class="form-input" placeholder="Visit our website!" maxlength="500">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+        <button type="button" class="btn-ghost" onclick="nextStep('user')" style="width: 140px;">Next: User Account →</button>
+      </div>
+    </div>
+    
+    <!-- Step 2: User Account -->
+    <div class="wizard-step {% if step == 'user' %}active{% endif %}" id="step-user" data-step="user">
+      <h3 style="margin-bottom: 8px;">User Account Details</h3>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Create the user account that will own this card</p>
+      
+      <div class="field-row">
+        <div class="form-group">
+          <label class="form-label">Email <span class="required" aria-hidden="true">*</span></label>
+          <input type="email" name="user_email" id="user_email" class="form-input" placeholder="user@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Display Name <span class="required" aria-hidden="true">*</span></label>
+          <input type="text" name="user_display_name" id="user_display_name" class="form-input" placeholder="John Doe" required maxlength="100">
+        </div>
+      </div>
+      
+      <div class="field-row">
+        <div class="form-group">
+          <label class="form-label">Username <span class="required" aria-hidden="true">*</span></label>
+          <input type="text" name="user_username" id="user_username" class="form-input" placeholder="johndoe" required maxlength="32" pattern="^[a-z_][a-z0-9_-]{0,31}$">
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Lowercase, start with letter/underscore, 1-32 chars</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Role</label>
+          <select name="user_role" id="user_role" class="form-select" style="width: 100%;">
+            <option value="individual" {% if user_role == 'individual' %}selected{% endif %}>Individual</option>
+            <option value="corporate_admin" {% if user_role == 'corporate_admin' %}selected{% endif %}>Corporate Admin</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; gap: 12px; margin-top: 24px;">
+        <button type="button" class="btn-ghost" onclick="prevStep('card')" style="width: 140px;">← Back: Card</button>
+        <button type="button" class="btn-primary" onclick="nextStep('review')" style="width: 140px;">Next: Review →</button>
+      </div>
+    </div>
+    
+    <!-- Step 3: Review -->
+    <div class="wizard-step {% if step == 'review' %}active{% endif %}" id="step-review" data-step="review">
+      <h3 style="margin-bottom: 8px;">Review & Create</h3>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Verify all details before creating the card and user account</p>
+      
+      <div style="background: var(--bg-inset); border-radius: var(--radius-lg); padding: 20px;">
+        <div style="font-weight: 600; margin-bottom: 16px; color: var(--text-strong);">Card Details</div>
+        <div class="detail-grid">
+          <div><div class="detail-label">Type</div><div class="detail-value" id="review-card-type">{{ card_type|capitalize }}</div></div>
+          <div><div class="detail-label">Tier</div><div class="detail-value" id="review-card-tier">{{ card_tier|capitalize }}</div></div>
+          <div><div class="detail-label">Template</div><div class="detail-value" id="review-template">{{ template_id or 'Manual entry' }}</div></div>
+        </div>
+        
+        <div style="font-weight: 600; margin: 20px 0 16px; color: var(--text-strong);">User Account</div>
+        <div class="detail-grid">
+          <div><div class="detail-label">Email</div><div class="detail-value" id="review-user-email">{{ user_email }}</div></div>
+          <div><div class="detail-label">Display Name</div><div class="detail-value" id="review-user-name">{{ user_display_name }}</div></div>
+          <div><div class="detail-label">Username</div><div class="detail-value" id="review-user-username">{{ user_username }}</div></div>
+          <div><div class="detail-label">Role</div><div class="detail-value" id="review-user-role">{{ user_role|capitalize }}</div></div>
+        </div>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; gap: 12px; margin-top: 24px;">
+        <button type="button" class="btn-ghost" onclick="prevStep('user')" style="width: 140px;">← Back: User</button>
+        <button type="submit" class="btn-primary" style="width: 180px;">Create Card & Account</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+const TEMPLATES = {{ templates | tojson }};
+const CSRF = document.querySelector('meta[name="csrf-token"]')?.content;
+
+function updateCardType(radio) {
+  const type = radio.value;
+  document.getElementById('social-fields').style.display = type === 'social' || type === 'corporate' ? 'block' : 'none';
+  document.getElementById('taglink-fields').style.display = type === 'taglink' ? 'block' : 'none';
+  document.querySelectorAll('.template-option').forEach(opt => opt.classList.remove('selected'));
+  radio.closest('.template-option').classList.add('selected');
+}
+
+function toggleTemplateFields(select) {
+  const templateId = select.value;
+  const fieldsContainer = document.getElementById('template-fields');
+  const manualContent = document.getElementById('manual-content');
+  const dynamicFields = document.getElementById('dynamic-fields');
+  
+  if (templateId) {
+    const template = TEMPLATES.find(t => t.id === templateId);
+    if (template) {
+      fieldsContainer.style.display = 'block';
+      manualContent.style.display = 'none';
+      dynamicFields.innerHTML = '';
+      template.fields.forEach(f => {
+        const g = document.createElement('div');
+        g.className = 'form-group';
+        const lbl = document.createElement('label');
+        lbl.className = 'form-label';
+        lbl.textContent = f.label + (f.required ? ' *' : '');
+        g.appendChild(lbl);
+        let input;
+        if (f.options?.length) {
+          input = document.createElement('select');
+          input.name = `field_${f.key}`;
+          if (!f.required) {
+            const o = document.createElement('option');
+            o.value = '';
+            o.textContent = '— Optional —';
+            input.appendChild(o);
+          }
+          (f.options || []).forEach(o => {
+            const op = document.createElement('option');
+            op.value = o;
+            op.textContent = o;
+            input.appendChild(op);
+          });
+        } else if (f.type === 'textarea') {
+          input = document.createElement('textarea');
+          input.name = `field_${f.key}`;
+          input.rows = 3;
+        } else {
+          input = document.createElement('input');
+          input.type = f.type || 'text';
+          input.name = `field_${f.key}`;
+          if (f.required) input.required = true;
+        }
+        input.id = `field_${f.key}`;
+        input.placeholder = f.placeholder || '';
+        input.style.cssText = 'width:100%;height:44px;padding:0 12px;background:var(--bg-inset);border:1px solid var(--line-2);border-radius:var(--radius-md);color:var(--text-strong);font:400 13px/1 var(--font-sans);';
+        g.appendChild(input);
+        dynamicFields.appendChild(g);
+      });
+    } else {
+      fieldsContainer.style.display = 'none';
+      manualContent.style.display = 'block';
+    }
+  } else {
+    fieldsContainer.style.display = 'none';
+    manualContent.style.display = 'block';
+  }
+}
+
+function nextStep(target) {
+  document.getElementById('current_step').value = target;
+  document.getElementById('wizard-form').submit();
+}
+
+function prevStep(target) {
+  document.getElementById('current_step').value = target;
+  document.getElementById('wizard-form').submit();
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  updateCardType(document.querySelector('input[name="card_type"]:checked'));
+  toggleTemplateFields(document.getElementById('template_id'));
+});
+</script>
+{% endblock %}

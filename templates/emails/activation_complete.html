@@ -1,0 +1,19 @@
+{% extends "emails/base.html" %}
+{% block content %}
+<h1 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Card Activated Successfully</h1>
+<p style="color: #525252; font-size: 14px;">Hi {{ display_name }},</p>
+<p style="color: #525252; font-size: 14px;">Your card <code>{{ card_id }}</code> has been successfully activated and is now ready to use.</p>
+
+<div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 20px 0;">
+  <p style="margin: 0; color: #166534; font-size: 14px;"><strong>✓ Activation Complete</strong></p>
+  <p style="margin: 8px 0 0; color: #166534; font-size: 13px;">Your card is now active and will work when tapped.</p>
+</div>
+
+<p style="color: #525252; font-size: 14px;">You can now manage your card from your dashboard:</p>
+
+<div style="text-align: center; margin: 24px 0;">
+  <a href="{{ site_url }}/dashboard/cards/{{ card_id }}" style="display: inline-block; padding: 12px 28px; background: #dc2626; color: white; border-radius: 8px; font-weight: 500; font-size: 14px; text-decoration: none;">View Card Dashboard</a>
+</div>
+
+<p style="color: #525252; font-size: 14px;">If you have any questions, feel free to reach out to our support team.</p>
+{% endblock %}

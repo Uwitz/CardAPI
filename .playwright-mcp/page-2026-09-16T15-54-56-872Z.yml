@@ -1,0 +1,63 @@
+- generic [ref=f4e3]:
+  - main [ref=f4e4]:
+    - generic [ref=f4e5]:
+      - generic [ref=f4e6]:
+        - link "UWITZ CARDS" [ref=f4e9] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f4e11]:
+          - text: Get started in minutes
+          - heading "Your NFC card awaits." [level=1] [ref=f4e12]
+          - paragraph [ref=f4e13]: Create an account, choose your card type, and start sharing in seconds. Your digital card is live the moment you subscribe.
+        - generic [ref=f4e14]:
+          - generic [ref=f4e15]:
+            - generic [ref=f4e16]: "3"
+            - generic [ref=f4e17]: Card Types
+          - generic [ref=f4e18]:
+            - generic [ref=f4e19]: 9 Template
+            - generic [ref=f4e20]: Card Designs
+          - generic [ref=f4e21]:
+            - generic [ref=f4e22]: NFC
+            - generic [ref=f4e23]: Tap to Share
+      - generic [ref=f4e67]:
+        - text: Step 2 of 3
+        - heading "Choose your card" [level=2] [ref=f4e72]
+        - paragraph [ref=f4e73]: Start with a digital card, or add a physical NFC card to match.
+        - generic [ref=f4e74]:
+          - generic [ref=f4e75] [cursor=pointer]:
+            - generic [ref=f4e76]:
+              - generic [ref=f4e77]:
+                - generic [ref=f4e78]: Social Card
+                - generic [ref=f4e79]: vCard contact sharing — ideal for individuals
+              - generic [ref=f4e80]:
+                - generic [ref=f4e81]: RM 25/yr
+                - generic [ref=f4e82]: subscription
+            - generic [ref=f4e83]: RM 35 one-time for a physical card
+          - generic [ref=f4e84] [cursor=pointer]:
+            - generic [ref=f4e85]:
+              - generic [ref=f4e86]:
+                - generic [ref=f4e87]: TagLink Card
+                - generic [ref=f4e88]: Dynamic redirect — update via API anytime
+              - generic [ref=f4e89]:
+                - generic [ref=f4e90]: RM 2.99/mo
+                - generic [ref=f4e91]: subscription
+            - generic [ref=f4e92]: RM 15 one-time for a physical card
+          - generic [ref=f4e93] [cursor=pointer]:
+            - generic [ref=f4e94]:
+              - generic [ref=f4e95]:
+                - generic [ref=f4e96]: Corporate Card
+                - generic [ref=f4e97]: Branded team cards with admin dashboard
+              - generic [ref=f4e98]:
+                - generic [ref=f4e99]: RM 45/yr
+                - generic [ref=f4e100]: subscription
+            - generic [ref=f4e101]: RM 50 one-time for a physical card
+        - generic [ref=f4e102]:
+          - button "← Back" [ref=f4e103] [cursor=pointer]
+          - button "Continue" [ref=f4e104] [cursor=pointer]
+  - contentinfo [ref=f4e63]:
+    - paragraph [ref=f4e64]:
+      - text: © 2026 Uwitz Cards ·
+      - link "Privacy" [ref=f4e65] [cursor=pointer]:
+        - /url: /privacy
+      - text: ·
+      - link "Terms" [ref=f4e66] [cursor=pointer]:
+        - /url: /terms

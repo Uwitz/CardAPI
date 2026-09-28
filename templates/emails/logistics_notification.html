@@ -1,0 +1,36 @@
+{% extends "emails/base.html" %}
+{% block content %}
+<h1 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">New Card Order for Processing</h1>
+<p style="color: #525252; font-size: 14px;">A new card has been created by an admin and is ready for logistics processing.</p>
+
+<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 20px 0;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0; color: #64748b; font-size: 13px;">Card ID</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 13px; font-family: monospace; font-weight: 500;">{{ card_id }}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #64748b; font-size: 13px;">Card Type</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 13px;">{{ card_type }}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #64748b; font-size: 13px;">Tier</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 13px;">{{ card_tier }}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #64748b; font-size: 13px;">Customer</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 13px;">{{ user_display_name }} ({{ user_email }})</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #64748b; font-size: 13px;">Card URL (for NFC writing)</td>
+      <td style="padding: 8px 0; color: #dc2626; font-size: 13px; font-family: monospace;">{{ card_url }}</td>
+    </tr>
+  </table>
+</div>
+
+<p style="color: #525252; font-size: 14px;">Please process this order and update the status in the logistics dashboard.</p>
+
+<div style="text-align: center; margin: 24px 0;">
+  <a href="{{ site_url }}/logistics" style="display: inline-block; padding: 12px 28px; background: #dc2626; color: white; border-radius: 8px; font-weight: 500; font-size: 14px; text-decoration: none;">Open Logistics Dashboard</a>
+</div>
+{% endblock %}

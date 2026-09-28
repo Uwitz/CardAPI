@@ -1,0 +1,48 @@
+- generic [ref=f44e2]:
+  - complementary [ref=f44e3]:
+    - link "UWITZ CARDS" [ref=f44e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f44e7]:
+      - generic [ref=f44e8]: Overview
+      - link "Dashboard" [ref=f44e9] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f44e16] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f44e20] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f44e25] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+      - generic [ref=f44e30]: Corporate
+      - link "Org Dashboard" [ref=f44e31] [cursor=pointer]:
+        - /url: /corporate
+      - link "Org Cards" [ref=f44e35] [cursor=pointer]:
+        - /url: /corporate/cards
+      - link "Members" [ref=f44e39] [cursor=pointer]:
+        - /url: /corporate/members
+      - link "Org Orders" [ref=f44e46] [cursor=pointer]:
+        - /url: /corporate/orders
+      - link "Org Settings" [ref=f44e51] [cursor=pointer]:
+        - /url: /corporate/settings
+    - generic [ref=f44e56]:
+      - generic [ref=f44e57]:
+        - generic [ref=f44e58]: E
+        - generic [ref=f44e59]:
+          - generic [ref=f44e60]: Edward Paxton
+          - generic [ref=f44e61]: corporate_admin
+      - button "Sign out" [ref=f44e63] [cursor=pointer]
+  - generic [ref=f44e66]:
+    - banner [ref=f44e67]:
+      - generic [ref=f44e68]: Organisation Orders
+    - main [ref=f44e69]:
+      - generic [ref=f44e71]:
+        - heading "Org Orders" [level=1] [ref=f44e72]
+        - paragraph [ref=f44e73]: 0 orders placed by your team
+      - paragraph [ref=f44e75]: No orders yet
+    - contentinfo [ref=f44e76]:
+      - paragraph [ref=f44e77]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f44e78] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f44e79] [cursor=pointer]:
+          - /url: /terms

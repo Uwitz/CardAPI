@@ -1,0 +1,73 @@
+- generic [ref=f47e2]:
+  - complementary [ref=f47e3]:
+    - link "UWITZ CARDS" [ref=f47e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f47e7]:
+      - generic [ref=f47e8]: Overview
+      - link "Dashboard" [ref=f47e9] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f47e16] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f47e20] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f47e25] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+      - generic [ref=f47e30]: Corporate
+      - link "Org Dashboard" [ref=f47e31] [cursor=pointer]:
+        - /url: /corporate
+      - link "Org Cards" [ref=f47e35] [cursor=pointer]:
+        - /url: /corporate/cards
+      - link "Members" [ref=f47e39] [cursor=pointer]:
+        - /url: /corporate/members
+      - link "Org Orders" [ref=f47e46] [cursor=pointer]:
+        - /url: /corporate/orders
+      - link "Org Settings" [ref=f47e51] [cursor=pointer]:
+        - /url: /corporate/settings
+    - generic [ref=f47e56]:
+      - generic [ref=f47e57]:
+        - generic [ref=f47e58]: E
+        - generic [ref=f47e59]:
+          - generic [ref=f47e60]: Edward Paxton
+          - generic [ref=f47e61]: corporate_admin
+      - button "Sign out" [ref=f47e63] [cursor=pointer]
+  - generic [ref=f47e66]:
+    - banner [ref=f47e67]:
+      - generic [ref=f47e68]: Org Settings
+    - main [ref=f47e69]:
+      - generic [ref=f47e70]:
+        - generic [ref=f47e71]:
+          - heading "Organisation Settings" [level=1] [ref=f47e72]
+          - paragraph [ref=f47e73]: Manage your org profile, slug, and custom domain
+        - link "← Back to Dashboard" [ref=f47e75] [cursor=pointer]:
+          - /url: /corporate
+      - generic [ref=f47e76]:
+        - generic [ref=f47e77]:
+          - heading "Profile" [level=3] [ref=f47e78]
+          - generic [ref=f47e79]:
+            - generic [ref=f47e80]: Organisation Name
+            - textbox "Organisation Name" [ref=f47e81]: Uwitz Labs
+          - generic [ref=f47e82]:
+            - generic [ref=f47e83]: Slug
+            - textbox "Slug" [ref=f47e84]: edward-paxton
+            - generic [ref=f47e85]: Used in URLs. Lowercase letters, numbers, hyphens.
+          - generic [ref=f47e86]:
+            - generic [ref=f47e87]: Custom Domain
+            - textbox "Custom Domain" [ref=f47e88]:
+              - /placeholder: cards.yourcompany.com
+              - text: cards.uwitz.org
+            - generic [ref=f47e89]: Optional. You'll verify ownership with a TXT record.
+          - button "Save Changes" [ref=f47e90] [cursor=pointer]
+        - generic [ref=f47e91]:
+          - generic [ref=f47e92]:
+            - heading "Domain Verification" [level=3] [ref=f47e93]
+            - generic [ref=f47e94]: Verified
+          - paragraph [ref=f47e95]: ✅ cards.uwitz.org is verified.
+          - button "Remove Domain" [ref=f47e96] [cursor=pointer]
+    - contentinfo [ref=f47e97]:
+      - paragraph [ref=f47e98]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f47e99] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f47e100] [cursor=pointer]:
+          - /url: /terms

@@ -3,41 +3,62 @@
 {% block title %}Org Cards — {{ brand }}{% endblock %}
 {% block page_title %}Organisation Cards{% endblock %}
 {% block content %}
-<div class="flex items-center justify-between mb-6">
-  <div>
-    <h1 style="font-size: 1.25rem; font-weight: 700;">Org Cards</h1>
-    <p class="text-sm text-muted">{{ cards | length }} card{{ 's' if cards | length != 1 }}</p>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>Org Cards</h1>
+    <p class="page-head-sub">{{ cards | length }} card{{ 's' if cards | length != 1 }} across your organisation</p>
   </div>
 </div>
 
 {% if cards %}
-<div class="card" style="overflow: hidden;">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Card ID</th>
-        <th>Type</th>
-        <th>Tier</th>
-        <th>Status</th>
-        <th>Sub</th>
-        <th>Views</th>
-        <th>Created</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for card in cards %}
-      <tr>
-        <td style="font-family: var(--font-mono); font-weight: 600;">{{ card.card_id }}</td>
-        <td><span class="tier-badge tier-{{ card.card_type }} {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type }}</span></td>
-        <td>{{ card.card_tier }}</td>
-        <td><span class="tag {% if card.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.status }}</span></td>
-        <td><span class="tag {% if card.subscription_status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.subscription_status }}</span></td>
-        <td>{{ card.views }}</td>
-        <td class="text-sm text-muted">{{ card.created_at[:10] }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="card-grid">
+  {% for card in cards %}
+  <div class="data-card data-card-hover">
+    <div class="card-mini">
+      {% if card.image_url %}
+      <img src="{{ card.image_url }}" alt="{{ card.card_type }} card preview" loading="lazy">
+      {% else %}
+      <div class="card-mini-chip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      </div>
+      <span class="card-mini-label">{{ card.card_type }}</span>
+      {% endif %}
+    </div>
+
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ card.card_id }}</div>
+        <div class="data-card-sub">Created {{ card.created_at[:10] }}</div>
+      </div>
+      <div class="data-card-badges">
+        <span class="tier-badge {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type }}</span>
+      </div>
+    </div>
+
+    <div class="data-card-body">
+      <div>
+        <div class="meta-label">Tier</div>
+        <div class="meta-value strong">{{ card.card_tier or '—' }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Views</div>
+        <div class="meta-value strong">{{ card.views }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Status</div>
+        <div class="meta-value">
+          <span class="badge {% if card.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
+        </div>
+      </div>
+      <div>
+        <div class="meta-label">Subscription</div>
+        <div class="meta-value">
+          <span class="badge {% if card.subscription_status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ card.subscription_status or 'none' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 {% else %}
 <div class="empty-state">

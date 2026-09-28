@@ -2,106 +2,119 @@
 {% block title %}Orders — {{ brand }}{% endblock %}
 {% block page_title %}Order Management{% endblock %}
 {% block content %}
-<div class="animate-fade-up">
-  <div class="flex items-center justify-between mb-6">
-    <div>
-      <h1 style="font-size: 1.25rem; font-weight: 700;">All Orders</h1>
-      <p class="text-sm text-muted">{{ orders | length }} order{{ 's' if orders | length != 1 }}</p>
-    </div>
-    <div style="display: flex; gap: 8px;">
-      <select id="status-filter" onchange="filterOrders()" style="height: 32px; padding: 0 10px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-strong); font: 500 12px/1 var(--font-sans);">
-        <option value="all">All Status</option>
-        <option value="pending">Pending</option>
-        <option value="paid">Paid / Printing</option>
-        <option value="printing">Printing</option>
-        <option value="shipped">Shipped</option>
-        <option value="delivered">Delivered</option>
-      </select>
-    </div>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>All Orders</h1>
+    <p class="page-head-sub">{{ orders | length }} order{{ 's' if orders | length != 1 }}</p>
   </div>
-
-  {% if orders %}
-  <div class="card" style="overflow: hidden; padding: 0;">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Order ID</th>
-          <th>Customer</th>
-          <th>Card Type</th>
-          <th>Tier</th>
-          <th>Status</th>
-          <th>Image</th>
-          <th>Amount</th>
-          <th>Date</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for order in orders %}
-        <tr data-status="{{ order.status }}" style="cursor: pointer;" onclick="location.href='/logistics/orders/{{ order._id }}'">
-          <td class="font-mono font-semibold text-sm">{{ order._id }}</td>
-          <td>
-            {% if order.user_info %}
-              <div class="font-medium text-sm">{{ order.user_info.display_name }}</div>
-              <div class="text-xs text-muted">{{ order.user_info.email }}</div>
-            {% else %}
-              <span class="text-muted text-sm">—</span>
-            {% endif %}
-          </td>
-          <td>
-            <span class="badge badge-info">{{ order.card_type }}</span>
-          </td>
-          <td class="text-sm">{{ order.card_tier }}</td>
-          <td>
-            <span class="badge {% if order.status == 'paid' %}badge-success{% elif order.status == 'pending' %}badge-warning{% elif order.status == 'shipped' %}badge-info{% elif order.status == 'delivered' %}badge-success{% else %}badge-neutral{% endif %}">{{ order.status }}</span>
-          </td>
-          <td>
-            {% if order.has_image %}
-              <span class="badge badge-success">✓</span>
-            {% else %}
-              <span class="badge badge-error">✗</span>
-            {% endif %}
-          </td>
-          <td class="text-sm font-semibold">RM {{ order.amount_total }}</td>
-          <td class="text-muted text-sm">{{ order.created_at[:10] }}</td>
-          <td>
-            <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); updateOrderStatus('{{ order._id }}', 'printing')" title="Start Printing">🖨</button>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-  <div class="empty-state">
-    <p class="font-semibold mb-2">No orders yet</p>
-    <p class="text-sm text-muted">Orders will appear here when customers place them.</p>
-  </div>
-  {% endif %}
 </div>
+
+{% set pipeline = ['pending', 'paid', 'printing', 'shipped', 'delivered'] %}
+
+<div class="filter-bar" role="group" aria-label="Filter orders by status">
+  <button class="filter-chip active" data-status="all" onclick="setFilter('all', this)">All<span class="chip-count">{{ orders | length }}</span></button>
+  {% for status in pipeline %}
+    <button class="filter-chip" data-status="{{ status }}" onclick="setFilter('{{ status }}', this)">{{ status.title() }}<span class="chip-count">{{ orders | selectattr('status', 'equalto', status) | list | length }}</span></button>
+  {% endfor %}
+</div>
+
+{% if orders %}
+<div class="card-grid" id="order-grid">
+  {% for order in orders %}
+  <a href="/logistics/orders/{{ order._id }}" class="data-card data-card-hover" data-status="{{ order.status }}" style="cursor: pointer;">
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ order._id }}</div>
+        <div class="data-card-sub">{{ order.created_at[:10] }}</div>
+      </div>
+      <span class="badge {% if order.status == 'paid' %}badge-success{% elif order.status == 'pending' %}badge-warning{% elif order.status in ('shipped', 'printing') %}badge-info{% elif order.status == 'delivered' %}badge-success{% else %}badge-neutral{% endif %}">{{ order.status }}</span>
+    </div>
+
+    <div class="data-card-body">
+      <div>
+        <div class="meta-label">Customer</div>
+        <div class="meta-value strong">
+          {{ order.user_info.display_name if order.user_info else '—' }}
+        </div>
+      </div>
+      <div>
+        <div class="meta-label">Product</div>
+        <div class="meta-value strong">{{ order.card_type }} · {{ order.card_tier }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Card URL</div>
+        <div class="meta-value">
+          {% if order.card_url %}
+            <span class="badge badge-info" style="font-family: var(--font-mono); font-size: 11px; cursor: pointer;" onclick="event.stopPropagation(); copyToClipboard('{{ order.card_url }}')" title="Click to copy">{{ order.card_url }}</span>
+          {% else %}
+            <span class="badge badge-neutral">—</span>
+          {% endif %}
+        </div>
+      </div>
+      <div>
+        <div class="meta-label">Card Image</div>
+        <div class="meta-value">
+          {% if order.has_image %}
+            <span class="badge badge-success">✓ Uploaded</span>
+          {% else %}
+            <span class="badge badge-error">✗ Missing</span>
+          {% endif %}
+        </div>
+      </div>
+      <div>
+        <div class="meta-label">Amount</div>
+        <div class="meta-value strong">RM {{ '%.2f' | format(order.amount_total) }}</div>
+      </div>
+    </div>
+
+    {% if order.status != 'cancelled' %}
+    <div class="status-flow" aria-label="Order progress">
+      {% for step in pipeline %}
+        {% if step == order.status %}
+          <span class="status-step active"><span class="dot"></span>{{ step }}</span>
+        {% elif loop.index < pipeline.index(order.status) %}
+          <span class="status-step done"><span class="dot"></span>{{ step }}</span>
+        {% else %}
+          <span class="status-step"><span class="dot"></span>{{ step }}</span>
+        {% endif %}
+        {% if not loop.last %}<span class="status-step-line {% if loop.index <= pipeline.index(order.status) %}done{% endif %}"></span>{% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="data-card-foot">
+      <span class="text-muted text-sm">Open order →</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p class="font-semibold mb-2">No orders yet</p>
+  <p class="text-sm text-muted">Orders will appear here when customers place them.</p>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block head %}
 <script>
-function filterOrders() {
-  const filter = document.getElementById('status-filter').value;
-  document.querySelectorAll('tbody tr').forEach(row => {
-    if (filter === 'all' || row.dataset.status === filter) {
-      row.style.display = '';
+function setFilter(status, btn) {
+  document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+  btn.classList.add('active');
+  const filter = status;
+  document.querySelectorAll('#order-grid .data-card[data-status]').forEach(card => {
+    if (filter === 'all' || card.dataset.status === filter) {
+      card.style.display = '';
     } else {
-      row.style.display = 'none';
+      card.style.display = 'none';
     }
   });
 }
 
-async function updateOrderStatus(orderId, status) {
-  const token = localStorage.getItem('token');
-  await fetch(`/api/admin/orders/${orderId}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-    body: JSON.stringify({ status }),
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    // Visual feedback could be added here
   });
-  location.reload();
 }
 </script>
 {% endblock %}

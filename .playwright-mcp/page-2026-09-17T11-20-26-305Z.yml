@@ -1,0 +1,92 @@
+- generic [ref=f29e2]:
+  - complementary [ref=f29e3]:
+    - link "UWITZ CARDS" [ref=f29e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f29e7]:
+      - generic [ref=f29e8]: Overview
+      - link "Dashboard" [ref=f29e9] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f29e16] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f29e20] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f29e25] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+      - generic [ref=f29e30]: Corporate
+      - link "Org Dashboard" [ref=f29e31] [cursor=pointer]:
+        - /url: /corporate
+      - link "Org Cards" [ref=f29e35] [cursor=pointer]:
+        - /url: /corporate/cards
+      - link "Members" [ref=f29e39] [cursor=pointer]:
+        - /url: /corporate/members
+      - link "Org Orders" [ref=f29e46] [cursor=pointer]:
+        - /url: /corporate/orders
+      - generic [ref=f29e51]:
+        - generic [ref=f29e52]: Logistics
+        - link "Logistics" [ref=f29e53] [cursor=pointer]:
+          - /url: /logistics
+        - link "Orders" [ref=f29e60] [cursor=pointer]:
+          - /url: /logistics/orders
+      - generic [ref=f29e65]:
+        - generic [ref=f29e66]: Admin
+        - link "Admin Panel" [ref=f29e67] [cursor=pointer]:
+          - /url: /admin
+        - link "Users" [ref=f29e71] [cursor=pointer]:
+          - /url: /admin/users
+        - link "All Cards" [ref=f29e78] [cursor=pointer]:
+          - /url: /admin/cards
+        - link "All Orders" [ref=f29e82] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Subscriptions" [ref=f29e87] [cursor=pointer]:
+          - /url: /admin/subscriptions
+        - link "Pricing" [ref=f29e91] [cursor=pointer]:
+          - /url: /admin/pricing
+        - link "Unassigned Cards" [ref=f29e95] [cursor=pointer]:
+          - /url: /admin/orphans
+        - link "Email Logs" [ref=f29e99] [cursor=pointer]:
+          - /url: /admin/email-logs
+    - generic [ref=f29e104]:
+      - generic [ref=f29e105]:
+        - generic [ref=f29e106]: E
+        - generic [ref=f29e107]:
+          - generic [ref=f29e108]: Edward Paxton
+          - generic [ref=f29e109]: admin
+      - button "Sign out" [ref=f29e111] [cursor=pointer]
+  - generic [ref=f29e114]:
+    - banner [ref=f29e115]:
+      - generic [ref=f29e116]: Dashboard
+    - main [ref=f29e117]:
+      - generic [ref=f29e119]:
+        - heading "Welcome back, Edward Paxton" [level=1] [ref=f29e120]
+        - paragraph [ref=f29e121]: Manage your NFC cards and subscriptions
+      - generic [ref=f29e122]:
+        - generic [ref=f29e123]:
+          - generic [ref=f29e124]: Cards
+          - generic [ref=f29e125]: "0"
+        - generic [ref=f29e126]:
+          - generic [ref=f29e127]: Active Subscriptions
+          - generic [ref=f29e128]: "0"
+        - generic [ref=f29e129]:
+          - generic [ref=f29e130]: Total Orders
+          - generic [ref=f29e131]: "0"
+        - generic [ref=f29e132]:
+          - generic [ref=f29e133]: Account
+          - generic [ref=f29e134]: Free
+          - generic [ref=f29e135]: No active plan
+      - generic [ref=f29e136]:
+        - heading "Recent Cards0" [level=2] [ref=f29e137]
+        - link "+ New Card" [ref=f29e138] [cursor=pointer]:
+          - /url: /dashboard/cards/new
+      - generic [ref=f29e139]:
+        - paragraph [ref=f29e140]: No cards yet
+        - paragraph [ref=f29e141]: Create your first NFC card to get started.
+        - link "Create Card" [ref=f29e142] [cursor=pointer]:
+          - /url: /dashboard/cards/new
+    - contentinfo [ref=f29e143]:
+      - paragraph [ref=f29e144]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f29e145] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f29e146] [cursor=pointer]:
+          - /url: /terms

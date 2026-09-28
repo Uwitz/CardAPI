@@ -1,0 +1,76 @@
+- generic [ref=f42e2]:
+  - complementary [ref=f42e3]:
+    - link "UWITZ CARDS" [ref=f42e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f42e7]:
+      - generic [ref=f42e8]: Overview
+      - link "Dashboard" [ref=f42e9] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f42e16] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f42e20] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f42e25] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+      - generic [ref=f42e30]: Corporate
+      - link "Org Dashboard" [ref=f42e31] [cursor=pointer]:
+        - /url: /corporate
+      - link "Org Cards" [ref=f42e35] [cursor=pointer]:
+        - /url: /corporate/cards
+      - link "Members" [ref=f42e39] [cursor=pointer]:
+        - /url: /corporate/members
+      - link "Org Orders" [ref=f42e46] [cursor=pointer]:
+        - /url: /corporate/orders
+      - link "Org Settings" [ref=f42e51] [cursor=pointer]:
+        - /url: /corporate/settings
+    - generic [ref=f42e56]:
+      - generic [ref=f42e57]:
+        - generic [ref=f42e58]: E
+        - generic [ref=f42e59]:
+          - generic [ref=f42e60]: Edward Paxton
+          - generic [ref=f42e61]: corporate_admin
+      - button "Sign out" [ref=f42e63] [cursor=pointer]
+  - generic [ref=f42e66]:
+    - banner [ref=f42e67]:
+      - generic [ref=f42e68]: Team Members
+    - main [ref=f42e69]:
+      - generic [ref=f42e70]:
+        - generic [ref=f42e71]:
+          - heading "Team Members" [level=1] [ref=f42e72]
+          - paragraph [ref=f42e73]: Members grouped by organisation
+        - button "+ Invite Member" [ref=f42e75] [cursor=pointer]
+      - generic [ref=f42e76]:
+        - generic [ref=f42e77]:
+          - generic [ref=f42e78]:
+            - heading "Uwitz Labs" [level=3] [ref=f42e79]
+            - generic [ref=f42e80]: 1 member
+          - generic [ref=f42e81]: edward-paxton
+        - generic [ref=f42e83]:
+          - generic [ref=f42e84]: E
+          - generic [ref=f42e85]:
+            - generic [ref=f42e86]: Edward Paxton
+            - generic [ref=f42e87]: edward@uwitz.org
+            - generic [ref=f42e88]:
+              - generic [ref=f42e89]: corporate_admin
+              - generic [ref=f42e90]: active
+              - generic [ref=f42e91]: Password set
+            - generic [ref=f42e92]: Joined 2026-09-16
+      - generic [ref=f42e94]:
+        - generic [ref=f42e96]:
+          - heading "Unassigned Members" [level=3] [ref=f42e97]
+          - generic [ref=f42e98]: Users without an organisation
+        - generic [ref=f42e100]:
+          - generic [ref=f42e101]: A
+          - generic [ref=f42e102]:
+            - generic [ref=f42e103]: A11y Scan User
+            - generic [ref=f42e104]: a11yscan@uwitz-cards.testing
+            - generic [ref=f42e105]: individual
+          - button "Remove" [ref=f42e108] [cursor=pointer]
+    - contentinfo [ref=f42e109]:
+      - paragraph [ref=f42e110]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f42e111] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f42e112] [cursor=pointer]:
+          - /url: /terms

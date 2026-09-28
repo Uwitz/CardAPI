@@ -7,7 +7,9 @@ from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from app.config import get_settings
 
 _settings = get_settings()
-_session_secret = _settings.SESSION_SECRET or secrets.token_hex(32)
+if not _settings.SESSION_SECRET:
+    raise RuntimeError("SESSION_SECRET must be set in environment. Generate with: python -c 'import secrets; print(secrets.token_hex(32))'")
+_session_secret = _settings.SESSION_SECRET
 _serializer = URLSafeTimedSerializer(_session_secret, salt="uwitz-cards-session")
 
 SESSION_COOKIE_NAME = "uwitz_session"

@@ -1,0 +1,57 @@
+- generic [ref=f6e2]:
+  - complementary [ref=f6e3]:
+    - link "UWITZ CARDS" [ref=f6e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f6e7]:
+      - link "Dashboard" [ref=f6e8] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f6e14] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f6e17] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f6e21] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+    - generic [ref=f6e24]:
+      - generic [ref=f6e25]:
+        - generic [ref=f6e26]: A
+        - generic [ref=f6e27]:
+          - generic [ref=f6e28]: A11y Scan User
+          - generic [ref=f6e29]: individual
+      - button "Sign out" [ref=f6e31] [cursor=pointer]
+  - generic [ref=f6e34]:
+    - banner [ref=f6e35]:
+      - generic [ref=f6e36]: Dashboard
+    - main [ref=f6e37]:
+      - generic [ref=f6e38]:
+        - heading "Welcome back, A11y Scan User" [level=1] [ref=f6e39]
+        - paragraph [ref=f6e40]: Manage your NFC cards and subscriptions
+      - generic [ref=f6e41]:
+        - generic [ref=f6e42]:
+          - generic [ref=f6e43]: Cards
+          - generic [ref=f6e44]: "0"
+        - generic [ref=f6e45]:
+          - generic [ref=f6e46]: Active Subscriptions
+          - generic [ref=f6e47]: "0"
+        - generic [ref=f6e48]:
+          - generic [ref=f6e49]: Total Orders
+          - generic [ref=f6e50]: "0"
+        - generic [ref=f6e51]:
+          - generic [ref=f6e52]: Account
+          - generic [ref=f6e53]: Individual
+      - generic [ref=f6e54]:
+        - heading "Recent Cards" [level=2] [ref=f6e55]
+        - link "+ New Card" [ref=f6e56] [cursor=pointer]:
+          - /url: /dashboard/cards/new
+      - generic [ref=f6e57]:
+        - paragraph [ref=f6e58]: No cards yet
+        - paragraph [ref=f6e59]: Create your first NFC card to get started.
+        - link "Create Card" [ref=f6e60] [cursor=pointer]:
+          - /url: /dashboard/cards/new
+    - contentinfo [ref=f6e61]:
+      - paragraph [ref=f6e62]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f6e63] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f6e64] [cursor=pointer]:
+          - /url: /terms

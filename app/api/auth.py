@@ -98,6 +98,9 @@ async def oidc_callback(request: Request):
                 "site_url": settings.SITE_URL,
             })
 
+            from app.sync import ensure_stripe_customer
+            await ensure_stripe_customer(user)
+
         # Create session cookie and return JSON (frontend handles redirect)
         from fastapi.responses import JSONResponse
         resp = JSONResponse(content={"status": "ok", "session_cookie": True})
@@ -122,7 +125,7 @@ async def _exchange_entraid(code: str, redirect_uri: str) -> dict:
             "redirect_uri": redirect_uri,
             "client_id": settings.ENTRA_CLIENT_ID,
             "client_secret": settings.ENTRA_CLIENT_SECRET,
-            "scope": "openid profile email groups",
+            "scope": "openid profile email",
         })
 
     if resp.status_code != 200:

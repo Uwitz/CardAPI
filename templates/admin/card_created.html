@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Card Created — Admin{% endblock %}
+{% block page_title %}Card & Account Created{% endblock %}
+{% block content %}
+<div style="max-width: 600px; text-align: center;">
+  <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--green-100); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--green-600)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  
+  <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">Card & Account Created</h1>
+  <p style="color: var(--text-muted); margin-bottom: 32px;">The card has been created with pending status. The user account is ready for activation.</p>
+  
+  <div style="background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; text-align: left; margin-bottom: 24px;">
+    <div class="detail-grid">
+      <div>
+        <div class="detail-label">Card ID</div>
+        <div class="detail-value mono">{{ card_id }}</div>
+      </div>
+      <div>
+        <div class="detail-label">User Email</div>
+        <div class="detail-value">{{ user_email }}</div>
+      </div>
+      <div>
+        <div class="detail-label">Temp Password</div>
+        <div class="detail-value mono">{{ temp_password }}</div>
+      </div>
+    </div>
+    
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+      <div class="detail-label" style="margin-bottom: 8px;">Activation URL (for logistics)</div>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" value="{{ activation_url }}" readonly style="flex: 1; padding: 10px 12px; background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 13px; color: var(--text-strong);">
+        <button class="btn-primary" onclick="copyToClipboard('{{ activation_url }}')">Copy</button>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Share this URL with logistics for NFC card writing. The user will use this link to activate their account.</p>
+    </div>
+  </div>
+  
+  <div style="display: flex; gap: 12px; justify-content: center;">
+    <a href="/admin/cards" class="btn-primary">View All Cards</a>
+    <a href="/admin/cards/new" class="btn-ghost">Create Another</a>
+    <a href="/admin/cards/pending" class="btn-ghost">View Pending</a>
+  </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = original, 2000);
+  });
+}
+</script>
+{% endblock %}

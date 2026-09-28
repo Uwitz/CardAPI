@@ -1,0 +1,37 @@
+- generic [ref=f1e3]:
+  - main [ref=f1e4]:
+    - generic [ref=f1e8]:
+      - text: Step 1 of 3
+      - heading "Create your account" [level=2] [ref=f1e13]
+      - paragraph [ref=f1e14]: Choose a sign-in method or create an account with email.
+      - generic [ref=f1e15]:
+        - button "Continue with Irys" [ref=f1e16] [cursor=pointer]
+        - button "Continue with Entra ID" [ref=f1e19] [cursor=pointer]
+      - generic [ref=f1e25]: or sign up with email
+      - generic [ref=f1e28]:
+        - generic [ref=f1e29]:
+          - generic [ref=f1e30]: Display Name
+          - textbox "Jane Doe" [ref=f1e31]
+        - generic [ref=f1e32]:
+          - generic [ref=f1e33]:
+            - generic [ref=f1e34]: Username
+            - textbox "jane" [ref=f1e35]
+          - generic [ref=f1e36]:
+            - generic [ref=f1e37]: Email
+            - textbox "jane@example.com" [ref=f1e38]
+        - generic [ref=f1e39]:
+          - generic [ref=f1e40]: Password
+          - textbox "Min 8 characters" [ref=f1e41]
+        - button "Continue" [ref=f1e42] [cursor=pointer]
+      - generic [ref=f1e43]:
+        - text: Already have an account?
+        - link "Sign in" [ref=f1e44] [cursor=pointer]:
+          - /url: /dashboard/login
+  - contentinfo [ref=f1e45]:
+    - paragraph [ref=f1e46]:
+      - text: © 2026 Uwitz Cards ·
+      - link "Privacy" [ref=f1e47] [cursor=pointer]:
+        - /url: /privacy
+      - text: ·
+      - link "Terms" [ref=f1e48] [cursor=pointer]:
+        - /url: /terms

@@ -3,23 +3,42 @@
 {% block title %}Org Orders — {{ brand }}{% endblock %}
 {% block page_title %}Organisation Orders{% endblock %}
 {% block content %}
-<h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Org Orders</h1>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>Org Orders</h1>
+    <p class="page-head-sub">{{ orders | length }} order{{ 's' if orders | length != 1 }} placed by your team</p>
+  </div>
+</div>
 
 {% if orders %}
-<table class="table card" style="overflow: hidden;">
-  <thead><tr><th>Order ID</th><th>Type</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
-  <tbody>
-    {% for o in orders %}
-    <tr>
-      <td class="font-mono font-semibold">{{ o._id }}</td>
-      <td>{{ o.card_type }}</td>
-      <td>RM {{ '%.2f' | format(o.amount_total) }}</td>
-      <td><span class="badge {% if o.status == 'paid' %}badge-success{% else %}badge-neutral{% endif %}">{{ o.status }}</span></td>
-      <td class="text-sm text-muted">{{ o.created_at[:10] }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="card-grid">
+  {% for o in orders %}
+  <div class="data-card">
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ o._id }}</div>
+        <div class="data-card-sub">{{ o.created_at[:10] }}</div>
+      </div>
+      <span class="badge {% if o.status == 'paid' %}badge-success{% else %}badge-neutral{% endif %}">{{ o.status }}</span>
+    </div>
+
+    <div class="data-card-body">
+      <div>
+        <div class="meta-label">Type</div>
+        <div class="meta-value strong">{{ o.card_type }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Tier</div>
+        <div class="meta-value strong">{{ o.card_tier }}</div>
+      </div>
+    </div>
+
+    <div class="data-card-foot">
+      <div class="amount">RM {{ '%.2f' | format(o.amount_total) }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
 {% else %}
 <div class="empty-state"><p class="font-semibold">No orders yet</p></div>
 {% endif %}

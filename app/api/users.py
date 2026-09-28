@@ -1,4 +1,7 @@
 import secrets
+import re
+from datetime import datetime, timedelta, timezone
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import EmailStr
 
@@ -6,6 +9,7 @@ from app.auth import get_api_user, hash_password, verify_password
 from app.database import db, now_iso
 from app.models import UserRegister, UserLogin, UserUpdate, CardCreate
 from app.idgen import gen_user_id, gen_token, gen_referral, gen_card_id
+from app.audit import audit_log, AuditAction, get_failed_login_attempts
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 
@@ -44,16 +48,104 @@ async def register(data: UserRegister):
         "site_url": "https://portal.uwitz.cards",
     })
 
+    from app.sync import ensure_stripe_customer
+    await ensure_stripe_customer(user)
+
     return {"id": user_id, "token": token, "display_name": data.display_name}
 
 
+# Account lockout settings
+MAX_FAILED_ATTEMPTS = 5
+LOCKOUT_WINDOW_MINUTES = 15
+LOCKOUT_DURATION_MINUTES = 30
+
+
 @router.post("/login")
-async def login(data: UserLogin):
+async def login(data: UserLogin, request: Request):
+    # Check for account lockout
     user = await db["users"].find_one({"email": data.email})
+    if user:
+        since = datetime.now(timezone.utc) - timedelta(minutes=LOCKOUT_WINDOW_MINUTES)
+        failed_attempts = await get_failed_login_attempts(user["_id"], since)
+        if failed_attempts >= MAX_FAILED_ATTEMPTS:
+            # Check if already locked out
+            lockout_until = user.get("lockout_until")
+            if lockout_until:
+                try:
+                    lockout_dt = datetime.fromisoformat(lockout_until.replace('Z', '+00:00'))
+                    if datetime.now(timezone.utc) < lockout_dt:
+                        raise HTTPException(status_code=429, detail={
+                            "error": "account_locked",
+                            "message": f"Too many failed attempts. Try again after {lockout_dt.isoformat()}"
+                        })
+                except ValueError:
+                    pass
+            
+            # Set lockout
+            lockout_until = (datetime.now(timezone.utc) + timedelta(minutes=LOCKOUT_DURATION_MINUTES)).isoformat()
+            await db["users"].update_one(
+                {"_id": user["_id"]},
+                {"$set": {"lockout_until": lockout_until, "updated_at": now_iso()}}
+            )
+            
+            await audit_log(
+                AuditAction.ACCOUNT_LOCKED,
+                actor_id=user["_id"],
+                actor_role=user.get("role", "individual"),
+                target_id=user["_id"],
+                target_type="user",
+                details={"failed_attempts": failed_attempts, "lockout_duration_minutes": LOCKOUT_DURATION_MINUTES},
+                request=request,
+                success=True,
+            )
+            raise HTTPException(status_code=429, detail={
+                "error": "account_locked",
+                "message": f"Too many failed attempts. Account locked for {LOCKOUT_DURATION_MINUTES} minutes."
+            })
+    
     if not user or not verify_password(data.password, user.get("password_hash", "")):
+        await audit_log(
+            AuditAction.LOGIN_FAILED,
+            actor_id=user["_id"] if user else "unknown",
+            actor_role=user.get("role", "individual") if user else "unknown",
+            target_id=user["_id"] if user else None,
+            target_type="user",
+            details={"email": data.email},
+            request=request,
+            success=False,
+            error_message="Invalid credentials",
+        )
         raise HTTPException(status_code=401, detail={"error": "invalid_credentials"})
+    
     if user.get("status") == "suspended":
+        await audit_log(
+            AuditAction.LOGIN_FAILED,
+            actor_id=user["_id"],
+            actor_role=user.get("role", "individual"),
+            target_id=user["_id"],
+            target_type="user",
+            request=request,
+            success=False,
+            error_message="Account suspended",
+        )
         raise HTTPException(status_code=403, detail={"error": "suspended"})
+    
+    # Clear failed attempts on successful login
+    await db["users"].update_one(
+        {"_id": user["_id"]},
+        {"$unset": {"lockout_until": ""}, "$set": {"updated_at": now_iso()}}
+    )
+    
+    await audit_log(
+        AuditAction.LOGIN_SUCCESS,
+        actor_id=user["_id"],
+        actor_role=user.get("role", "individual"),
+        target_id=user["_id"],
+        target_type="user",
+        request=request,
+        success=True,
+    )
+    
     return {"id": user["_id"], "token": user["token"], "display_name": user["display_name"], "role": user.get("role", "individual")}
 
 

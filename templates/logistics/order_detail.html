@@ -2,148 +2,180 @@
 {% block title %}Order {{ order._id }} — {{ brand }}{% endblock %}
 {% block page_title %}Order {{ order._id }}{% endblock %}
 {% block content %}
-<div class="animate-fade-up">
-  <div class="flex items-center gap-3 mb-6">
+{% set pipeline = ['pending', 'paid', 'printing', 'shipped', 'delivered'] %}
+
+<div class="page-head">
+  <div class="flex items-center gap-3">
     <a href="/logistics/orders" class="btn btn-ghost btn-sm">← Back</a>
-    <span class="badge {% if order.status == 'paid' %}badge-success{% elif order.status == 'pending' %}badge-warning{% elif order.status == 'shipped' %}badge-info{% else %}badge-neutral{% endif %}">{{ order.status }}</span>
+    <span class="badge {% if order.status == 'paid' %}badge-success{% elif order.status == 'pending' %}badge-warning{% elif order.status in ('shipped', 'printing') %}badge-info{% elif order.status == 'delivered' %}badge-success{% else %}badge-neutral{% endif %}">{{ order.status }}</span>
     <span class="badge badge-info">{{ order.card_type }}</span>
   </div>
+  {% if order.status != 'cancelled' %}
+  <div class="status-flow" aria-label="Order progress">
+    {% for step in pipeline %}
+      {% if step == order.status %}
+        <span class="status-step active"><span class="dot"></span>{{ step }}</span>
+      {% elif loop.index < pipeline.index(order.status) %}
+        <span class="status-step done"><span class="dot"></span>{{ step }}</span>
+      {% else %}
+        <span class="status-step"><span class="dot"></span>{{ step }}</span>
+      {% endif %}
+      {% if not loop.last %}<span class="status-step-line {% if loop.index <= pipeline.index(order.status) %}done{% endif %}"></span>{% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Order Info -->
-    <div class="card">
-      <h3 style="font-weight: 600; margin-bottom: 1rem;">Order Details</h3>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div>
-          <div class="text-xs text-muted" style="margin-bottom: 4px;">Order ID</div>
-          <div class="font-mono font-semibold">{{ order._id }}</div>
-        </div>
-        <div>
-          <div class="text-xs text-muted" style="margin-bottom: 4px;">Created</div>
-          <div class="text-sm">{{ order.created_at[:10] }}</div>
-        </div>
-        <div>
-          <div class="text-xs text-muted" style="margin-bottom: 4px;">Card Type</div>
-          <span class="badge badge-info">{{ order.card_type }}</span>
-        </div>
-        <div>
-          <div class="text-xs text-muted" style="margin-bottom: 4px;">Tier</div>
-          <div class="text-sm">{{ order.card_tier }}</div>
-        </div>
-        <div>
-          <div class="text-xs text-muted" style="margin-bottom: 4px;">Amount</div>
-          <div class="text-lg font-bold">RM {{ order.amount_total }}</div>
-        </div>
-        <div>
-          <div class="text-xs text-muted" style="margin-bottom: 4px;">Status</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- Order Info -->
+  <div class="card">
+    <h3 style="font-weight: 600; margin-bottom: 1rem;">Order Details</h3>
+    <div class="detail-grid">
+      <div>
+        <div class="detail-label">Order ID</div>
+        <div class="detail-value mono">{{ order._id }}</div>
+      </div>
+      <div>
+        <div class="detail-label">Created</div>
+        <div class="detail-value">{{ order.created_at[:10] }}</div>
+      </div>
+      <div>
+        <div class="detail-label">Card Type</div>
+        <div class="detail-value"><span class="badge badge-info">{{ order.card_type }}</span></div>
+      </div>
+      <div>
+        <div class="detail-label">Tier</div>
+        <div class="detail-value">{{ order.card_tier }}</div>
+      </div>
+      <div>
+        <div class="detail-label">Amount</div>
+        <div class="detail-value amount">RM {{ '%.2f' | format(order.amount_total) }}</div>
+      </div>
+      <div>
+        <div class="detail-label">Status</div>
+        <div class="detail-value">
           <span class="badge {% if order.status == 'paid' %}badge-success{% elif order.status == 'pending' %}badge-warning{% else %}badge-neutral{% endif %}">{{ order.status }}</span>
         </div>
       </div>
-
-      {% if order.shipping_address %}
-      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-faint);">
-        <div class="text-xs text-muted" style="margin-bottom: 8px;">Shipping Address</div>
-        <pre style="background: var(--bg-inset); padding: 10px; border-radius: var(--radius-sm); font-size: 12px; white-space: pre-wrap;">{{ order.shipping_address | tojson(indent=2) }}</pre>
-      </div>
-      {% endif %}
-
-      {% if order.notes %}
-      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-faint);">
-        <div class="text-xs text-muted" style="margin-bottom: 8px;">Notes</div>
-        <div class="text-sm">{{ order.notes }}</div>
-      </div>
-      {% endif %}
     </div>
 
-    <!-- Card & Image -->
-    <div class="card">
-      <h3 style="font-weight: 600; margin-bottom: 1rem;">Card to Print</h3>
-      {% if card %}
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-          <div>
-            <div class="text-xs text-muted" style="margin-bottom: 4px;">Card ID</div>
-            <div class="font-mono text-sm">{{ card.card_id }}</div>
-          </div>
-          <div>
-            <div class="text-xs text-muted" style="margin-bottom: 4px;">Status</div>
+    {% if order.shipping_address %}
+    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-faint);">
+      <div class="detail-label" style="margin-bottom: 8px;">Shipping Address</div>
+      <pre style="background: var(--bg-inset); padding: 10px; border-radius: var(--radius-sm); font-size: 12px; white-space: pre-wrap;">{{ order.shipping_address | tojson(indent=2) }}</pre>
+    </div>
+    {% endif %}
+
+    {% if order.notes %}
+    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-faint);">
+      <div class="detail-label" style="margin-bottom: 8px;">Notes</div>
+      <div class="text-sm">{{ order.notes }}</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Card & Image -->
+  <div class="card">
+    <h3 style="font-weight: 600; margin-bottom: 1rem;">Card to Print</h3>
+    {% if card %}
+      <div class="detail-grid" style="margin-bottom: 16px;">
+        <div>
+          <div class="detail-label">Card ID</div>
+          <div class="detail-value mono">{{ card.card_id }}</div>
+        </div>
+        <div>
+          <div class="detail-label">Status</div>
+          <div class="detail-value">
             <span class="badge {% if card.status == 'active' %}badge-success{% elif card.status == 'frozen' %}badge-error{% else %}badge-neutral{% endif %}">{{ card.status }}</span>
           </div>
         </div>
+      </div>
 
-        {% if card.card_type in ('social', 'corporate') and card.vcard_data %}
-        <div style="margin-bottom: 16px;">
-          <div class="text-xs text-muted" style="margin-bottom: 8px;">vCard Content</div>
-          <pre style="background: var(--bg-inset); padding: 10px; border-radius: var(--radius-sm); font-size: 11px; overflow-x: auto; white-space: pre-wrap; max-height: 120px;">{{ card.vcard_data }}</pre>
+      {% if card_url %}
+      <div style="margin-bottom: 16px; padding: 16px; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: var(--radius-md);">
+        <div class="detail-label" style="margin-bottom: 8px; color: var(--accent); font-weight: 600;">📱 Card URL for NFC Writing</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <input type="text" value="{{ card_url }}" readonly id="card-url-input" style="flex: 1; min-width: 200px; padding: 10px 12px; background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 13px; color: var(--text-strong);">
+          <button class="btn-primary btn-sm" onclick="copyCardUrl()">📋 Copy URL</button>
+          <button class="btn-ghost btn-sm" onclick="openCardUrl()">🔗 Open</button>
         </div>
-        {% endif %}
-
-        {% if card.card_type == 'taglink' %}
-        <div style="margin-bottom: 16px;">
-          <div class="text-xs text-muted" style="margin-bottom: 4px;">Redirect URL</div>
-          <div class="text-sm">{{ card.redirect_url or '—' }}</div>
-        </div>
-        {% endif %}
-
-        {% if image %}
-          <div style="margin-top: 16px;">
-            <div class="text-xs text-muted" style="margin-bottom: 8px;">Card Face Image</div>
-            <img src="/static/uploads/cards/{{ image.filename }}" class="card-image-preview" alt="Card face">
-            <div class="text-xs text-muted" style="margin-top: 6px;">{{ image.width_px }}x{{ image.height_px }}px @ {{ image.dpi }} DPI</div>
-          </div>
-        {% else %}
-          <div class="empty-state" style="padding: 1.5rem 0;">
-            <p class="text-sm text-muted">No card face image uploaded</p>
-          </div>
-        {% endif %}
-      {% else %}
-        <div class="empty-state">
-          <p class="text-sm text-muted">Card not found or not yet created</p>
-        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Write this URL to the NFC card. When tapped, it will redirect to the activation page if user is pending, or serve the card content if active.</p>
+      </div>
       {% endif %}
-    </div>
 
-    <!-- Customer Info -->
-    <div class="card">
-      <h3 style="font-weight: 600; margin-bottom: 1rem;">Customer</h3>
-      {% if order_user %}
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div>
-            <div class="text-xs text-muted" style="margin-bottom: 4px;">Name</div>
-            <div class="font-semibold text-sm">{{ order_user.display_name }}</div>
-          </div>
-          <div>
-            <div class="text-xs text-muted" style="margin-bottom: 4px;">Email</div>
-            <div class="text-sm">{{ order_user.email }}</div>
-          </div>
-          <div>
-            <div class="text-xs text-muted" style="margin-bottom: 4px;">User ID</div>
-            <div class="font-mono text-xs">{{ order_user._id }}</div>
-          </div>
-          <div>
-            <div class="text-xs text-muted" style="margin-bottom: 4px;">Role</div>
-            <span class="badge badge-neutral">{{ order_user.role }}</span>
-          </div>
+      {% if card.card_type in ('social', 'corporate') and card.vcard_data %}
+      <div style="margin-bottom: 16px;">
+        <div class="detail-label" style="margin-bottom: 8px;">vCard Content</div>
+        <pre style="background: var(--bg-inset); padding: 10px; border-radius: var(--radius-sm); font-size: 11px; overflow-x: auto; white-space: pre-wrap; max-height: 120px;">{{ card.vcard_data }}</pre>
+      </div>
+      {% endif %}
+
+      {% if card.card_type == 'taglink' %}
+      <div style="margin-bottom: 16px;">
+        <div class="detail-label" style="margin-bottom: 4px;">Redirect URL</div>
+        <div class="text-sm">{{ card.redirect_url or '—' }}</div>
+      </div>
+      {% endif %}
+
+      {% if image %}
+        <div style="margin-top: 16px;">
+          <div class="detail-label" style="margin-bottom: 8px;">Card Face Image</div>
+          <img src="/static/uploads/cards/{{ image.filename }}" class="card-image-preview" alt="Card face">
+          <div class="text-xs text-muted" style="margin-top: 6px;">{{ image.width_px }}x{{ image.height_px }}px @ {{ image.dpi }} DPI</div>
         </div>
       {% else %}
-        <div class="text-sm text-muted">Customer info unavailable</div>
+        <div class="empty-state" style="padding: 1.5rem 0;">
+          <p class="text-sm text-muted">No card face image uploaded</p>
+        </div>
       {% endif %}
-    </div>
+    {% else %}
+      <div class="empty-state">
+        <p class="text-sm text-muted">Card not found or not yet created</p>
+      </div>
+    {% endif %}
+  </div>
 
-    <!-- Status Actions -->
-    <div class="card">
-      <h3 style="font-weight: 600; margin-bottom: 1rem;">Update Status</h3>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <button class="btn btn-ghost btn-sm" onclick="updateStatus('printing')">🖨 Start Printing</button>
-        <button class="btn btn-ghost btn-sm" onclick="updateStatus('shipped')">📦 Mark Shipped</button>
-        <button class="btn btn-ghost btn-sm" onclick="updateStatus('delivered')">✓ Mark Delivered</button>
-        <button class="btn btn-danger btn-sm" onclick="updateStatus('cancelled')">✕ Cancel Order</button>
+  <!-- Customer Info -->
+  <div class="card">
+    <h3 style="font-weight: 600; margin-bottom: 1rem;">Customer</h3>
+    {% if order_user %}
+      <div class="detail-grid">
+        <div>
+          <div class="detail-label">Name</div>
+          <div class="detail-value">{{ order_user.display_name }}</div>
+        </div>
+        <div>
+          <div class="detail-label">Email</div>
+          <div class="detail-value">{{ order_user.email }}</div>
+        </div>
+        <div>
+          <div class="detail-label">User ID</div>
+          <div class="detail-value mono">{{ order_user._id }}</div>
+        </div>
+        <div>
+          <div class="detail-label">Role</div>
+          <div class="detail-value"><span class="badge badge-neutral">{{ order_user.role }}</span></div>
+        </div>
       </div>
-      <div class="form-group" style="margin-top: 16px;">
-        <label class="form-label">Notes</label>
-        <textarea id="order-notes" rows="3" style="width:100%;padding:8px 12px;background:var(--bg-inset);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-strong);font:400 13px/1.4 var(--font-sans);resize:vertical;" placeholder="Add internal notes about this order...">{{ order.notes or '' }}</textarea>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="saveNotes()">Save Notes</button>
+    {% else %}
+      <div class="text-sm text-muted">Customer info unavailable</div>
+    {% endif %}
+  </div>
+
+  <!-- Status Actions -->
+  <div class="card">
+    <h3 style="font-weight: 600; margin-bottom: 1rem;">Update Status</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+      <button class="btn btn-ghost btn-sm" onclick="updateStatus('printing')">🖨 Start Printing</button>
+      <button class="btn btn-ghost btn-sm" onclick="updateStatus('shipped')">📦 Mark Shipped</button>
+      <button class="btn btn-ghost btn-sm" onclick="updateStatus('delivered')">✓ Mark Delivered</button>
+      <button class="btn btn-danger btn-sm" onclick="updateStatus('cancelled')">✕ Cancel Order</button>
     </div>
+    <div class="form-group" style="margin-top: 16px;">
+      <label class="form-label">Notes</label>
+      <textarea id="order-notes" rows="3" style="width:100%;padding:8px 12px;background:var(--bg-inset);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-strong);font:400 13px/1.4 var(--font-sans);resize:vertical;" placeholder="Add internal notes about this order...">{{ order.notes or '' }}</textarea>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="saveNotes()">Save Notes</button>
   </div>
 </div>
 {% endblock %}
@@ -173,6 +205,25 @@ async function saveNotes() {
   });
   if (res.ok) alert('Notes saved');
   else alert('Failed to save notes');
+}
+
+function copyCardUrl() {
+  const input = document.getElementById('card-url-input');
+  if (input) {
+    navigator.clipboard.writeText(input.value).then(() => {
+      const btn = event.target;
+      const original = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => btn.textContent = original, 2000);
+    });
+  }
+}
+
+function openCardUrl() {
+  const input = document.getElementById('card-url-input');
+  if (input && input.value) {
+    window.open(input.value, '_blank');
+  }
 }
 </script>
 {% endblock %}

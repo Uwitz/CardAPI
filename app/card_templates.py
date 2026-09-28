@@ -100,41 +100,71 @@ def _text_size(draw: ImageDraw.ImageDraw, text: str, font) -> tuple[int, int]:
     return bbox[2] - bbox[0], bbox[3] - bbox[1]
 
 
-def _draw_qr(draw: ImageDraw.ImageDraw, x: int, y: int, size: int, data: str):
-    """Draw a real QR code from data, falling back to placeholder if no data."""
-    if not data:
-        _draw_qr_placeholder(draw, x, y, size)
-        return
+def _make_qr_image(data: str, size: int, fill=WHITE, back=BG_CARD) -> Image.Image:
+    """Build a QR marking PNG that blends into the card background.
 
+    Uses the card's dark background (not a stark white box) and light modules,
+    so it reads as part of the design rather than a foreign sticker.
+    """
+    if not data:
+        return _qr_placeholder(size, fill, back)
     qr = qrcode.QRCode(
         version=None,
         error_correction=qrcode.constants.ERROR_CORRECT_M,
         box_size=10,
-        border=1,
+        border=2,
     )
     qr.add_data(data)
     qr.make(fit=True)
-    qr_img = qr.make_image(fill_color=BG, back_color=FG_0).convert("RGB")
-    qr_img = qr_img.resize((size, size), Image.Resampling.NEAREST)
-
-    # Paste QR code onto card
-    # We need to composite since draw doesn't support paste directly on the draw object
-    # Instead, we'll return the QR image and let callers paste it
-    return qr_img
+    qr_img = qr.make_image(fill_color=fill, back_color=back).convert("RGB")
+    return qr_img.resize((size, size), Image.Resampling.NEAREST)
 
 
-def _draw_qr_placeholder(draw: ImageDraw.ImageDraw, x: int, y: int, size: int):
-    """Draw a decorative QR-code placeholder."""
-    draw.rectangle([x, y, x + size, y + size], fill=FG_0, outline=LINE_2, width=1)
-    cell = size // 8
-    for r in range(8):
-        for c in range(8):
-            if (r + c) % 3 == 0 or (r < 2 and c < 2) or (r < 2 and c > 5) or (r > 5 and c < 2):
-                draw.rectangle(
-                    [x + c * cell + 2, y + r * cell + 2,
-                     x + (c + 1) * cell - 2, y + (r + 1) * cell - 2],
-                    fill=BG,
+def _qr_placeholder(size: int, fill=FG_2, back=BG_CARD) -> Image.Image:
+    """Generate a decorative QR-style placeholder grid for empty templates."""
+    img = Image.new("RGB", (size, size), back)
+    d = ImageDraw.Draw(img)
+    n, m = 6, size / 6
+    for r in range(n):
+        for c in range(n):
+            if (r + c) % 3 == 0:
+                d.rounded_rectangle(
+                    [c * m + m / 7, r * m + m / 7, (c + 1) * m - m / 7, (r + 1) * m - m / 7],
+                    radius=max(2, m / 10),
+                    fill=fill,
                 )
+    cb = size / 3
+    for ox, oy in ((0, 0), (0, size - cb), (size - cb, 0)):
+        d.rounded_rectangle(
+            [ox + m / 4, oy + m / 4, ox + cb - m / 4, oy + cb - m / 4],
+            radius=max(3, m / 3),
+            fill=fill,
+        )
+    return img
+
+
+def _draw_qr_panel(
+    img: Image.Image,
+    draw: ImageDraw.ImageDraw,
+    box: tuple[int, int, int, int],
+    data: str,
+    label: str = "",
+    fill=WHITE,
+    back=BG_CARD,
+    label_color=FG_2,
+):
+    """Draw a rounded QR panel that occupies the (former) photo slot."""
+    x0, y0, x1, y1 = box
+    draw.rounded_rectangle([x0, y0, x1, y1], radius=22, fill=back, outline=LINE_2, width=2)
+    pad = 30
+    label_h = 36 if label else 4
+    qr_max = min(x1 - x0, y1 - y0) - pad * 2 - label_h
+    qr_size = max(int(qr_max), 40)
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2 - (10 if label else 0)
+    qr_img = _make_qr_image(data, qr_size, fill=fill, back=back)
+    img.paste(qr_img, (int(cx - qr_size / 2), int(cy - qr_size / 2)))
+    if label:
+        draw.text((cx, cy + qr_size / 2 + 16), label, fill=label_color, font=_mono(10), anchor="ma")
 
 
 def _draw_contact_field(draw: ImageDraw.ImageDraw, x: int, y: int, label: str, value: str, max_w: int = 380):
@@ -156,31 +186,103 @@ def _draw_watermark(draw: ImageDraw.ImageDraw):
     draw.text((CARD_W // 2, CARD_H - 16), "UWITZ CARDS", fill=FG_3, font=_mono(11), anchor="mm")
 
 
+def _draw_brand(draw: ImageDraw.ImageDraw, x: int, y: int, size: int = 17):
+    """Small red logo mark + 'UWITZ' wordmark (left-aligned)."""
+    s = size
+    draw.rounded_rectangle([x, y, x + s, y + s], radius=int(s / 4), fill=RED_500)
+    draw.text((x + s + 10, y + s * 0.7), "UWITZ", fill=FG_0, font=_font(size, True), anchor="lm")
+
+
+def _draw_brand_rt(draw: ImageDraw.ImageDraw, x_right: int, y: int, size: int = 17):
+    """Small red logo mark + 'UWITZ' wordmark (right-aligned to x_right)."""
+    s = size
+    t = "UWITZ"
+    tw = _text_size(draw, t, _font(size, True))[0]
+    x = x_right - tw - s - 10
+    draw.rounded_rectangle([x, y, x + s, y + s], radius=int(s / 4), fill=RED_500)
+    draw.text((x + s + 10, y + s * 0.7), t, fill=FG_0, font=_font(size, True), anchor="lm")
+
+
+def _draw_serial(draw: ImageDraw.ImageDraw, text: str):
+    """Small micro-print serial line at bottom-left, matching the reference."""
+    draw.text((36, CARD_H - 30), text, fill=FG_3, font=_mono(9))
+
+
+def _draw_asterisk(draw: ImageDraw.ImageDraw, cx: int, cy: int, r: int, color=RED_500, width: int = 8):
+    """Six-bar asterisk star mark (Uwitz brand glyph) centered at (cx, cy)."""
+    for angle in (0, 60, 120):
+        rad = math.radians(angle)
+        dx, dy = math.cos(rad) * r, math.sin(rad) * r
+        draw.line([(cx - dx, cy - dy), (cx + dx, cy + dy)], fill=color, width=width)
+
+
+def _render_back(fields: dict, qr_data: str = "", card_id: str = "") -> Image.Image:
+    """Card back face, matching the back.svg reference: logo top-left, large
+    card image, contact text, shield at bottom-right."""
+    img, draw = _card_bg()
+
+    # ── Logo block, top-left ──
+    draw.rounded_rectangle([30, 24, 214, 138], radius=16, fill=RED_500)
+    draw.rounded_rectangle([38, 32, 206, 130], radius=10, fill=BG)
+    _draw_asterisk(draw, 94, 81, 26, color=RED_500, width=6)
+    draw.rounded_rectangle([112, 66, 148, 102], radius=8, fill=RED_500)
+    draw.text((30, 150), "UWITZ", fill=FG_0, font=_font(26, bold=True))
+    draw.text((30, 186), "DIGITAL BUSINESS CARD", fill=FG_2, font=_mono(9))
+
+    # ── Large card image area ──
+    img_box = (30, 220, 330, 500)
+    draw.rounded_rectangle(img_box, radius=22, fill=BG_INSET, outline=LINE_2, width=2)
+
+    # Style line (reduced card mock) + asterisk watermark inside
+    cx, cy = (img_box[0] + img_box[2]) / 2, (img_box[1] + img_box[3]) / 2
+    _draw_asterisk(draw, int(cx), int(cy), 56, color=RED_400, width=7)
+    draw.rounded_rectangle([int(cx) - 90, int(cy) + 66, int(cx) + 90, int(cy) + 86], radius=10, fill=LINE_1)
+    draw.text((int(cx), int(cy) + 116), "THE CARD IMAGE APPEARS HERE", fill=FG_3, font=_mono(8), anchor="mm")
+
+    # ── Contact text block, right ──
+    rx = 370
+    ry = 96
+    name = fields.get("name", "")
+    if name:
+        draw.text((rx, ry), name, fill=FG_0, font=_font(22, bold=True))
+        ry += 40
+    for label, key in (("EMAIL", "email"), ("TEL", "phone"), ("URL", "website")):
+        val = fields.get(key, "")
+        if val:
+            draw.text((rx, ry), label, fill=FG_2, font=_mono(9))
+            draw.text((rx, ry + 14), val, fill=FG_1, font=_font(14))
+            ry += 46
+
+    if qr_data:
+        qr_box = (rx, CARD_H - 170, rx + 140, CARD_H - 30)
+        _draw_qr_panel(img, draw, qr_box, qr_data, back=BG_CARD)
+
+    # ── Shield at bottom-right ──
+    sx, sy = CARD_W - 90, CARD_H - 90
+    draw.rounded_rectangle([sx - 42, sy - 52, sx + 42, sy + 40], radius=14, fill=RED_500)
+    _draw_asterisk(draw, sx, sy - 6, 22, color=WHITE, width=5)
+
+    _draw_serial(draw, f"UWITZ {'/'.join([card_id, 'BACK']) if card_id else 'BACK'}")
+    _draw_watermark(draw)
+    return img
+
+
 # ── Template renderers ───────────────────────────────────────────────────────
 
 def _render_business(fields: dict, qr_data: str = "") -> Image.Image:
-    """Business card matching the exact front.svg layout."""
+    """Business card matching the front.svg reference layout."""
     img, draw = _card_bg()
 
-    # ── Left side: Avatar photo area ──
-    # Clip region: x=0..107, y=0..106 (in mm-space scaled to px)
-    avatar_w, avatar_h = 300, 297  # ~107mm × ~106mm in px
-    # Draw avatar background
-    draw.rectangle([0, 0, avatar_w, avatar_h], fill=BG_INSET)
-    # Avatar placeholder with initials
-    name = fields.get("name", "Name")
-    initials = "".join(w[0].upper() for w in name.split()[:2]) if name else "N"
-    # Draw circular avatar
-    cx, cy = avatar_w // 2, avatar_h // 2 - 20
-    r = 80
-    draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=RED_500)
-    draw.text((cx, cy), initials, fill=WHITE, font=_font(48, bold=True), anchor="mm")
-    # Name below avatar
-    draw.text((cx, cy + r + 30), name, fill=FG_0, font=_font(20, bold=True), anchor="mm")
+    # ── Left: QR panel (replaces the avatar slot) ──
+    qr_box = (30, 40, 380, 420)
+    _draw_qr_panel(img, draw, qr_box, qr_data, label="SCAN TO CONNECT", back=BG_INSET)
 
-    # ── Right side: Contact fields ──
-    rx = 340  # right column start
-    ry = 50
+    # ── Brand wordmark, top center-right ──
+    _draw_brand_rt(draw, CARD_W - 40, 46, size=16)
+
+    # ── Right side: contact fields ──
+    rx = 420
+    ry = 60
 
     contact_items = [
         ("Email", fields.get("email", "")),
@@ -193,34 +295,25 @@ def _render_business(fields: dict, qr_data: str = "") -> Image.Image:
             _draw_contact_field(draw, rx, ry, label, value)
             ry += 62
 
-    # ── Top-right: QR code ──
-    qr_size = 80
-    qr_img = _draw_qr(draw, CARD_W - qr_size - 30, 30, qr_size, qr_data)
-    if qr_img:
-        img.paste(qr_img, (CARD_W - qr_size - 30, 30))
+    # ── Bottom-left: micro serial line ──
+    _draw_serial(draw, "UWITZ DIGITAL BUSINESS CARD")
 
-    # ── Bottom: Watermark ──
+    # ── Bottom: watermark ──
     _draw_watermark(draw)
 
     return img
 
 
 def _render_emergency(fields: dict, qr_data: str = "") -> Image.Image:
-    """Emergency / ICE card."""
+    """Emergency / ICE card with QR in the left slot."""
     img, draw = _card_bg()
 
-    # ── Left side: Photo area ──
-    avatar_w = 300
-    draw.rectangle([0, 0, avatar_w, CARD_H - 40], fill=BG_INSET)
-    name = fields.get("name", "Name")
-    initials = "".join(w[0].upper() for w in name.split()[:2]) if name else "N"
-    cx, cy = avatar_w // 2, (CARD_H - 40) // 2
-    r = 70
-    draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=RED_500)
-    draw.text((cx, cy), initials, fill=WHITE, font=_font(42, bold=True), anchor="mm")
+    # ── Left: QR panel (replaces the avatar slot) ──
+    qr_box = (30, 80, 290, 540)
+    _draw_qr_panel(img, draw, qr_box, qr_data, label="MEDICAL QR", back=BG_INSET)
 
-    # ── Medical cross icon ──
-    cross_x, cross_y = avatar_w // 2, 40
+    # ── Medical cross icon, top of left column ──
+    cross_x, cross_y = 160, 48
     draw.rectangle([cross_x - 4, cross_y - 16, cross_x + 4, cross_y + 16], fill=RED_400)
     draw.rectangle([cross_x - 16, cross_y - 4, cross_x + 16, cross_y + 4], fill=RED_400)
 
@@ -231,6 +324,7 @@ def _render_emergency(fields: dict, qr_data: str = "") -> Image.Image:
     # Title
     draw.text((rx, ry), "EMERGENCY CONTACT", fill=RED_300, font=_mono(11))
     ry += 30
+    name = fields.get("name", "Name")
     draw.text((rx, ry), name, fill=FG_0, font=_font(20, bold=True))
     ry += 36
 
@@ -256,17 +350,13 @@ def _render_emergency(fields: dict, qr_data: str = "") -> Image.Image:
             draw.text((rx, ry + 14), val, fill=FG_0, font=_font(14))
             ry += 38
 
-    # ── QR ──
-    qr_img = _draw_qr(draw, CARD_W - 80 - 30, CARD_H - 80 - 50, 80, qr_data)
-    if qr_img:
-        img.paste(qr_img, (CARD_W - 80 - 30, CARD_H - 80 - 50))
-
+    _draw_serial(draw, "UWITZ MEDICAL  ·  NFC")
     _draw_watermark(draw)
     return img
 
 
 def _render_student(fields: dict, qr_data: str = "") -> Image.Image:
-    """Student ID card."""
+    """Student ID card with QR in the photo slot."""
     img, draw = _card_bg()
 
     # ── Header bar ──
@@ -275,16 +365,13 @@ def _render_student(fields: dict, qr_data: str = "") -> Image.Image:
     draw.text((30, 12), uni.upper(), fill=CYAN_400, font=_mono(14))
     draw.text((30, 32), "STUDENT IDENTIFICATION", fill=FG_2, font=_mono(9))
 
-    # ── Left: Photo ──
-    photo_w, photo_h = 260, 260
-    draw.rectangle([30, 70, 30 + photo_w, 70 + photo_h], fill=BG_INSET, outline=LINE_2, width=1)
-    name = fields.get("name", "Student")
-    initials = "".join(w[0].upper() for w in name.split()[:2])
-    draw.text((30 + photo_w // 2, 70 + photo_h // 2), initials, fill=FG_3, font=_font(60, bold=True), anchor="mm")
-    draw.text((30 + photo_w // 2, 70 + photo_h // 2 + 40), "PHOTO", fill=FG_3, font=_mono(10), anchor="mm")
+    # ── Left: QR panel (replaces the photo area) ──
+    qr_box = (30, 70, 320, 470)
+    _draw_qr_panel(img, draw, qr_box, qr_data, label="STUDENT QR", back=BG_INSET)
 
     # ── Right: Info ──
-    sx = 330
+    sx = 360
+    name = fields.get("name", "Student")
     draw.text((sx, 80), name, fill=FG_0, font=_font(20, bold=True))
 
     info_y = 120
@@ -312,7 +399,7 @@ def _render_student(fields: dict, qr_data: str = "") -> Image.Image:
 
 
 def _render_event_badge(fields: dict, qr_data: str = "") -> Image.Image:
-    """Event / conference badge."""
+    """Event / conference badge with QR in the photo slot."""
     img, draw = _card_bg()
 
     # ── Event header ──
@@ -323,61 +410,53 @@ def _render_event_badge(fields: dict, qr_data: str = "") -> Image.Image:
     if date:
         draw.text((CARD_W // 2, 38), date, fill=FG_2, font=_mono(10), anchor="mm")
 
-    # ── Avatar ──
-    name = fields.get("name", "Attendee")
-    initials = "".join(w[0].upper() for w in name.split()[:2])
-    cx, cy = 140, 200
-    r = 60
-    draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=RED_500)
-    draw.text((cx, cy), initials, fill=WHITE, font=_font(36, bold=True), anchor="mm")
+    # ── Left: QR panel (replaces the avatar slot) ──
+    qr_box = (30, 80, 290, 440)
+    _draw_qr_panel(img, draw, qr_box, qr_data, label="BADGE QR", back=BG_INSET)
 
-    # ── Name & title ──
-    draw.text((240, 160), name, fill=FG_0, font=_font(22, bold=True))
+    # ── Name & title, right of QR panel ──
+    name = fields.get("name", "Attendee")
+    draw.text((330, 120), name, fill=FG_0, font=_font(22, bold=True))
     subtitle = " · ".join(filter(None, [fields.get("title", ""), fields.get("company", "")]))
     if subtitle:
-        draw.text((240, 192), subtitle, fill=FG_1, font=_font(13))
+        draw.text((330, 152), subtitle, fill=FG_1, font=_font(13))
 
     # ── Badge type pill ──
     badge_type = fields.get("badge_type", "Attendee").upper()
     badge_colors = {"VIP": RED_500, "SPEAKER": CYAN_400, "ATTENDEE": FG_2, "ORGANIZER": AMBER_400}
     badge_color = badge_colors.get(badge_type, FG_2)
     bw = max(len(badge_type) * 12, 100)
-    bx = 240
-    by = 230
+    bx = 330
+    by = 200
     draw.rounded_rectangle([bx, by, bx + bw, by + 30], radius=15, fill=badge_color)
     draw.text((bx + bw // 2, by + 15), badge_type, fill=WHITE, font=_mono(11), anchor="mm")
 
     # ── Contact ──
-    cy = 300
+    cy = 270
     for val in [fields.get("email", ""), fields.get("phone", ""), fields.get("website", "")]:
         if val:
-            draw.text((240, cy), val[:40], fill=FG_1, font=_font(12))
+            draw.text((330, cy), val[:40], fill=FG_1, font=_font(12))
             cy += 28
 
-    # ── QR ──
-    qr_img = _draw_qr(draw, CARD_W - 90 - 30, CARD_H - 90 - 50, 90, qr_data)
-    if qr_img:
-        img.paste(qr_img, (CARD_W - 90 - 30, CARD_H - 90 - 50))
-
+    _draw_serial(draw, "UWITZ EVENTS  ·  DIGITAL BADGE")
     _draw_watermark(draw)
     return img
 
 
-def _render_real_estate(fields: dict) -> Image.Image:
-    """Real estate agent card."""
+def _render_real_estate(fields: dict, qr_data: str = "") -> Image.Image:
+    """Real estate agent card with QR in the photo slot."""
     img, draw = _card_bg()
 
     # ── Green accent bar at top ──
     draw.rectangle([0, 0, CARD_W, 6], fill=GREEN_400)
 
-    # ── Left: Agent photo area ──
-    draw.rectangle([0, 6, 280, CARD_H - 40], fill=BG_INSET)
-    name = fields.get("name", "Agent")
-    initials = "".join(w[0].upper() for w in name.split()[:2])
-    draw.text((140, 150), initials, fill=FG_3, font=_font(56, bold=True), anchor="mm")
+    # ── Left: QR panel (replaces the agent photo area) ──
+    qr_box = (30, 30, 280, 530)
+    _draw_qr_panel(img, draw, qr_box, qr_data, label="AGENT QR", back=BG_INSET)
 
     # ── Right: Info ──
-    rx = 310
+    rx = 320
+    name = fields.get("name", "Agent")
     draw.text((rx, 40), name, fill=FG_0, font=_font(20, bold=True))
     draw.text((rx, 70), "Licensed Real Estate Agent", fill=GREEN_400, font=_mono(10))
     draw.text((rx, 90), fields.get("company", ""), fill=FG_1, font=_font(14))
@@ -406,8 +485,8 @@ def _render_real_estate(fields: dict) -> Image.Image:
     return img
 
 
-def _render_medical(fields: dict) -> Image.Image:
-    """Medical professional card."""
+def _render_medical(fields: dict, qr_data: str = "") -> Image.Image:
+    """Medical professional card with QR panel."""
     img, draw = _card_bg()
 
     # ── Cyan accent ──
@@ -441,7 +520,7 @@ def _render_medical(fields: dict) -> Image.Image:
 
     # ── Right panel: Medical ID ──
     rx = CARD_W // 2 + 30
-    draw.rounded_rectangle([rx, 30, CARD_W - 30, CARD_H - 50], radius=10, fill=BG_INSET, outline=CYAN_400, width=1)
+    draw.rounded_rectangle([rx, 30, CARD_W - 30, CARD_H - 200], radius=10, fill=BG_INSET, outline=CYAN_400, width=1)
     draw.text((rx + 16, 46), "MEDICAL ID", fill=CYAN_400, font=_mono(10))
 
     iy = 80
@@ -456,12 +535,16 @@ def _render_medical(fields: dict) -> Image.Image:
             draw.text((rx + 16, iy + 14), val[:20], fill=FG_0, font=_font(14))
             iy += 50
 
+    # ── QR panel, bottom right ──
+    qr_box = (rx, CARD_H - 170, CARD_W - 30, CARD_H - 30)
+    _draw_qr_panel(img, draw, qr_box, qr_data, label="CONTACT QR", back=BG_CARD)
+
     _draw_watermark(draw)
     return img
 
 
-def _render_minimal(fields: dict) -> Image.Image:
-    """Minimalist card."""
+def _render_minimal(fields: dict, qr_data: str = "") -> Image.Image:
+    """Minimalist card with subtle QR panel."""
     img, draw = _card_bg()
 
     # ── Left accent line ──
@@ -490,12 +573,16 @@ def _render_minimal(fields: dict) -> Image.Image:
     mono = name[0].upper() if name else "N"
     draw.text((CARD_W - 130, CARD_H // 2), mono, fill=BG_INSET, font=_font(180, bold=True), anchor="mm")
 
+    # ── QR panel, bottom-right (smaller to keep the minimal feel) ──
+    qr_box = (CARD_W - 190, CARD_H - 150, CARD_W - 40, CARD_H - 50)
+    _draw_qr_panel(img, draw, qr_box, qr_data, back=BG_CARD)
+
     _draw_watermark(draw)
     return img
 
 
-def _render_taglink(fields: dict) -> Image.Image:
-    """TagLink dynamic redirect card."""
+def _render_taglink(fields: dict, qr_data: str = "") -> Image.Image:
+    """TagLink dynamic redirect card with QR panel."""
     img, draw = _card_bg()
 
     # ── Center content ──
@@ -514,6 +601,10 @@ def _render_taglink(fields: dict) -> Image.Image:
     if desc:
         draw.text((CARD_W // 2, 250), desc[:50], fill=FG_2, font=_font(13), anchor="mm")
 
+    # ── QR panel, left side ──
+    qr_box = (50, CARD_H - 180, 250, CARD_H - 40)
+    _draw_qr_panel(img, draw, qr_box, qr_data, label="SCAN ME", back=BG_CARD)
+
     # ── Tap button ──
     draw.rounded_rectangle([CARD_W // 2 - 110, CARD_H - 95, CARD_W // 2 + 110, CARD_H - 55], radius=20, fill=RED_500)
     draw.text((CARD_W // 2, CARD_H - 75), "TAP TO REDIRECT", fill=WHITE, font=_mono(10), anchor="mm")
@@ -523,7 +614,7 @@ def _render_taglink(fields: dict) -> Image.Image:
 
 
 def _render_corporate(fields: dict, qr_data: str = "") -> Image.Image:
-    """Corporate / branded team card."""
+    """Corporate / branded team card with QR in the photo slot."""
     img, draw = _card_bg()
 
     # ── Full-width header ──
@@ -532,14 +623,13 @@ def _render_corporate(fields: dict, qr_data: str = "") -> Image.Image:
     draw.text((30, 15), company.upper(), fill=FG_0, font=_mono(16))
     draw.text((30, 40), "EMPLOYEE CARD", fill=FG_2, font=_mono(9))
 
-    # ── Left: photo ──
-    draw.rectangle([30, 90, 290, 350], fill=BG_INSET, outline=LINE_2, width=1)
-    name = fields.get("name", "Employee")
-    initials = "".join(w[0].upper() for w in name.split()[:2])
-    draw.text((160, 220), initials, fill=FG_3, font=_font(50, bold=True), anchor="mm")
+    # ── Left: QR panel (replaces the photo area) ──
+    qr_box = (30, 90, 300, 470)
+    _draw_qr_panel(img, draw, qr_box, qr_data, label="EMPLOYEE QR", back=BG_INSET)
 
     # ── Right: info ──
-    sx = 320
+    sx = 340
+    name = fields.get("name", "Employee")
     draw.text((sx, 100), name, fill=FG_0, font=_font(20, bold=True))
     draw.text((sx, 132), fields.get("title", ""), fill=FG_1, font=_font(14))
 
@@ -556,11 +646,7 @@ def _render_corporate(fields: dict, qr_data: str = "") -> Image.Image:
             draw.text((sx, ry + 14), val[:28], fill=FG_0, font=_font(13))
             ry += 40
 
-    # ── QR ──
-    qr_img = _draw_qr(draw, CARD_W - 90 - 30, CARD_H - 90 - 50, 90, qr_data)
-    if qr_img:
-        img.paste(qr_img, (CARD_W - 90 - 30, CARD_H - 90 - 50))
-
+    _draw_serial(draw, "UWITZ CORPORATE  ·  NFC ENABLED")
     _draw_watermark(draw)
     return img
 
@@ -773,6 +859,16 @@ def render_template_preview(template_id: str, fields: dict, qr_data: str = "") -
     if not tpl:
         raise ValueError(f"Unknown template: {template_id}")
     img = tpl.render(fields, qr_data)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG", optimize=True)
+    return buf.getvalue()
+
+
+def render_template_back(template_id: str, fields: dict, qr_data: str = "", card_id: str = "") -> bytes:
+    """Render the card back face (shared design across templates)."""
+    if not get_template(template_id):
+        raise ValueError(f"Unknown template: {template_id}")
+    img = _render_back(fields, qr_data, card_id)
     buf = io.BytesIO()
     img.save(buf, format="PNG", optimize=True)
     return buf.getvalue()

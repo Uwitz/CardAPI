@@ -2,22 +2,47 @@
 {% block title %}Subscriptions — Admin{% endblock %}
 {% block page_title %}Subscription Management{% endblock %}
 {% block content %}
-<h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">All Subscriptions</h1>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>All Subscriptions</h1>
+    <p class="page-head-sub">{{ subscriptions | length }} subscription{{ 's' if subscriptions | length != 1 }}</p>
+  </div>
+</div>
 
-<table class="table card" style="overflow: hidden;">
-  <thead><tr><th>ID</th><th>User</th><th>Card</th><th>Plan</th><th>Amount</th><th>Status</th><th>Period End</th></tr></thead>
-  <tbody>
-    {% for sub in subscriptions %}
-    <tr>
-      <td class="font-mono text-sm">{{ sub._id }}</td>
-      <td class="font-mono text-sm">{{ sub.user_id }}</td>
-      <td class="font-mono text-sm">{{ sub.card_id }}</td>
-      <td>{{ sub.plan }}</td>
-      <td>RM {{ '%.2f' | format(sub.amount) }}</td>
-      <td><span class="badge {% if sub.status == 'active' %}badge-success{% elif sub.status == 'cancelled' %}badge-error{% else %}badge-neutral{% endif %}">{{ sub.status }}</span></td>
-      <td class="text-sm text-muted">{{ sub.current_period_end[:10] if sub.current_period_end else '—' }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% if subscriptions %}
+<div class="card-grid">
+  {% for sub in subscriptions %}
+  <div class="data-card">
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ sub.plan }}</div>
+        <div class="data-card-sub">User {{ sub.user_id[:8] }}... · Card {{ sub.card_id[:8] }}...</div>
+      </div>
+      <span class="badge {% if sub.status == 'active' %}badge-success{% elif sub.status == 'cancelled' %}badge-error{% else %}badge-neutral{% endif %}">{{ sub.status }}</span>
+    </div>
+
+    <div class="data-card-body">
+      <div>
+        <div class="meta-label">Amount</div>
+        <div class="amount">RM {{ '%.2f' | format(sub.amount) }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Interval</div>
+        <div class="meta-value strong">{{ sub.interval }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Period Ends</div>
+        <div class="meta-value strong">{{ sub.current_period_end[:10] if sub.current_period_end else '—' }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Stripe Ref</div>
+        <div class="meta-value mono">{{ sub.stripe_subscription_id or '—' }}</div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><p class="font-semibold">No subscriptions</p></div>
+{% endif %}
 {% endblock %}

@@ -1,0 +1,29 @@
+- generic [ref=f2e3]:
+  - main [ref=f2e4]:
+    - generic [ref=f2e7]:
+      - text: Secure sign-in
+      - heading "Sign in to continue" [level=2] [ref=f2e8]
+      - paragraph [ref=f2e9]: Choose your sign-in method below.
+      - generic [ref=f2e10]:
+        - button "Sign in with Irys" [ref=f2e11] [cursor=pointer]
+        - button "Sign in with Entra ID" [ref=f2e14] [cursor=pointer]
+      - generic [ref=f2e20]: or sign in with email
+      - generic [ref=f2e21]:
+        - textbox "Email address" [active] [ref=f2e23]
+        - textbox "Password" [ref=f2e25]
+        - button "Sign in with email" [ref=f2e26] [cursor=pointer]
+      - generic [ref=f2e27]:
+        - text: Don't have an account?
+        - link "Register" [ref=f2e28] [cursor=pointer]:
+          - /url: /register
+        - text: ·
+        - link "Back to site" [ref=f2e29] [cursor=pointer]:
+          - /url: /
+  - contentinfo [ref=f2e30]:
+    - paragraph [ref=f2e31]:
+      - text: © 2026 Uwitz Cards ·
+      - link "Privacy" [ref=f2e32] [cursor=pointer]:
+        - /url: /privacy
+      - text: ·
+      - link "Terms" [ref=f2e33] [cursor=pointer]:
+        - /url: /terms

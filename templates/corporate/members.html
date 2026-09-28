@@ -3,60 +3,52 @@
 {% block title %}Members — {{ brand }}{% endblock %}
 {% block page_title %}Team Members{% endblock %}
 {% block content %}
-<div class="flex items-center justify-between mb-6">
-  <div>
-    <h1 style="font-size: 1.25rem; font-weight: 700;">Team Members</h1>
-    <p class="text-sm text-muted">Members grouped by organisation</p>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>Team Members</h1>
+    <p class="page-head-sub">Members grouped by organisation</p>
   </div>
-  <button class="btn-primary btn-sm" onclick="showInvite()">+ Invite Member</button>
+  <div class="page-head-actions">
+    <button class="btn-primary btn-sm" onclick="showInvite()">+ Invite Member</button>
+  </div>
 </div>
 
 {% if org_members %}
   {% for org_id, data in org_members.items() %}
-  <div class="card" style="margin-bottom: 16px; overflow: hidden;">
-    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+  <div class="org-group">
+    <div class="org-group-head">
       <div>
-        <h3 style="font-size: 16px; font-weight: 600;">{{ data.org.name }}</h3>
-        <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">{{ data.members | length }} member{{ 's' if data.members | length != 1 }}</div>
+        <h3 class="section-title">{{ data.org.name }}</h3>
+        <div class="text-sm text-muted" style="margin-top: 2px;">{{ data.members | length }} member{{ 's' if data.members | length != 1 }}</div>
       </div>
       <span class="tag tag-info">{{ data.org.slug }}</span>
     </div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Role</th>
-          <th>Status</th>
-          <th>Password</th>
-          <th>Joined</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for m in data.members %}
-        <tr>
-          <td style="font-weight: 500;">{{ m.display_name }}</td>
-          <td class="text-sm">{{ m.email }}</td>
-          <td><span class="tag {% if m.role == 'corporate_admin' %}tag-info{% else %}tag-neutral{% endif %}">{{ m.role }}</span></td>
-          <td><span class="tag {% if m.status == 'active' %}tag-success{% else %}tag-error{% endif %}">{{ m.status }}</span></td>
-          <td>
-            {% if m.password_hash is defined and m.password_hash %}
-              <span class="tag tag-success">Set</span>
-            {% else %}
-              <span class="tag tag-warning">None</span>
-            {% endif %}
-          </td>
-          <td class="text-sm text-muted">{{ m.created_at[:10] }}</td>
-          <td>
-            {% if m._id != user._id %}
-              <button class="btn-ghost btn-sm" onclick="removeMember('{{ m._id }}')">Remove</button>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="card-grid compact">
+      {% for m in data.members %}
+      <div class="member-card">
+        <div class="avatar">{{ m.display_name[:1] | upper }}</div>
+        <div class="member-card-main">
+          <div class="member-name">{{ m.display_name }}</div>
+          <div class="member-email">{{ m.email }}</div>
+          <div class="member-meta">
+            <span class="tag {% if m.role == 'corporate_admin' %}tag-info{% else %}tag-neutral{% endif %}">{{ m.role }}</span>
+            <span class="tag {% if m.status == 'active' %}tag-success{% else %}tag-error{% endif %}">{{ m.status }}</span>
+            <span class="tag {% if m.password_hash is defined and m.password_hash %}tag-success{% else %}tag-warning{% endif %}">
+              {% if m.password_hash is defined and m.password_hash %}Password set{% else %}No password{% endif %}
+            </span>
+          </div>
+          <div class="member-meta">
+            <span class="meta-value mono" style="font-size: 11px;">Joined {{ m.created_at[:10] }}</span>
+          </div>
+        </div>
+        {% if m._id != user._id %}
+        <div class="member-actions">
+          <button class="btn-ghost btn-sm" onclick="removeMember('{{ m._id }}')">Remove</button>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
   </div>
   {% endfor %}
 {% else %}
@@ -66,26 +58,30 @@
 {% endif %}
 
 {% if orphans %}
-<div class="card" style="margin-top: 16px; overflow: hidden;">
-  <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
-    <h3 style="font-size: 16px; font-weight: 600;">Unassigned Members</h3>
-    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Users without an organisation</div>
+<div class="org-group" style="margin-top: var(--space-6);">
+  <div class="org-group-head">
+    <div>
+      <h3 class="section-title">Unassigned Members</h3>
+      <div class="text-sm text-muted" style="margin-top: 2px;">Users without an organisation</div>
+    </div>
   </div>
-  <table class="table">
-    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th></th></tr></thead>
-    <tbody>
-      {% for m in orphans %}
-      <tr>
-        <td style="font-weight: 500;">{{ m.display_name }}</td>
-        <td class="text-sm">{{ m.email }}</td>
-        <td><span class="tag tag-neutral">{{ m.role }}</span></td>
-        <td>
-          <button class="btn-ghost btn-sm" onclick="removeMember('{{ m._id }}')">Remove</button>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="card-grid compact">
+    {% for m in orphans %}
+    <div class="member-card">
+      <div class="avatar">{{ m.display_name[:1] | upper }}</div>
+      <div class="member-card-main">
+        <div class="member-name">{{ m.display_name }}</div>
+        <div class="member-email">{{ m.email }}</div>
+        <div class="member-meta">
+          <span class="tag tag-neutral">{{ m.role }}</span>
+        </div>
+      </div>
+      <div class="member-actions">
+        <button class="btn-ghost btn-sm" onclick="removeMember('{{ m._id }}')">Remove</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 </div>
 {% endif %}
 
@@ -95,11 +91,11 @@
     <h3 style="text-align: center;">Invite Team Member</h3>
     <p style="text-align: center;">They'll receive an email with login credentials.</p>
     <div class="form-group" style="margin-top: 16px;">
-      <label class="form-label">Email</label>
+      <label class="form-label" for="invite-email">Email</label>
       <input type="email" id="invite-email" placeholder="colleague@company.com">
     </div>
     <div class="form-group">
-      <label class="form-label">Display Name</label>
+      <label class="form-label" for="invite-name">Display Name</label>
       <input type="text" id="invite-name" placeholder="John Doe">
     </div>
     <div class="modal-actions" style="margin-top: 16px;">

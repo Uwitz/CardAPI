@@ -1,0 +1,47 @@
+{% extends "emails/base.html" %}
+{% block content %}
+<h1 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Order Status Update</h1>
+<p style="color: #525252; font-size: 14px;">Hi {{ display_name }},</p>
+<p style="color: #525252; font-size: 14px;">Your order <code>{{ order_id }}</code> status has been updated.</p>
+
+<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 20px 0;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0; color: #64748b; font-size: 13px;">Order ID</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 13px; font-family: monospace; font-weight: 500;">{{ order_id }}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #64748b; font-size: 13px;">Card Type</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 13px;">{{ card_type }}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #64748b; font-size: 13px;">Previous Status</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 13px;">{{ previous_status | capitalize }}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #64748b; font-size: 13px;">New Status</td>
+      <td style="padding: 8px 0; color: #dc2626; font-size: 13px; font-weight: 600;">{{ new_status | capitalize }}</td>
+    </tr>
+    {% if tracking_number %}
+    <tr>
+      <td style="padding: 8px 0; color: #64748b; font-size: 13px;">Tracking Number</td>
+      <td style="padding: 8px 0; color: #1e293b; font-size: 13px; font-family: monospace;">{{ tracking_number }}</td>
+    </tr>
+    {% endif %}
+  </table>
+</div>
+
+{% if new_status == 'shipped' %}
+<p style="color: #525252; font-size: 14px;">Your card has been shipped! You will receive an activation email shortly to set up your account.</p>
+{% elif new_status == 'delivered' %}
+<p style="color: #525252; font-size: 14px;">Your card has been delivered! Please check your email for the activation link if you haven't activated yet.</p>
+{% elif new_status == 'printing' %}
+<p style="color: #525252; font-size: 14px;">Your card is now being printed. We'll notify you once it's shipped.</p>
+{% elif new_status == 'paid' %}
+<p style="color: #525252; font-size: 14px;">Payment confirmed. Your order is now being processed.</p>
+{% endif %}
+
+<div style="text-align: center; margin: 24px 0;">
+  <a href="{{ site_url }}/dashboard/orders" style="display: inline-block; padding: 12px 28px; background: #dc2626; color: white; border-radius: 8px; font-weight: 500; font-size: 14px; text-decoration: none;">View Order Details</a>
+</div>
+{% endblock %}

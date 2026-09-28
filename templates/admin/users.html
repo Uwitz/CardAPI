@@ -2,62 +2,77 @@
 {% block title %}Users — Admin{% endblock %}
 {% block page_title %}User Management{% endblock %}
 {% block content %}
-<div class="flex items-center justify-between mb-6">
-  <div>
-    <h1 style="font-size: 1.25rem; font-weight: 700;">Users</h1>
-    <p class="text-sm text-muted">{{ users | length }} total</p>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>Users</h1>
+    <p class="page-head-sub">{{ users | length }} total accounts</p>
   </div>
 </div>
 
 <!-- User detail panel (hidden by default) -->
 <div id="user-detail" style="display: none;"></div>
 
-<div class="card" style="overflow: hidden;">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Status</th>
-        <th>Password</th>
-        <th>Joined</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for u in users %}
-      <tr>
-        <td style="font-family: var(--font-mono); font-size: 12px;">{{ u._id }}</td>
-        <td style="font-weight: 500;">{{ u.display_name }}</td>
-        <td class="text-sm">{{ u.email }}</td>
-        <td><span class="tag tag-info">{{ u.role }}</span></td>
-        <td><span class="tag {% if u.status == 'active' %}tag-success{% else %}tag-error{% endif %}">{{ u.status }}</span></td>
-        <td>
+{% if users %}
+<div class="card-grid">
+  {% for u in users %}
+  <div class="data-card data-card-hover"
+       data-name="{{ u.display_name }}"
+       data-email="{{ u.email }}"
+       data-role="{{ u.role }}"
+       data-status="{{ u.status }}">
+    <div class="data-card-head">
+      <div class="flex items-center gap-3">
+        <div class="avatar">{{ u.display_name[:1] | upper }}</div>
+        <div>
+          <div class="data-card-title" style="font-family: var(--font-sans);">{{ u.display_name }}</div>
+          <div class="data-card-sub">{{ u.email }}</div>
+        </div>
+      </div>
+      <span class="tag tag-info">{{ u.role }}</span>
+    </div>
+
+    <div class="data-card-body">
+      <div>
+        <div class="meta-label">User ID</div>
+        <div class="meta-value mono">{{ u._id }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Status</div>
+        <div class="meta-value">
+          <span class="tag {% if u.status == 'active' %}tag-success{% else %}tag-error{% endif %}">{{ u.status }}</span>
+        </div>
+      </div>
+      <div>
+        <div class="meta-label">Password</div>
+        <div class="meta-value">
           {% if u.password_hash is defined and u.password_hash %}
             <span class="tag tag-success">Set</span>
           {% else %}
             <span class="tag tag-warning">None</span>
           {% endif %}
-        </td>
-        <td class="text-sm text-muted">{{ u.created_at[:10] }}</td>
-        <td>
-          <div style="display: flex; gap: 4px;">
-            <button class="btn-ghost btn-sm" onclick="inspectUser('{{ u._id }}')">View</button>
-            <button class="btn-ghost btn-sm" onclick="editUser('{{ u._id }}')">Edit</button>
-            {% if not (u.password_hash is defined and u.password_hash) %}
-              <button class="btn-primary btn-sm" onclick="inviteUser('{{ u._id }}')">Invite</button>
-            {% else %}
-              <button class="btn-ghost btn-sm" onclick="resetPassword('{{ u._id }}')">Reset PW</button>
-            {% endif %}
-          </div>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+        </div>
+      </div>
+      <div>
+        <div class="meta-label">Joined</div>
+        <div class="meta-value strong">{{ u.created_at[:10] }}</div>
+      </div>
+    </div>
+
+    <div class="data-card-foot">
+      <button class="btn-ghost btn-sm" onclick="inspectUser('{{ u._id }}')">View</button>
+      <button class="btn-ghost btn-sm" onclick="editUser(this, '{{ u._id }}')">Edit</button>
+      {% if not (u.password_hash is defined and u.password_hash) %}
+        <button class="btn-primary btn-sm" onclick="inviteUser('{{ u._id }}')">Invite</button>
+      {% else %}
+        <button class="btn-ghost btn-sm" onclick="resetPassword('{{ u._id }}')">Reset PW</button>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
 </div>
+{% else %}
+<div class="empty-state"><p class="font-semibold">No users</p></div>
+{% endif %}
 
 <!-- Edit Modal -->
 <div class="modal-overlay" id="edit-modal">
@@ -146,7 +161,7 @@ async function inspectUser(userId) {
             <span class="tag ${s.status == 'active' ? 'tag-success' : 'tag-error'}">${s.status}</span>
             <span style="font-size: 13px;">${s.plan}</span>
             <span style="font-size: 12px; color: var(--text-muted);">RM ${s.amount}/${s.interval}</span>
-            <span style="font-size: 12px; color: var(--text-muted);">${s.current_period_end ? s.current_period_end[:10] : '—'}</span>
+            <span style="font-size: 12px; color: var(--text-muted);">${s.current_period_end ? s.current_period_end.slice(0,10) : '—'}</span>
           </div>
         `).join('') : '<div style="font-size: 13px; color: var(--text-muted);">No subscriptions</div>'}
       </div>
@@ -155,14 +170,13 @@ async function inspectUser(userId) {
   panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-function editUser(userId) {
+function editUser(btn, userId) {
   editingUserId = userId;
-  const row = event.target.closest('tr');
-  const cells = row.querySelectorAll('td');
-  document.getElementById('edit-name').value = cells[1].textContent.trim();
-  document.getElementById('edit-email').value = cells[2].textContent.trim();
-  document.getElementById('edit-role').value = cells[3].textContent.trim().toLowerCase();
-  document.getElementById('edit-status').value = cells[4].textContent.trim().toLowerCase();
+  const card = btn.closest('.data-card');
+  document.getElementById('edit-name').value = card.dataset.name || '';
+  document.getElementById('edit-email').value = card.dataset.email || '';
+  document.getElementById('edit-role').value = card.dataset.role || 'individual';
+  document.getElementById('edit-status').value = card.dataset.status || 'active';
   document.getElementById('edit-modal').classList.add('open');
 }
 

@@ -1,0 +1,287 @@
+- generic [ref=f4e2]:
+  - complementary [ref=f4e3]:
+    - link "UWITZ CARDS" [ref=f4e5] [cursor=pointer]:
+      - /url: /dashboard
+    - navigation [ref=f4e7]:
+      - generic [ref=f4e8]: Overview
+      - link "Dashboard" [ref=f4e9] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Cards" [ref=f4e16] [cursor=pointer]:
+        - /url: /dashboard/cards
+      - link "Orders" [ref=f4e20] [cursor=pointer]:
+        - /url: /dashboard/orders
+      - link "Subscriptions" [ref=f4e25] [cursor=pointer]:
+        - /url: /dashboard/subscriptions
+      - generic [ref=f4e30]: Corporate
+      - link "Org Dashboard" [ref=f4e31] [cursor=pointer]:
+        - /url: /corporate
+      - link "Org Cards" [ref=f4e35] [cursor=pointer]:
+        - /url: /corporate/cards
+      - link "Members" [ref=f4e39] [cursor=pointer]:
+        - /url: /corporate/members
+      - link "Org Orders" [ref=f4e46] [cursor=pointer]:
+        - /url: /corporate/orders
+      - link "Org Settings" [ref=f4e51] [cursor=pointer]:
+        - /url: /corporate/settings
+      - generic [ref=f4e56]:
+        - generic [ref=f4e57]: Logistics
+        - link "Logistics" [ref=f4e58] [cursor=pointer]:
+          - /url: /logistics
+        - link "Orders" [ref=f4e65] [cursor=pointer]:
+          - /url: /logistics/orders
+      - generic [ref=f4e70]:
+        - generic [ref=f4e71]: Admin
+        - link "Admin Panel" [ref=f4e72] [cursor=pointer]:
+          - /url: /admin
+        - link "Users" [ref=f4e76] [cursor=pointer]:
+          - /url: /admin/users
+        - link "All Cards" [ref=f4e83] [cursor=pointer]:
+          - /url: /admin/cards
+        - link "All Orders" [ref=f4e87] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Subscriptions" [ref=f4e92] [cursor=pointer]:
+          - /url: /admin/subscriptions
+        - link "Pricing" [ref=f4e96] [cursor=pointer]:
+          - /url: /admin/pricing
+        - link "Unassigned Cards" [ref=f4e100] [cursor=pointer]:
+          - /url: /admin/orphans
+        - link "Email Logs" [ref=f4e104] [cursor=pointer]:
+          - /url: /admin/email-logs
+    - generic [ref=f4e109]:
+      - generic [ref=f4e110]:
+        - generic [ref=f4e111]: E
+        - generic [ref=f4e112]:
+          - generic [ref=f4e113]: Edward Paxton
+          - generic [ref=f4e114]: admin
+      - button "Sign out" [ref=f4e116] [cursor=pointer]
+  - generic [ref=f4e119]:
+    - banner [ref=f4e120]:
+      - generic [ref=f4e121]: Card thGSUO
+    - main [ref=f4e122]:
+      - generic [ref=f4e123]:
+        - generic [ref=f4e124]:
+          - link "← My Cards" [ref=f4e125] [cursor=pointer]:
+            - /url: /dashboard/cards
+          - generic [ref=f4e126]:
+            - heading "Card thGSUO" [level=1] [ref=f4e127]
+            - generic [ref=f4e128]: active
+            - generic [ref=f4e129]: social
+            - generic [ref=f4e130]: physical ↗
+          - paragraph [ref=f4e131]: http://localhost:8000/thGSUO · 0 views · Subscription none
+        - generic [ref=f4e132]:
+          - button "Freeze" [ref=f4e133] [cursor=pointer]
+          - button "Copy link" [ref=f4e134] [cursor=pointer]
+      - generic [ref=f4e135]:
+        - group [ref=f4e136]:
+          - generic "Card faces Front artwork and the generated back face" [ref=f4e137] [cursor=pointer]:
+            - generic [ref=f4e141]:
+              - generic [ref=f4e142]: Card faces
+              - generic [ref=f4e143]: Front artwork and the generated back face
+          - generic [ref=f4e144]:
+            - generic [ref=f4e145]:
+              - img "Card face" [ref=f4e146]
+              - generic [ref=f4e147]:
+                - generic [ref=f4e148]: 1011x638px
+                - generic [ref=f4e149]: 300 DPI
+            - generic [ref=f4e150]:
+              - generic [ref=f4e151] [cursor=pointer]: Replace Image
+              - button "Remove" [ref=f4e152] [cursor=pointer]
+            - generic [ref=f4e153]:
+              - generic [ref=f4e154]: Card back
+              - generic [ref=f4e155]: Rendering back face…
+              - generic [ref=f4e160]: Generated from your saved card details.
+        - group [ref=f4e161]:
+          - generic "QR code Generate a scannable QR for your card Physical card" [ref=f4e162] [cursor=pointer]:
+            - generic [ref=f4e166]:
+              - generic [ref=f4e167]: QR code
+              - generic [ref=f4e168]: Generate a scannable QR for your card
+            - generic [ref=f4e169]: Physical card
+          - generic [ref=f4e171]:
+            - generic [ref=f4e172]:
+              - generic [ref=f4e173]: Link to encode
+              - generic [ref=f4e174]:
+                - textbox "Link to encode" [ref=f4e175]: http://localhost:8000/thGSUO
+                - button "Copy" [ref=f4e176] [cursor=pointer]
+              - generic [ref=f4e177]: "Scanned link: http://localhost:8000/thGSUO Scanning the QR serves the vCard."
+            - generic [ref=f4e178]:
+              - generic [ref=f4e179]:
+                - group [ref=f4e180]:
+                  - generic "Content" [ref=f4e181] [cursor=pointer]
+                  - generic [ref=f4e186]:
+                    - generic [ref=f4e187]:
+                      - generic [ref=f4e188]: QR type
+                      - combobox "QR type" [ref=f4e189] [cursor=pointer]:
+                        - option "Text / URL" [selected]
+                        - option "Wi-Fi"
+                        - option "SMS"
+                        - option "Email"
+                        - option "Phone"
+                        - option "Crypto"
+                        - option "vCard"
+                        - option "WhatsApp"
+                        - option "vEvent (calendar)"
+                        - option "Geo location"
+                    - generic [ref=f4e191]:
+                      - generic [ref=f4e192]: Text or URL
+                      - textbox "Text or URL" [ref=f4e193]: http://localhost:8000/thGSUO
+                - group [ref=f4e194]:
+                  - generic "Output" [ref=f4e195] [cursor=pointer]
+                  - generic [ref=f4e200]:
+                    - generic [ref=f4e201]:
+                      - generic [ref=f4e202]:
+                        - generic [ref=f4e203]: Fast QR
+                        - generic [ref=f4e204] [cursor=pointer]:
+                          - checkbox
+                      - generic [ref=f4e206]: Plain QR, 1/50 credit — styling is skipped.
+                    - generic [ref=f4e207]:
+                      - generic [ref=f4e208]:
+                        - generic [ref=f4e209]: Image format
+                        - combobox "Image format" [ref=f4e210] [cursor=pointer]:
+                          - option "PNG" [selected]
+                          - option "SVG"
+                          - option "JPEG"
+                          - option "WEBP"
+                          - option "EPS"
+                          - option "TIFF"
+                          - option "GIF"
+                          - option "OBJ (3D)"
+                          - option "STL (3D)"
+                          - option "3MF (3D)"
+                          - option "USDZ (3D)"
+                      - generic [ref=f4e211]:
+                        - generic [ref=f4e212]: Width (px)
+                        - spinbutton "Width (px)" [ref=f4e213]: "1011"
+                      - generic [ref=f4e214]:
+                        - generic [ref=f4e215]: Error correction
+                        - combobox "Error correction" [ref=f4e216] [cursor=pointer]:
+                          - option "L — low (7%)"
+                          - option "M — medium (15%)" [selected]
+                          - option "Q — quartile (25%)"
+                          - option "H — high (30%)"
+                      - generic [ref=f4e217]:
+                        - generic [ref=f4e218]: Border size
+                        - spinbutton "Border size" [ref=f4e219]: "4"
+                - group [ref=f4e220]:
+                  - group [ref=f4e221]:
+                    - generic "Style & shape" [ref=f4e222] [cursor=pointer]
+                    - option "0" [selected]
+                    - option "1"
+                    - option "2"
+                    - option "3"
+                    - option "4"
+                    - option "5"
+                    - option "6"
+                    - option "7"
+                    - option "8"
+                    - option "9"
+                    - option "10"
+                    - option "11"
+                    - option "12"
+                    - option "13"
+                    - option "14"
+                    - option "15"
+                    - option "16"
+                    - option "17"
+                    - option "18"
+                    - option "19"
+                    - option "20"
+                    - option "21"
+                    - option "22"
+                    - option "23"
+                    - option "24"
+                    - option "0" [selected]
+                    - option "1"
+                    - option "2"
+                    - option "3"
+                    - option "4"
+                    - option "5"
+                    - option "6"
+                    - option "7"
+                    - option "0" [selected]
+                    - option "1"
+                    - option "2"
+                    - option "3"
+                    - option "4"
+                    - option "5"
+                    - option "6"
+                  - group [ref=f4e227]:
+                    - generic "Frame" [ref=f4e228] [cursor=pointer]
+                    - option "0" [selected]
+                    - option "1"
+                    - option "2"
+                    - option "3"
+                    - option "4"
+                    - option "5"
+                    - option "6"
+                    - option "7"
+                    - option "8"
+                    - option "9"
+                    - option "10"
+                    - option "11"
+                    - option "12"
+                    - option "13"
+                    - option "14"
+                    - option "15"
+                    - option "None" [selected]
+                    - option "Comment"
+                    - option "Comment (outline)"
+                    - option "Address book"
+                    - option "Address book (outline)"
+                    - option "Calendar check"
+                    - option "Calendar check (outline)"
+                    - option "Calendar"
+                    - option "Calendar (outline)"
+                    - option "User"
+                    - option "User (outline)"
+                    - option "ID card"
+                    - option "ID card (outline)"
+                    - option "Image"
+                    - option "Image (outline)"
+                    - option "Mobile"
+                    - option "Wi-Fi"
+                - group [ref=f4e233]:
+                  - group [ref=f4e234]:
+                    - generic "Colors" [ref=f4e235] [cursor=pointer]
+                - group [ref=f4e240]:
+                  - group [ref=f4e241]:
+                    - generic "Logo" [ref=f4e242] [cursor=pointer]
+                    - option "None" [selected]
+                    - option "GenQRCode"
+                    - option "YouTube"
+                    - option "Instagram"
+                    - option "LinkedIn"
+                    - option "Facebook"
+                    - option "X (Twitter)"
+                    - option "Twitter"
+                    - option "Threads"
+                    - option "Spotify"
+                    - option "Snapchat"
+                    - option "Google Maps"
+                    - option "Google Drive"
+                    - option "Reddit"
+                    - option "Zoom"
+                    - option "Skype"
+                    - option "Airbnb"
+                    - option "Wi-Fi"
+              - generic [ref=f4e248]:
+                - generic [ref=f4e249]: Preview
+                - button "Generate QR" [ref=f4e251] [cursor=pointer]
+                - status
+        - group [ref=f4e257]:
+          - generic "Card data Identity, links and stored payload" [ref=f4e258] [cursor=pointer]:
+            - generic [ref=f4e262]:
+              - generic [ref=f4e263]: Card data
+              - generic [ref=f4e264]: Identity, links and stored payload
+        - group [ref=f4e265]:
+          - generic "Danger zone Destructive actions are tucked away here" [ref=f4e266] [cursor=pointer]:
+            - generic [ref=f4e270]:
+              - generic [ref=f4e271]: Danger zone
+              - generic [ref=f4e272]: Destructive actions are tucked away here
+    - contentinfo [ref=f4e273]:
+      - paragraph [ref=f4e274]:
+        - text: © 2026 Uwitz Cards ·
+        - link "Privacy" [ref=f4e275] [cursor=pointer]:
+          - /url: /privacy
+        - text: ·
+        - link "Terms" [ref=f4e276] [cursor=pointer]:
+          - /url: /terms

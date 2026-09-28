@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     IRYS_CLIENT_SECRET: str = ""
     IRYS_TOKEN_URL: str = "https://irys.uwz/oauth/token"
 
+    # GenQRCode.com QR generator (server-side only) — get a key at https://genqrcode.com/account
+    GENQR_API_KEY: str = ""
+
     # Site
     SITE_URL: str = "http://localhost:8000"
     LOG_LEVEL: str = "INFO"

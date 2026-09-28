@@ -18,6 +18,11 @@ async def upload_image(card_id: str, file: UploadFile, user: dict = Depends(get_
     if not card or card["owner_id"] != user["_id"]:
         raise HTTPException(status_code=404, detail={"error": "card_not_found"})
 
+    # Validate MIME type
+    allowed_mime_types = {"image/png", "image/jpeg", "image/webp"}
+    if file.content_type not in allowed_mime_types:
+        raise HTTPException(status_code=400, detail={"error": "invalid_file_type", "message": "Only PNG, JPEG, and WebP images allowed"})
+
     content = await file.read()
     if len(content) > 10 * 1024 * 1024:
         raise HTTPException(status_code=400, detail={"error": "file_too_large"})

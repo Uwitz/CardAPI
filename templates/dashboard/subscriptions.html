@@ -2,35 +2,51 @@
 {% block title %}Subscriptions — {{ brand }}{% endblock %}
 {% block page_title %}Subscriptions{% endblock %}
 {% block content %}
-<h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Subscriptions</h1>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>Subscriptions</h1>
+    <p class="page-head-sub">{{ subscriptions | length }} subscription{{ 's' if subscriptions | length != 1 }}</p>
+  </div>
+</div>
 
 {% if subscriptions %}
-<div class="table-wrap">
-<table class="table">
-  <thead><tr><th>Plan</th><th>Amount</th><th>Status</th><th>Period End</th><th></th></tr></thead>
-  <tbody>
-    {% for sub in subscriptions %}
-    <tr>
-      <td class="font-medium">{{ sub.plan }}</td>
-      <td>RM {{ '%.2f' | format(sub.amount) }}/{{ sub.interval }}</td>
-      <td><span class="badge {% if sub.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ sub.status }}</span></td>
-      <td class="text-sm text-muted">{{ sub.current_period_end[:10] if sub.current_period_end else '—' }}</td>
-      <td>
-        {% if sub.status == 'active' %}
-          {% if sub.manual_renewal %}
-            <button class="btn btn-outline btn-sm" onclick="renewSub('{{ sub._id }}')">Renew</button>
-          {% endif %}
-          <button class="btn btn-outline btn-sm" onclick="cancelSub('{{ sub._id }}')">Cancel</button>
+<div class="card-grid">
+  {% for sub in subscriptions %}
+  <div class="data-card">
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ sub.plan }}</div>
+        <div class="data-card-sub">Plan interval: {{ sub.interval }}</div>
+      </div>
+      <span class="badge {% if sub.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}">{{ sub.status }}</span>
+    </div>
+
+    <div class="data-card-body">
+      <div>
+        <div class="meta-label">Amount</div>
+        <div class="amount">RM {{ '%.2f' | format(sub.amount) }}/{{ sub.interval }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Period Ends</div>
+        <div class="meta-value strong">{{ sub.current_period_end[:10] if sub.current_period_end else '—' }}</div>
+      </div>
+    </div>
+
+    <div class="data-card-foot">
+      {% if sub.status == 'active' %}
+        {% if sub.manual_renewal %}
+          <button class="btn btn-outline btn-sm" onclick="renewSub('{{ sub._id }}')">Renew</button>
         {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+        <button class="btn btn-outline btn-sm" onclick="cancelSub('{{ sub._id }}')">Cancel</button>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
 </div>
 {% else %}
 <div class="empty-state">
-  <p class="font-semibold">No active subscriptions</p>
+  <p class="font-semibold">No subscriptions</p>
+  <a href="/dashboard" class="btn btn-primary mt-2">Browse plans</a>
 </div>
 {% endif %}
 {% endblock %}

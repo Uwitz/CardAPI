@@ -2,23 +2,30 @@
 {% block title %}Email Logs — Admin{% endblock %}
 {% block page_title %}Email Logs{% endblock %}
 {% block content %}
-<h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Email Logs</h1>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>Email Logs</h1>
+    <p class="page-head-sub">{{ logs | length }} email{{ 's' if logs | length != 1 }} sent</p>
+  </div>
+</div>
 
 {% if logs %}
-<table class="table card" style="overflow: hidden;">
-  <thead><tr><th>To</th><th>Subject</th><th>Template</th><th>Status</th><th>Date</th></tr></thead>
-  <tbody>
-    {% for log in logs %}
-    <tr>
-      <td class="text-sm">{{ log.to }}</td>
-      <td class="text-sm">{{ log.subject }}</td>
-      <td class="font-mono text-xs">{{ log.template }}</td>
-      <td><span class="badge {% if log.status == 'sent' %}badge-success{% else %}badge-error{% endif %}">{{ log.status }}</span></td>
-      <td class="text-sm text-muted">{{ log.created_at[:16] }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-wrap card">
+  <table class="table">
+    <thead><tr><th>To</th><th>Subject</th><th>Template</th><th>Status</th><th>Date</th></tr></thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td class="text-sm">{{ log.to }}</td>
+        <td class="text-sm">{{ log.subject }}</td>
+        <td class="font-mono text-xs">{{ log.template }}</td>
+        <td><span class="badge {% if log.status == 'sent' %}badge-success{% else %}badge-error{% endif %}">{{ log.status }}</span></td>
+        <td class="font-mono text-sm text-muted">{{ log.created_at[:16] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% else %}
 <div class="empty-state"><p class="font-semibold">No emails sent yet</p></div>
 {% endif %}

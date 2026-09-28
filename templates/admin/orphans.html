@@ -2,48 +2,49 @@
 {% block title %}Unassigned Cards — Admin{% endblock %}
 {% block page_title %}Unassigned Cards{% endblock %}
 {% block content %}
-<div class="flex items-center justify-between mb-6">
-  <div>
-    <h1 style="font-size: 1.25rem; font-weight: 700;">Unassigned Cards</h1>
-    <p class="text-sm text-muted">{{ orphans | length }} card{{ 's' if orphans | length != 1 }} without a user account</p>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>Unassigned Cards</h1>
+    <p class="page-head-sub">{{ orphans | length }} card{{ 's' if orphans | length != 1 }} without a user account</p>
   </div>
 </div>
 
 {% if orphans %}
-<div class="card" style="overflow: hidden;">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Card ID</th>
-        <th>Type</th>
-        <th>Status</th>
-        <th>Owner ID</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for card in orphans %}
-      <tr>
-        <td style="font-family: var(--font-mono); font-weight: 600;">{{ card.card_id }}</td>
-        <td><span class="tier-badge tier-{{ card.card_type }}">{{ card.card_type }}</span></td>
-        <td><span class="tag {% if card.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.status }}</span></td>
-        <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">{{ card.owner_id or '—' }}</td>
-        <td>
-          <div style="display: flex; gap: 6px; align-items: center;">
-            <select id="user-{{ card.card_id }}" style="height: 32px; padding: 0 28px 0 8px; font-size: 12px; max-width: 200px;">
-              <option value="">Select user...</option>
-              {% for u in users %}
-                <option value="{{ u._id }}">{{ u.display_name }} ({{ u.email }})</option>
-              {% endfor %}
-            </select>
-            <button class="btn-primary btn-sm" onclick="assignCard('{{ card.card_id }}')">Assign</button>
-            <button class="btn-ghost btn-sm" onclick="showInvite('{{ card.card_id }}')">Invite</button>
-          </div>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="card-grid">
+  {% for card in orphans %}
+  <div class="data-card">
+    <div class="card-mini">
+      <div class="card-mini-chip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      </div>
+      <span class="card-mini-label">{{ card.card_type }}</span>
+    </div>
+
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ card.card_id }}</div>
+        <div class="data-card-sub">No owner yet</div>
+      </div>
+      <div class="data-card-badges">
+        <span class="tier-badge tier-{{ card.card_type }}">{{ card.card_type }}</span>
+        <span class="tag {% if card.status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.status }}</span>
+      </div>
+    </div>
+
+    <div class="data-card-foot">
+      <div style="display: flex; gap: 6px; align-items: center; width: 100%;">
+        <select id="user-{{ card.card_id }}" style="flex: 1; height: 32px; padding: 0 8px; font-size: 12px; min-width: 0;">
+          <option value="">Select user...</option>
+          {% for u in users %}
+            <option value="{{ u._id }}">{{ u.display_name }} ({{ u.email }})</option>
+          {% endfor %}
+        </select>
+        <button class="btn-primary btn-sm" onclick="assignCard('{{ card.card_id }}')">Assign</button>
+        <button class="btn-ghost btn-sm" onclick="showInvite('{{ card.card_id }}')">Invite</button>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 {% else %}
 <div class="empty-state">

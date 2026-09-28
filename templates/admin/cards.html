@@ -2,51 +2,77 @@
 {% block title %}Cards — Admin{% endblock %}
 {% block page_title %}Card Management{% endblock %}
 {% block content %}
-<div class="flex items-center justify-between mb-6">
-  <div>
-    <h1 style="font-size: 1.25rem; font-weight: 700;">All Cards</h1>
-    <p class="text-sm text-muted">{{ cards | length }} total</p>
+<div class="page-head">
+  <div class="page-head-main">
+    <h1>All Cards</h1>
+    <p class="page-head-sub">{{ cards | length }} total in the system</p>
   </div>
 </div>
 
 <!-- Card detail panel -->
 <div id="card-detail" style="display: none;"></div>
 
-<div class="card" style="overflow: hidden;">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Card ID</th>
-        <th>Type</th>
-        <th>Tier</th>
-        <th>Owner</th>
-        <th>Status</th>
-        <th>Sub</th>
-        <th>Views</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for card in cards %}
-      <tr>
-        <td style="font-family: var(--font-mono); font-weight: 600;">{{ card.card_id }}</td>
-        <td><span class="tier-badge tier-{{ card.card_type }} {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type }}</span></td>
-        <td>{{ card.card_tier }}</td>
-        <td style="font-family: var(--font-mono); font-size: 12px;">{{ card.owner_id[:8] }}...</td>
-        <td><span class="tag {% if card.status == 'active' %}tag-success{% elif card.status == 'frozen' %}tag-error{% else %}tag-neutral{% endif %}">{{ card.status }}</span></td>
-        <td><span class="tag {% if card.subscription_status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.subscription_status }}</span></td>
-        <td>{{ card.views }}</td>
-        <td>
-          <div style="display: flex; gap: 4px;">
-            <button class="btn-ghost btn-sm" onclick="inspectCard('{{ card.card_id }}')">View</button>
-            <button class="btn-ghost btn-sm" onclick="editCard('{{ card.card_id }}')">Edit</button>
-          </div>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+{% if cards %}
+<div class="card-grid">
+  {% for card in cards %}
+  <div class="data-card data-card-hover"
+       data-type="{{ card.card_type }}"
+       data-owner="{{ card.owner_id }}"
+       data-status="{{ card.status }}">
+    <div class="card-mini">
+      {% if card.image_url %}
+      <img src="{{ card.image_url }}" alt="{{ card.card_type }} card preview" loading="lazy">
+      {% else %}
+      <div class="card-mini-chip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      </div>
+      <span class="card-mini-label">{{ card.card_type }}</span>
+      {% endif %}
+    </div>
+
+    <div class="data-card-head">
+      <div>
+        <div class="data-card-title">{{ card.card_id }}</div>
+        <div class="data-card-sub">Owner {{ card.owner_id[:8] }}...</div>
+      </div>
+      <div class="data-card-badges">
+        <span class="tier-badge {% if card.card_type == 'social' %}tier-badge-upgradeable{% else %}tier-badge-locked{% endif %}">{{ card.card_type }}</span>
+      </div>
+    </div>
+
+    <div class="data-card-body">
+      <div>
+        <div class="meta-label">Tier</div>
+        <div class="meta-value strong">{{ card.card_tier or '—' }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Views</div>
+        <div class="meta-value strong">{{ card.views }}</div>
+      </div>
+      <div>
+        <div class="meta-label">Status</div>
+        <div class="meta-value">
+          <span class="tag {% if card.status == 'active' %}tag-success{% elif card.status == 'frozen' %}tag-error{% else %}tag-neutral{% endif %}">{{ card.status }}</span>
+        </div>
+      </div>
+      <div>
+        <div class="meta-label">Subscription</div>
+        <div class="meta-value">
+          <span class="tag {% if card.subscription_status == 'active' %}tag-success{% else %}tag-neutral{% endif %}">{{ card.subscription_status or 'none' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="data-card-foot">
+      <button class="btn-ghost btn-sm" onclick="inspectCard('{{ card.card_id }}')">View</button>
+      <button class="btn-ghost btn-sm" onclick="editCard(this, '{{ card.card_id }}')">Edit</button>
+    </div>
+  </div>
+  {% endfor %}
 </div>
+{% else %}
+<div class="empty-state"><p class="font-semibold">No cards</p></div>
+{% endif %}
 
 <!-- Edit Modal -->
 <div class="modal-overlay" id="card-edit-modal">
@@ -159,13 +185,12 @@ async function inspectCard(cardId) {
   panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-function editCard(cardId) {
+function editCard(btn, cardId) {
   editingCardId = cardId;
-  const row = event.target.closest('tr');
-  const cells = row.querySelectorAll('td');
-  document.getElementById('ce-type').value = cells[1].querySelector('.tag').textContent.trim().toLowerCase();
-  document.getElementById('ce-owner').value = cells[3].textContent.trim().replace('...', '');
-  document.getElementById('ce-status').value = cells[4].querySelector('.tag').textContent.trim().toLowerCase();
+  const card = btn.closest('.data-card');
+  document.getElementById('ce-type').value = card.dataset.type || 'social';
+  document.getElementById('ce-owner').value = card.dataset.owner || '';
+  document.getElementById('ce-status').value = card.dataset.status || 'active';
   document.getElementById('ce-content').value = '';
   document.getElementById('card-edit-modal').classList.add('open');
 }

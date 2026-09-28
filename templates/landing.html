@@ -6,7 +6,7 @@
   <title>Uwitz Cards — NFC Business Cards</title>
   <meta name="description" content="Smart NFC business cards with instant contact sharing, dynamic TagLink redirects, and corporate card management.">
   <meta name="theme-color" content="#09090A">
-  <link rel="icon" type="image/svg+xml" href="/static/assets/uwitz_logo.svg">
+  <link rel="icon" type="image/png" href="/static/assets/NFCCard.png">
   <style>
     @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400 800; font-display: swap; src: url('/static/assets/fonts/geist-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
     @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('/static/assets/fonts/geist-mono-latin.woff2') format('woff2'); unicode-range: U+0000-00FF; }
@@ -14,8 +14,8 @@
     :root {
       --bg-0: #09090A; --bg-1: #0D0D0F; --bg-2: #141416; --bg-3: #1A1A1D;
       --line-1: #202023; --line-2: #2C2C30;
-      --fg-0: #F3F1EF; --fg-1: #BDB9B6; --fg-2: #8A8683; --fg-3: #5C5957;
-      --red-500: #DA2A1C; --red-400: #E8543F;
+      --fg-0: #F3F1EF; --fg-1: #BDB9B6; --fg-2: #A09D9A; --fg-3: #73706D;
+      --red-500: #DA2A1C; --red-400: #E8543F; --red-600: #B8210F; --red-700: #931A0D; --red-800: #6E140A;
       --cyan-400: #2FD3C9;
       --green-400: #46C95F;
       --font-sans: 'Geist', -apple-system, sans-serif;
@@ -30,16 +30,16 @@
     a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
     /* ── Nav ── */
-    .nav { position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(9,9,10,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line-1); }
+    .nav { position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(9,9,10,0.88); backdrop-filter: blur(12px); }
     .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
-    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
     .nav-brand img { width: 24px; height: 24px; }
     .nav-brand span { font: 600 14px/1 var(--font-mono); letter-spacing: 0.14em; color: var(--fg-0); }
     .nav-links { display: flex; align-items: center; gap: 8px; }
     .nav-links a { font: 500 13px/1 var(--font-sans); color: var(--fg-1); padding: 6px 14px; border-radius: 7px; transition: all 0.15s; }
     .nav-links a:hover { color: var(--fg-0); background: var(--bg-3); text-decoration: none; }
-    .nav-cta { display: inline-flex; align-items: center; height: 34px; padding: 0 18px; border-radius: var(--radius-pill); background: var(--red-500); color: #fff; font: 600 12.5px/1 var(--font-sans); text-decoration: none; transition: all 0.15s; }
-    .nav-cta:hover { background: var(--red-400); transform: translateY(-1px); text-decoration: none; color: #fff; }
+    .nav-links .nav-cta { display: inline-flex; align-items: center; height: 34px; padding: 0 18px; border-radius: var(--radius-pill); background: var(--red-600); color: #fff; font: 600 12.5px/1 var(--font-sans); text-decoration: none; transition: all 0.15s; }
+    .nav-links .nav-cta:hover { background: var(--red-500); transform: translateY(-1px); text-decoration: none; color: #fff; }
     .nav-toggle { display: none; background: none; border: 1px solid var(--line-2); border-radius: 7px; width: 38px; height: 34px; align-items: center; justify-content: center; color: var(--fg-1); cursor: pointer; }
     @media (max-width: 640px) {
       .nav-toggle { display: flex; }
@@ -51,13 +51,13 @@
     /* ── Hero ── */
     .hero { padding: 140px 24px 80px; text-align: center; background: var(--bg-0); position: relative; overflow: hidden; }
     @media (max-width: 640px) { .hero { padding: 120px 16px 60px; } }
-    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% -10%, rgba(218,42,28,0.08), transparent 60%); pointer-events: none; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% -10%, rgba(255,255,255,0.03), transparent 60%); pointer-events: none; }
     .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: var(--radius-pill); background: rgba(218,42,28,0.12); border: 1px solid rgba(218,42,28,0.25); font: 600 11px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--red-400); margin-bottom: 24px; }
     .hero h1 { font: 700 clamp(36px, 5vw, 64px)/1.08 var(--font-mono); letter-spacing: -0.03em; color: var(--fg-0); max-width: 14ch; margin: 0 auto; }
     .hero p { font: 400 16px/1.7 var(--font-sans); color: var(--fg-2); max-width: 48ch; margin: 20px auto 0; }
     .hero-btns { display: flex; gap: 12px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
-    .btn-primary { display: inline-flex; align-items: center; height: 48px; padding: 0 28px; border-radius: var(--radius-pill); background: var(--red-500); color: #fff; font: 600 14px/1 var(--font-mono); text-decoration: none; border: none; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 6px 20px -8px rgba(0,0,0,0.8); transition: all 0.15s; }
-    .btn-primary:hover { background: var(--red-400); transform: translateY(-2px); text-decoration: none; color: #fff; }
+    .btn-primary { display: inline-flex; align-items: center; height: 48px; padding: 0 28px; border-radius: var(--radius-pill); background: var(--red-600); color: #fff; font: 600 14px/1 var(--font-mono); text-decoration: none; border: none; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 6px 20px -8px rgba(0,0,0,0.8); transition: all 0.15s; }
+    .btn-primary:hover { background: var(--red-500); transform: translateY(-2px); text-decoration: none; color: #fff; }
     .btn-ghost { display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: var(--radius-pill); background: transparent; border: 1px solid var(--line-2); color: var(--fg-0); font: 600 14px/1 var(--font-mono); text-decoration: none; transition: all 0.15s; }
     .btn-ghost:hover { border-color: var(--fg-3); background: rgba(255,255,255,0.03); transform: translateY(-2px); text-decoration: none; color: var(--fg-0); }
 
@@ -76,6 +76,38 @@
     .feature-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(218,42,28,0.1); border: 1px solid rgba(218,42,28,0.18); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--red-400); }
     .feature h3 { font: 600 16px/1.3 var(--font-sans); color: var(--fg-0); margin-bottom: 8px; }
     .feature p { font: 400 14px/1.6 var(--font-sans); color: var(--fg-2); }
+    .feature:hover { box-shadow: 0 18px 40px -22px rgba(218,42,28,0.35); }
+
+    /* ── Motion / Visuals ── */
+    .hero > * { position: relative; z-index: 1; }
+    .hero-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .hero-bg .grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 48px 48px; -webkit-mask-image: radial-gradient(85% 75% at 50% 30%, #000 30%, transparent 92%); mask-image: radial-gradient(85% 75% at 50% 30%, #000 30%, transparent 92%); animation: gridDrift 24s linear infinite; }
+    @keyframes gridDrift { to { background-position: 0 48px; } }
+    @keyframes heroRise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    [class*="rise-"] { opacity: 0; animation: heroRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .rise-1 { animation-delay: 0.05s; } .rise-2 { animation-delay: 0.15s; } .rise-3 { animation-delay: 0.25s; } .rise-4 { animation-delay: 0.35s; }
+
+    .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+    .js .reveal.in-view { opacity: 1; transform: none; }
+    .rd1 { transition-delay: 0.05s; } .rd2 { transition-delay: 0.1s; } .rd3 { transition-delay: 0.15s; } .rd4 { transition-delay: 0.2s; } .rd5 { transition-delay: 0.25s; } .rd6 { transition-delay: 0.3s; }
+
+    .marquee { overflow: hidden; border-top: 1px solid var(--line-1); border-bottom: 1px solid var(--line-1); padding: 14px 0; background: var(--bg-0); }
+    .marquee-track { display: flex; width: max-content; animation: marquee 32s linear infinite; }
+    .marquee-track span { font: 500 12px/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-2); padding-right: 40px; white-space: nowrap; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+
+    .btn-primary { position: relative; overflow: hidden; }
+    .btn-primary::after { content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent); transform: skewX(-20deg); animation: shimmer 3.5s ease-in-out infinite; }
+    @keyframes shimmer { 0% { left: -60%; } 55%, 100% { left: 130%; } }
+
+    .price-card.popular { animation: popularPulse 4s ease-in-out infinite; }
+    @keyframes popularPulse { 0%, 100% { border-color: var(--red-500); } 50% { border-color: var(--red-400); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+      .js .reveal { opacity: 1; transform: none; }
+    }
 
     /* ── Pricing ── */
     .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 48px; }
@@ -83,11 +115,11 @@
     .price-card { background: var(--bg-2); border: 1px solid var(--line-1); border-radius: 14px; padding: 32px; text-align: center; position: relative; transition: border-color 0.2s, transform 0.2s; }
     .price-card:hover { border-color: var(--line-2); transform: translateY(-3px); }
     .price-card.popular { border-color: var(--red-500); }
-    .price-card.popular::before { content: 'MOST POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); padding: 4px 14px; border-radius: var(--radius-pill); background: var(--red-500); color: #fff; font: 600 10px/1 var(--font-sans); letter-spacing: 0.08em; }
+    .price-card.popular::before { content: 'MOST POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); padding: 4px 14px; border-radius: var(--radius-pill); background: var(--red-600); color: #fff; font: 600 10px/1 var(--font-sans); letter-spacing: 0.08em; }
     .price-card h3 { font: 600 18px/1.2 var(--font-sans); color: var(--fg-0); margin-bottom: 4px; }
     .price-card .price { font: 700 36px/1 var(--font-mono); color: var(--fg-0); margin: 16px 0 4px; }
     .price-card .price span { font-size: 14px; font-weight: 400; color: var(--fg-2); }
-    .price-card .interval { font: 400 13px/1 var(--font-sans); color: var(--fg-3); margin-bottom: 20px; }
+    .price-card .interval { font: 400 13px/1 var(--font-sans); color: var(--fg-2); margin-bottom: 20px; }
     .price-card ul { list-style: none; text-align: left; margin-bottom: 24px; }
     .price-card li { font: 400 13px/1 var(--font-sans); color: var(--fg-2); padding: 6px 0; display: flex; align-items: center; gap: 8px; }
     .price-card li::before { content: '✓'; color: var(--green-400); font-weight: 700; font-size: 12px; }
@@ -99,12 +131,30 @@
     @media (max-width: 400px) { .stats { grid-template-columns: 1fr; } }
     .stat { text-align: center; padding: 24px; }
     .stat-val { font: 700 32px/1 var(--font-mono); color: var(--fg-0); }
-    .stat-label { font: 500 12px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-3); margin-top: 8px; }
+    .stat-label { font: 500 12px/1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-2); margin-top: 8px; }
+
+    /* ── Mobile polish ── */
+    @media (max-width: 520px) {
+      .hero { padding: 110px 16px 48px; }
+      .hero h1 { font-size: 34px; }
+      .hero p { font-size: 15px; }
+      .hero-btns { flex-direction: column; align-items: stretch; margin-top: 26px; }
+      .hero-btns .btn-primary, .hero-btns .btn-ghost { justify-content: center; height: 46px; }
+      .stats { gap: 12px; margin-top: 32px; }
+      .stat { padding: 16px; }
+      .stat-val { font-size: 26px; }
+      .features { gap: 14px; margin-top: 28px; }
+      .feature { padding: 22px 20px; }
+      .pricing { gap: 14px; margin-top: 28px; }
+      .price-card { padding: 24px 20px; }
+      .price-card .price { font-size: 32px; }
+    }
 
     /* ── Footer ── */
     .footer { border-top: 1px solid var(--line-1); padding: 40px 24px; text-align: center; }
     @media (max-width: 640px) { .footer { padding: 32px 16px; } }
-    .footer p { font: 400 12px/1.5 var(--font-mono); color: var(--fg-3); }
+    .footer p { font: 400 12px/1.5 var(--font-mono); color: var(--fg-2); }
+    .footer p a { text-decoration: underline; text-underline-offset: 3px; }
   </style>
 </head>
 <body>
@@ -113,11 +163,11 @@
 <nav class="nav">
   <div class="nav-inner">
     <a href="/" class="nav-brand">
-      <img src="/static/assets/uwitz_logo.svg" alt="Uwitz Cards" style="width: 28px; height: 20px;">
+      <img src="/static/assets/NFCCard.png" alt="" style="width: 28px; height: auto;">
       <span>UWITZ CARDS</span>
     </a>
-    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" onclick="let l=document.querySelector('.nav-links');l.classList.toggle('open');this.setAttribute('aria-expanded', l.classList.contains('open'));">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
     </button>
     <div class="nav-links">
       <a href="#features">Features</a>
@@ -128,16 +178,21 @@
   </div>
 </nav>
 
+<main>
+
 <!-- Hero -->
 <section class="hero">
-  <div class="hero-eyebrow">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="grid"></div>
+  </div>
+  <div class="hero-eyebrow rise-1">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6z"/></svg>
     NFC-Powered Cards
   </div>
-  <h1>Tap. Share. Connect.</h1>
-  <p>Smart NFC business cards with instant contact sharing, dynamic TagLink redirects, and enterprise-grade management. One tap replaces the paper card.</p>
-  <div class="hero-btns">
-    <a href="/register" class="btn-primary">Create Free Account</a>
+  <h1 class="rise-2">Tap. Share. Connect.</h1>
+  <p class="rise-3">Smart NFC business cards with instant contact sharing, dynamic TagLink redirects, and enterprise-grade management. One tap replaces the paper card.</p>
+  <div class="hero-btns rise-4">
+    <a href="/register" class="btn-primary">Create Account</a>
     <a href="#features" class="btn-ghost">Learn More</a>
   </div>
 
@@ -147,13 +202,21 @@
 <section class="sec" style="border-top: none; padding-top: 40px;">
   <div class="wrap">
     <div class="stats">
-      <div class="stat"><div class="stat-val">NTAG 215</div><div class="stat-label">NFC Chip</div></div>
-      <div class="stat"><div class="stat-val">vCard 4.0</div><div class="stat-label">Contact Format</div></div>
-      <div class="stat"><div class="stat-val">REST API</div><div class="stat-label">TagLink Control</div></div>
-      <div class="stat"><div class="stat-val">85.6×54mm</div><div class="stat-label">ISO/IEC 7810</div></div>
+      <div class="stat reveal rd1"><div class="stat-val">NTAG 215</div><div class="stat-label">NFC Chip</div></div>
+      <div class="stat reveal rd2"><div class="stat-val">vCard 4.0</div><div class="stat-label">Contact Format</div></div>
+      <div class="stat reveal rd3"><div class="stat-val">REST API</div><div class="stat-label">TagLink Control</div></div>
+      <div class="stat reveal rd4"><div class="stat-val">85.6×54mm</div><div class="stat-label">ISO/IEC 7810</div></div>
     </div>
   </div>
 </section>
+
+<!-- Marquee -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Tap-to-Share</span><span>NTAG 215 NFC</span><span>vCard 4.0</span><span>TagLink Redirects</span><span>REST API</span><span>ISO/IEC 7810</span><span>Bulk Corporate</span><span>iOS Shortcuts</span>
+    <span>Tap-to-Share</span><span>NTAG 215 NFC</span><span>vCard 4.0</span><span>TagLink Redirects</span><span>REST API</span><span>ISO/IEC 7810</span><span>Bulk Corporate</span><span>iOS Shortcuts</span>
+  </div>
+</div>
 
 <!-- Features -->
 <section class="sec" id="features">
@@ -161,42 +224,42 @@
     <h2 class="sec-title">Everything you need in a card</h2>
     <p class="sec-sub">Three card types for individuals, teams, and dynamic use cases. All powered by NTAG 215 NFC.</p>
     <div class="features">
-      <div class="feature">
+      <div class="feature reveal">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
         <h3>Social Contact Card</h3>
         <p>Your digital vCard with name, email, phone, website, and social profiles. One tap shares your complete contact info — no app required.</p>
       </div>
-      <div class="feature">
+      <div class="feature reveal">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
         </div>
         <h3>Corporate Cards</h3>
         <p>Branded cards for your entire team. Corporate admins manage all employee cards from a single dashboard with bulk ordering and member invites.</p>
       </div>
-      <div class="feature">
+      <div class="feature reveal">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
         </div>
         <h3>TagLink Cards</h3>
         <p>Dynamic redirect cards you can update on-the-fly via API. Perfect for iOS Shortcuts, marketing campaigns, or any automation — change where your card points to anytime.</p>
       </div>
-      <div class="feature">
+      <div class="feature reveal">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
         </div>
         <h3>Physical NFC Cards</h3>
         <p>ISO/IEC 7810 ID-1 compliant cards (85.6×54mm) with NTAG 215 chips. Upload your own design or use the default. Printed and shipped to your door.</p>
       </div>
-      <div class="feature">
+      <div class="feature reveal">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <h3>Manage from Dashboard</h3>
         <p>Freeze cards, update contact info, change TagLink redirects, manage API keys, upload card images — all from a secure web dashboard.</p>
       </div>
-      <div class="feature">
+      <div class="feature reveal">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         </div>
@@ -213,17 +276,17 @@
     <h2 class="sec-title">How it works</h2>
     <p class="sec-sub">From sign-up to first tap in three steps.</p>
     <div class="features" style="margin-top: 48px;">
-      <div class="feature" style="text-align: center;">
+      <div class="feature reveal rd1" style="text-align: center;">
         <div style="font: 700 48px/1 var(--font-mono); color: var(--red-500); margin-bottom: 12px;">1</div>
         <h3>Create your card</h3>
         <p>Sign up and build your digital vCard or TagLink card from the dashboard. Add your name, contact info, social links, or redirect URL.</p>
       </div>
-      <div class="feature" style="text-align: center;">
+      <div class="feature reveal rd2" style="text-align: center;">
         <div style="font: 700 48px/1 var(--font-mono); color: var(--red-500); margin-bottom: 12px;">2</div>
         <h3>Order a physical card</h3>
         <p>Choose your card type and upload a custom design. We print on ISO/IEC 7810 compliant stock with an embedded NTAG 215 NFC chip.</p>
       </div>
-      <div class="feature" style="text-align: center;">
+      <div class="feature reveal rd3" style="text-align: center;">
         <div style="font: 700 48px/1 var(--font-mono); color: var(--red-500); margin-bottom: 12px;">3</div>
         <h3>Tap to share</h3>
         <p>Anyone with a smartphone can tap your card to instantly get your contact info or be redirected to your chosen URL. No app needed.</p>
@@ -238,7 +301,7 @@
     <h2 class="sec-title">Simple pricing</h2>
     <p class="sec-sub">Pay once for the physical card, subscribe to keep it active. All prices in MYR.</p>
     <div class="pricing">
-      <div class="price-card">
+      <div class="price-card reveal">
         <h3>Social Card</h3>
         <p style="font: 400 13px/1.4 var(--font-sans); color: var(--fg-2);">For individuals</p>
         <div class="price">RM 35<span></span></div>
@@ -249,10 +312,11 @@
           <li>Custom image upload</li>
           <li>Freeze/unfreeze from dashboard</li>
           <li>Email alerts</li>
+          <li>Aluminium card RM 75 · pre-order</li>
         </ul>
         <a href="/register" class="btn-ghost">Get Started</a>
       </div>
-      <div class="price-card popular">
+      <div class="price-card popular reveal rd1">
         <h3>TagLink Card</h3>
         <p style="font: 400 13px/1.4 var(--font-sans); color: var(--fg-2);">Dynamic redirect</p>
         <div class="price">RM 15<span></span></div>
@@ -267,7 +331,7 @@
         </ul>
         <a href="/register" class="btn-primary">Get Started</a>
       </div>
-      <div class="price-card">
+      <div class="price-card reveal rd2">
         <h3>Corporate Card</h3>
         <p style="font: 400 13px/1.4 var(--font-sans); color: var(--fg-2);">For teams</p>
         <div class="price">RM 50<span></span></div>
@@ -278,6 +342,7 @@
           <li>Member management & invites</li>
           <li>Bulk card ordering</li>
           <li>Organisation-level controls</li>
+          <li>Aluminium card RM 90 · pre-order</li>
         </ul>
         <a href="/register" class="btn-ghost">Get Started</a>
       </div>
@@ -289,18 +354,37 @@
 <section class="sec" style="text-align: center;">
   <div class="wrap">
     <h2 class="sec-title">Ready to replace your paper cards?</h2>
-    <p class="sec-sub">Create a free account and build your first digital card in minutes.</p>
+    <p class="sec-sub">Create an account and build your first digital card in minutes.</p>
     <div class="hero-btns" style="margin-top: 32px;">
-      <a href="/register" class="btn-primary">Create Free Account</a>
+<a href="/register" class="btn-primary">Create Account</a>
       <a href="/dashboard/login" class="btn-ghost">Sign In</a>
     </div>
   </div>
 </section>
 
+</main>
+
 <!-- Footer -->
 <footer class="footer">
-  <p>&copy; 2026 Uwitz. All rights reserved. · <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Service</a> · <a href="/dashboard/login">Admin</a></p>
+  <p>&copy; 2026 Uwitz. All rights reserved. · <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Service</a> · <a href="/admin/login">Admin</a></p>
 </footer>
+
+<script>
+  document.documentElement.classList.add('js');
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      els.forEach(function (el) { el.classList.add('in-view'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+</script>
 
 </body>
 </html>

@@ -1,0 +1,139 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "UWITZ CARDS" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e6]:
+        - link "Features" [ref=e7] [cursor=pointer]:
+          - /url: "#features"
+        - link "Pricing" [ref=e8] [cursor=pointer]:
+          - /url: "#pricing"
+        - link "Sign in" [ref=e9] [cursor=pointer]:
+          - /url: /dashboard/login
+        - link "Get Started" [ref=e10] [cursor=pointer]:
+          - /url: /register
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]: NFC-Powered Cards
+      - heading "Tap. Share. Connect." [level=1] [ref=e16]
+      - paragraph [ref=e17]: Smart NFC business cards with instant contact sharing, dynamic TagLink redirects, and enterprise-grade management. One tap replaces the paper card.
+      - generic [ref=e18]:
+        - link "Create Free Account" [ref=e19] [cursor=pointer]:
+          - /url: /register
+        - link "Learn More" [ref=e20] [cursor=pointer]:
+          - /url: "#features"
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]: NTAG 215
+        - generic [ref=e26]: NFC Chip
+      - generic [ref=e27]:
+        - generic [ref=e28]: vCard 4.0
+        - generic [ref=e29]: Contact Format
+      - generic [ref=e30]:
+        - generic [ref=e31]: REST API
+        - generic [ref=e32]: TagLink Control
+      - generic [ref=e33]:
+        - generic [ref=e34]: 85.6×54mm
+        - generic [ref=e35]: ISO/IEC 7810
+    - generic [ref=e37]:
+      - heading "Everything you need in a card" [level=2] [ref=e38]
+      - paragraph [ref=e39]: Three card types for individuals, teams, and dynamic use cases. All powered by NTAG 215 NFC.
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - heading "Social Contact Card" [level=3] [ref=e46]
+          - paragraph [ref=e47]: Your digital vCard with name, email, phone, website, and social profiles. One tap shares your complete contact info — no app required.
+        - generic [ref=e48]:
+          - heading "Corporate Cards" [level=3] [ref=e53]
+          - paragraph [ref=e54]: Branded cards for your entire team. Corporate admins manage all employee cards from a single dashboard with bulk ordering and member invites.
+        - generic [ref=e55]:
+          - heading "TagLink Cards" [level=3] [ref=e60]
+          - paragraph [ref=e61]: Dynamic redirect cards you can update on-the-fly via API. Perfect for iOS Shortcuts, marketing campaigns, or any automation — change where your card points to anytime.
+        - generic [ref=e62]:
+          - heading "Physical NFC Cards" [level=3] [ref=e66]
+          - paragraph [ref=e67]: ISO/IEC 7810 ID-1 compliant cards (85.6×54mm) with NTAG 215 chips. Upload your own design or use the default. Printed and shipped to your door.
+        - generic [ref=e68]:
+          - heading "Manage from Dashboard" [level=3] [ref=e72]
+          - paragraph [ref=e73]: Freeze cards, update contact info, change TagLink redirects, manage API keys, upload card images — all from a secure web dashboard.
+        - generic [ref=e74]:
+          - heading "Email Alerts" [level=3] [ref=e79]
+          - paragraph [ref=e80]: Automated notifications for orders, payments, subscription renewals, card status changes, and API key activity. Never miss an update.
+    - generic [ref=e82]:
+      - heading "How it works" [level=2] [ref=e83]
+      - paragraph [ref=e84]: From sign-up to first tap in three steps.
+      - generic [ref=e85]:
+        - generic [ref=e86]:
+          - generic [ref=e87]: "1"
+          - heading "Create your card" [level=3] [ref=e88]
+          - paragraph [ref=e89]: Sign up and build your digital vCard or TagLink card from the dashboard. Add your name, contact info, social links, or redirect URL.
+        - generic [ref=e90]:
+          - generic [ref=e91]: "2"
+          - heading "Order a physical card" [level=3] [ref=e92]
+          - paragraph [ref=e93]: Choose your card type and upload a custom design. We print on ISO/IEC 7810 compliant stock with an embedded NTAG 215 NFC chip.
+        - generic [ref=e94]:
+          - generic [ref=e95]: "3"
+          - heading "Tap to share" [level=3] [ref=e96]
+          - paragraph [ref=e97]: Anyone with a smartphone can tap your card to instantly get your contact info or be redirected to your chosen URL. No app needed.
+    - generic [ref=e99]:
+      - heading "Simple pricing" [level=2] [ref=e100]
+      - paragraph [ref=e101]: Pay once for the physical card, subscribe to keep it active. All prices in MYR.
+      - generic [ref=e102]:
+        - generic [ref=e103]:
+          - heading "Social Card" [level=3] [ref=e104]
+          - paragraph [ref=e105]: For individuals
+          - generic [ref=e106]: RM 35
+          - generic [ref=e107]: physical card + RM 25/year
+          - list [ref=e108]:
+            - listitem [ref=e109]: ✓ vCard 4.0 contact sharing
+            - listitem [ref=e110]: ✓ NTAG 215 NFC chip
+            - listitem [ref=e111]: ✓ Custom image upload
+            - listitem [ref=e112]: ✓ Freeze/unfreeze from dashboard
+            - listitem [ref=e113]: ✓ Email alerts
+          - link "Get Started" [ref=e114] [cursor=pointer]:
+            - /url: /register
+        - generic [ref=e115]:
+          - text: MOST POPULAR
+          - heading "TagLink Card" [level=3] [ref=e116]
+          - paragraph [ref=e117]: Dynamic redirect
+          - generic [ref=e118]: RM 15
+          - generic [ref=e119]: physical card + RM 2.99/month
+          - list [ref=e120]:
+            - listitem [ref=e121]: ✓ Dynamic URL redirect
+            - listitem [ref=e122]: ✓ Plain text content
+            - listitem [ref=e123]: ✓ REST API for on-the-fly updates
+            - listitem [ref=e124]: ✓ Per-card API keys
+            - listitem [ref=e125]: ✓ iOS Shortcuts integration
+            - listitem [ref=e126]: ✓ Rate limited (60 req/min)
+          - link "Get Started" [ref=e127] [cursor=pointer]:
+            - /url: /register
+        - generic [ref=e128]:
+          - heading "Corporate Card" [level=3] [ref=e129]
+          - paragraph [ref=e130]: For teams
+          - generic [ref=e131]: RM 50
+          - generic [ref=e132]: physical card + RM 45/year
+          - list [ref=e133]:
+            - listitem [ref=e134]: ✓ Branded employee cards
+            - listitem [ref=e135]: ✓ Corporate admin dashboard
+            - listitem [ref=e136]: ✓ Member management & invites
+            - listitem [ref=e137]: ✓ Bulk card ordering
+            - listitem [ref=e138]: ✓ Organisation-level controls
+          - link "Get Started" [ref=e139] [cursor=pointer]:
+            - /url: /register
+    - generic [ref=e141]:
+      - heading "Ready to replace your paper cards?" [level=2] [ref=e142]
+      - paragraph [ref=e143]: Create a free account and build your first digital card in minutes.
+      - generic [ref=e144]:
+        - link "Create Free Account" [ref=e145] [cursor=pointer]:
+          - /url: /register
+        - link "Sign In" [ref=e146] [cursor=pointer]:
+          - /url: /dashboard/login
+  - contentinfo [ref=e147]:
+    - paragraph [ref=e148]:
+      - text: © 2026 Uwitz. All rights reserved. ·
+      - link "Privacy Policy" [ref=e149] [cursor=pointer]:
+        - /url: /privacy
+      - text: ·
+      - link "Terms of Service" [ref=e150] [cursor=pointer]:
+        - /url: /terms
+      - text: ·
+      - link "Admin" [ref=e151] [cursor=pointer]:
+        - /url: /dashboard/login

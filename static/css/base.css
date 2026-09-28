@@ -47,6 +47,8 @@
   --accent: var(--red-500);
   --accent-hover: var(--red-400);
   --accent-press: var(--red-600);
+  --accent-cta: var(--red-600);
+  --accent-cta-hover: var(--red-500);
   --accent-fg: #FFFFFF;
   --accent-soft: rgba(218,42,28,0.12);
   --accent-soft-hi: rgba(218,42,28,0.20);

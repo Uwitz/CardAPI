@@ -4,87 +4,210 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy — {{ brand }}</title>
-  <meta name="description" content="How Uwitz Cards handles your personal data.">
+  <meta name="description" content="How Uwitz Cards handles your personal data in compliance with GDPR, nFADP, FADP, PDPA, and COPPA.">
   <meta name="theme-color" content="#09090A">
-  <link rel="icon" type="image/svg+xml" href="/static/assets/uwitz_logo.svg">
+  <link rel="icon" type="image/png" href="/static/assets/NFCCard.png">
   <link rel="stylesheet" href="/static/css/base.css">
   <link rel="stylesheet" href="/static/css/components.css">
   <link rel="stylesheet" href="/static/css/utilities.css">
   <style>
-    .legal-layout { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+    .legal-layout { max-width: 800px; margin: 0 auto; padding: 48px 24px 80px; }
     .legal-layout h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
     .legal-layout h2 { font-size: 1.25rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.75rem; color: var(--text-strong); }
+    .legal-layout h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-strong); }
     .legal-layout p { font: 400 14px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 1rem; }
     .legal-layout ul { margin: 0 0 1rem 1.25rem; }
     .legal-layout li { font: 400 14px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 0.25rem; }
-    .legal-meta { font: 500 12px/1 var(--font-mono); color: var(--text-faint); margin-bottom: 2rem; }
+    .legal-layout table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 13px; }
+    .legal-layout th, .legal-layout td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; }
+    .legal-layout th { background: var(--bg-inset); font-weight: 600; }
+    .legal-meta { font: 500 12px/1 var(--font-mono); color: var(--text-muted); margin-bottom: 2rem; }
     .legal-notice { padding: 14px 16px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 2rem; }
-    .legal-notice p { font: 400 12px/1.6 var(--font-sans); color: var(--text-faint); margin: 0; }
+    .legal-notice p { font: 400 12px/1.6 var(--font-sans); color: var(--text-muted); margin: 0; }
+    .compliance-badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; margin-right: 6px; }
+    .badge-gdpr { background: #dbeafe; color: #1e40af; }
+    .badge-nfadp { background: #fef3c7; color: #92400e; }
+    .badge-fadp { background: #fce7f3; color: #9d174d; }
+    .badge-pdpa { background: #dcfce7; color: #166534; }
+    .badge-coppa { background: #f3e8ff; color: #7c3aed; }
   </style>
 </head>
 <body style="background: var(--bg-1); min-height: 100vh;">
-  <div class="legal-layout">
+  <main class="legal-layout">
     <a href="/" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; margin-bottom: 24px;">
-      <img src="/static/assets/uwitz_logo.svg" alt="Uwitz Cards" style="width: 24px; height: 16px;">
+      <img src="/static/assets/NFCCard.png" alt="" style="width: 24px; height: auto;">
       <span style="font: 600 12px/1 var(--font-mono); letter-spacing: 0.1em; color: var(--text-strong);">UWITZ CARDS</span>
     </a>
 
     <h1>Privacy Policy</h1>
-    <div class="legal-meta">Effective 7 September 2026 · Last updated 7 September 2026</div>
-
-    <div class="legal-notice">
-      <p><strong style="color: var(--text-muted);">Legal status:</strong> Uwitz is currently unincorporated. We are preparing to legally register and operate under Estonia in the foreseeable future.</p>
+    <div class="legal-meta">
+      Effective 7 September 2026 · Last updated 7 September 2026
+      <div style="margin-top: 8px;">
+        <span class="compliance-badge badge-gdpr">GDPR (EU)</span>
+        <span class="compliance-badge badge-nfadp">nFADP (CH)</span>
+        <span class="compliance-badge badge-fadp">FADP (CH)</span>
+        <span class="compliance-badge badge-pdpa">PDPA (SG)</span>
+        <span class="compliance-badge badge-coppa">COPPA (US)</span>
+      </div>
     </div>
 
-    <h2>What we collect</h2>
-    <p>When you create an account or use Uwitz Cards, we collect only what's necessary to provide the service:</p>
+    <div class="legal-notice">
+      <p><strong style="color: var(--text-muted);">Legal status:</strong> Uwitz Cards is currently unincorporated. We are preparing to legally register and operate under Estonia in the foreseeable future. This policy complies with GDPR (EU), nFADP/FADP (Switzerland), PDPA (Singapore), and COPPA (US).</p>
+    </div>
+
+    <h2>1. Controller and Contact</h2>
+    <p><strong>Data Controller:</strong> Uwitz Cards<br>
+    <strong>Contact:</strong> <a href="mailto:privacy@uwitz.org" style="color: var(--text-link); text-decoration: underline; text-underline-offset: 2px;">privacy@uwitz.org</a><br>
+    <strong>Data Protection Officer:</strong> <a href="mailto:dpo@uwitz.org" style="color: var(--text-link); text-decoration: underline; text-underline-offset: 2px;">dpo@uwitz.org</a></p>
+
+    <h2>2. What Personal Data We Process</h2>
+    <p>We process only the personal data necessary for the purposes described below. The categories of personal data depend on how you use our service:</p>
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Data Elements</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Account Data</td><td>Email, username, display name, password hash (bcrypt), role, status, referral code</td><td>You (registration)</td></tr>
+        <tr><td>SSO Data</td><td>Email, display name, group memberships from Entra ID/Irys</td><td>Identity Provider</td></tr>
+        <tr><td>Card Data</td><td>Card ID, type, tier, vCard content, redirect URL, template fields, images</td><td>You (card creation)</td></tr>
+        <tr><td>Order Data</td><td>Shipping address, order ID, card type/tier, amount, payment status</td><td>You (ordering)</td></tr>
+        <tr><td>Payment Data</td><td>Stripe customer ID, payment intent, invoice ID (no card numbers stored)</td><td>Stripe</td></tr>
+        <tr><td>Usage Data</td><td>Card tap counts (anonymous, no IP/device tracking)</td><td>Automated</td></tr>
+        <tr><td>Security Data</td><td>IP address, user agent, timestamps, actions (audit logs)</td><td>Automated</td></tr>
+        <tr><td>Consent Records</td><td>Consent type, granted/withdrawn, timestamp, IP, user agent</td><td>You (consent UI)</td></tr>
+        <tr><td>Age Verification</td><td>Birth date, age category, parental consent status</td><td>You (age check)</td></tr>
+      </tbody>
+    </table>
+
+    <h2>3. Purposes and Lawful Bases (GDPR Art. 6, nFADP Art. 31, PDPA)</h2>
+    <table>
+      <thead>
+        <tr><th>Purpose</th><th>Lawful Basis</th><th>Regulation Reference</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Account creation & management</td><td>Contract (Art. 6(1)(b) GDPR)</td><td>GDPR Art. 6(1)(b), nFADP Art. 31, PDPA s.13</td></tr>
+        <tr><td>Card creation & NFC serving</td><td>Contract (Art. 6(1)(b) GDPR)</td><td>GDPR Art. 6(1)(b), nFADP Art. 31, PDPA s.13</td></tr>
+        <tr><td>Order fulfillment & shipping</td><td>Contract (Art. 6(1)(b) GDPR)</td><td>GDPR Art. 6(1)(b), nFADP Art. 31, PDPA s.13</td></tr>
+        <tr><td>Payment processing</td><td>Contract (Art. 6(1)(b) GDPR)</td><td>GDPR Art. 6(1)(b), nFADP Art. 31, PDPA s.13</td></tr>
+        <tr><td>Transactional emails</td><td>Legitimate Interests (Art. 6(1)(f) GDPR)</td><td>GDPR Art. 6(1)(f), nFADP Art. 31, PDPA s.17</td></tr>
+        <tr><td>Security & fraud prevention</td><td>Legitimate Interests (Art. 6(1)(f) GDPR)</td><td>GDPR Art. 6(1)(f), nFADP Art. 31, PDPA s.24</td></tr>
+        <tr><td>Legal compliance</td><td>Legal Obligation (Art. 6(1)(c) GDPR)</td><td>GDPR Art. 6(1)(c), nFADP Art. 31, PDPA s.24</td></tr>
+        <tr><td>Analytics / Marketing</td><td>Consent (Art. 6(1)(a) GDPR)</td><td>GDPR Art. 6(1)(a), nFADP Art. 31, PDPA s.13</td></tr>
+      </tbody>
+    </table>
+
+    <h2>4. Special Categories & Children's Data (COPPA)</h2>
+    <p>We do not process special category data (health, biometrics, etc.) under GDPR Art. 9. For children's data:</p>
     <ul>
-      <li><strong>Account information:</strong> Name, email address, username, and password (hashed with bcrypt).</li>
-      <li><strong>SSO data:</strong> If you sign in via Entra ID or Irys, we receive your email, display name, and group memberships from the identity provider.</li>
-      <li><strong>Card data:</strong> vCard contents, redirect URLs, and card images you upload.</li>
-      <li><strong>Order data:</strong> Shipping addresses and payment records (processed via Stripe — we never see your card number).</li>
-      <li><strong>Usage data:</strong> Card tap counts (anonymous, no IP or device tracking).</li>
+      <li><strong>Under 13:</strong> We do not knowingly collect personal data from children under 13 without verifiable parental consent (COPPA). Age verification is required at registration.</li>
+      <li><strong>Ages 13–17:</strong> Standard data subject rights apply with enhanced protections.</li>
+      <li><strong>Parental Rights:</strong> Parents can review, correct, or delete their child's data at any time by contacting <a href="mailto:privacy@uwitz.org">privacy@uwitz.org</a>.</li>
     </ul>
 
-    <h2>What we don't collect</h2>
+    <h2>5. Data Retention (GDPR Art. 5(1)(e), nFADP Art. 5, PDPA s.25)</h2>
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Retention Period</th><th>Legal Basis</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Account Data</td><td>Account lifetime + 30 days after deletion</td><td>Contract + Legal Obligation</td></tr>
+        <tr><td>Card Data</td><td>Card lifetime + 30 days after account deletion</td><td>Contract</td></tr>
+        <tr><td>Order & Shipping Data</td><td>7 years (tax/legal requirement)</td><td>Legal Obligation</td></tr>
+        <tr><td>Payment Data</td><td>7 years (tax/legal requirement)</td><td>Legal Obligation</td></tr>
+        <tr><td>Email & Communication Logs</td><td>1 year</td><td>Legitimate Interests</td></tr>
+        <tr><td>Audit & Security Logs</td><td>1 year</td><td>Legitimate Interests / Legal Obligation</td></tr>
+        <tr><td>Consent Records</td><td>Account lifetime + 3 years</td><td>Legal Obligation (GDPR Art. 7)</td></tr>
+        <tr><td>Session Data</td><td>7 days</td><td>Contract</td></tr>
+        <tr><td>Age Verification</td><td>Account lifetime + 3 years</td><td>Legal Obligation (COPPA)</td></tr>
+      </tbody>
+    </table>
+
+    <h2>6. Data Recipients & International Transfers</h2>
+    <p><strong>Internal:</strong> Uwitz Cards staff (need-to-know basis).<br>
+    <strong>Processors:</strong></p>
     <ul>
-      <li>No analytics, tracking, or fingerprinting scripts.</li>
-      <li>No third-party cookies or advertising pixels.</li>
-      <li>No IP addresses or device information beyond what's required for session management.</li>
-      <li>No data sold to or shared with third parties for marketing purposes.</li>
+      <li><strong>Stripe (US):</strong> Payment processing — Standard Contractual Clauses (SCCs) in place.</li>
+      <li><strong>SMTP2Go (NZ/US):</strong> Email delivery — SCCs in place.</li>
+      <li><strong>MongoDB Atlas (EU/US):</strong> Database hosting — SCCs + BCRs.</li>
+    </ul>
+    <p>All international transfers rely on adequacy decisions, SCCs, or Binding Corporate Rules as required by GDPR Chapter V, nFADP Art. 16-17, PDPA s.26.</p>
+
+    <h2>7. Your Rights (GDPR Art. 15-22, nFADP Art. 17-18, PDPA s.21-22)</h2>
+    <p>You have the following rights regarding your personal data:</p>
+    <table>
+      <thead>
+        <tr><th>Right</th><th>Description</th><th>How to Exercise</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Access (Art. 15 GDPR)</td><td>Obtain copy of your data and processing info</td><td><a href="/api/compliance/data-export" style="color: var(--text-link);">API: GET /api/compliance/data-export</a></td></tr>
+        <tr><td>Rectification (Art. 16 GDPR)</td><td>Correct inaccurate or incomplete data</td><td><a href="/api/compliance/rectify" style="color: var(--text-link);">API: POST /api/compliance/rectify</a></td></tr>
+        <tr><td>Erasure (Art. 17 GDPR)</td><td>Delete your data (right to be forgotten)</td><td><a href="/api/compliance/account" style="color: var(--text-link);">API: DELETE /api/compliance/account</a></td></tr>
+        <tr><td>Restriction (Art. 18 GDPR)</td><td>Limit processing of your data</td><td><a href="/api/compliance/restrict-processing" style="color: var(--text-link);">API: POST /api/compliance/restrict-processing</a></td></tr>
+        <tr><td>Portability (Art. 20 GDPR)</td><td>Receive your data in structured format</td><td><a href="/api/compliance/data-export" style="color: var(--text-link);">API: GET /api/compliance/data-export</a></td></tr>
+        <tr><td>Objection (Art. 21 GDPR)</td><td>Object to processing based on legitimate interests</td><td><a href="/api/compliance/object-processing" style="color: var(--text-link);">API: POST /api/compliance/object-processing</a></td></tr>
+        <tr><td>Withdraw Consent (Art. 7 GDPR)</td><td>Withdraw consent at any time</td><td><a href="/api/compliance/consent" style="color: var(--text-link);">API: POST /api/compliance/consent/{type}</a></td></tr>
+        <tr><td>Complaint</td><td>Lodge complaint with supervisory authority</td><td>Contact your local DPA or <a href="mailto:privacy@uwitz.org">privacy@uwitz.org</a></td></tr>
+      </tbody>
+    </table>
+
+    <h2>8. Automated Decision-Making (GDPR Art. 22)</h2>
+    <p>We do not use solely automated decision-making (including profiling) that produces legal effects or significantly affects you. Any automated processes (e.g., fraud detection) include human review.</p>
+
+    <h2>9. Privacy by Design & Default (GDPR Art. 25, nFADP Art. 7)</h2>
+    <p>We implement privacy by design and by default:</p>
+    <ul>
+      <li><strong>Data Minimization:</strong> We collect only data necessary for each purpose.</li>
+      <li><strong>Opt-in by Default:</strong> Analytics, marketing, third-party sharing, and non-essential cookies require explicit opt-in.</li>
+      <li><strong>Encryption:</strong> TLS 1.3 for data in transit; AES-256 for data at rest.</li>
+      <li><strong>Access Controls:</strong> Role-based access, least privilege, audit logging.</li>
+      <li><strong>Automatic Deletion:</strong> Data automatically deleted after retention periods.</li>
     </ul>
 
-    <h2>How we use your data</h2>
-    <p>Your data is used solely to:</p>
+    <h2>9. Security Measures (GDPR Art. 32, nFADP Art. 8, PDPA s.24)</h2>
     <ul>
-      <li>Provide and maintain the Uwitz Cards service.</li>
-      <li>Process orders and ship physical cards.</li>
-      <li>Send transactional emails (order confirmations, account notifications).</li>
-      <li>Enforce access control and security.</li>
+      <li>TLS 1.3 for all connections</li>
+      <li>AES-256 encryption for data at rest (MongoDB encryption at rest)</li>
+      <li>Bcrypt for password hashing (cost factor 12)</li>
+      <li>Rate limiting on auth endpoints (5 req/min)</li>
+      <li>Account lockout after 5 failed attempts (30 min)</li>
+      <li>CSRF protection with session-bound tokens</li>
+      <li>Content Security Policy (CSP) headers</li>
+      <li>Regular security assessments</li>
     </ul>
 
-    <h2>Data storage</h2>
-    <p>All data is stored in MongoDB. Card images are stored on the server filesystem. We apply encryption in transit (TLS) and access controls to protect your data.</p>
-
-    <h2>Data retention</h2>
-    <p>We retain your data for as long as your account is active. When you delete your account, we remove your personal data within 30 days. Card images and order records may be retained for legal or operational purposes.</p>
-
-    <h2>Your rights</h2>
-    <p>You have the right to:</p>
+    <h2>10. Data Breach Notification (GDPR Art. 33-34, nFADP Art. 24, PDPA s.26A)</h2>
+    <p>In the event of a personal data breach:</p>
     <ul>
-      <li>Access all personal data we hold about you.</li>
-      <li>Request correction of inaccurate data.</li>
-      <li>Request deletion of your account and associated data.</li>
-      <li>Export your data in a portable format.</li>
+      <li>We will notify the supervisory authority within 72 hours (GDPR Art. 33, nFADP Art. 24).</li>
+      <li>Affected individuals will be notified without undue delay if the breach poses high risk (GDPR Art. 34).</li>
+      <li>Breach records are maintained per GDPR Art. 33(5).</li>
     </ul>
-    <p>To exercise these rights, contact us at <a href="mailto:privacy@uwitz.org" style="color: var(--text-link);">privacy@uwitz.org</a>.</p>
 
-    <h2>Changes to this policy</h2>
-    <p>We may update this policy from time to time. Significant changes will be communicated via email or a notice on the platform.</p>
+    <h2>11. Data Protection Impact Assessments (GDPR Art. 35, nFADP Art. 22)</h2>
+    <p>We conduct DPIAs for high-risk processing including: NFC card serving, physical card shipping with PII, payment processing via Stripe, and corporate card management. DPIA summaries are available upon request.</p>
+
+    <h2>12. Records of Processing Activities (GDPR Art. 30, nFADP Art. 12)</h2>
+    <p>We maintain ROPA covering all processing activities. Available to supervisory authorities on request.</p>
+
+    <h2>13. Cookies and Tracking</h2>
+    <p>We use only essential cookies:</p>
+    <ul>
+      <li><code>uwitz_session</code> — Session authentication (7 days, HttpOnly, Secure, SameSite=Lax)</li>
+      <li><code>uwitz_csrf</code> — CSRF protection (7 days, HttpOnly=false for JS access, Secure, SameSite=Lax)</li>
+    </ul>
+    <p>No analytics, advertising, or third-party tracking cookies. Non-essential cookies require your explicit consent.</p>
+
+    <h2>14. Changes to This Policy</h2>
+    <p>We may update this policy. Significant changes will be communicated via email or platform notice at least 30 days before taking effect. The "Last updated" date above will be revised.</p>
 
     <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-faint);">
       <a href="/" style="color: var(--text-link); font: 500 13px/1 var(--font-sans);">← Back to Uwitz Cards</a>
+      <div style="margin-top: 1rem; font-size: 12px; color: var(--text-muted);">
+        <a href="/api/compliance/privacy-notice/account_management" style="color: var(--text-link); margin-right: 1rem;">Account Management Notice</a>
+        <a href="/api/compliance/privacy-notice/service_provision" style="color: var(--text-link); margin-right: 1rem;">Service Provision Notice</a>
+        <a href="/api/compliance/privacy-notice/order_fulfillment" style="color: var(--text-link);">Order Fulfillment Notice</a>
+      </div>
     </div>
-  </div>
+  </main>
 </body>
 </html>
