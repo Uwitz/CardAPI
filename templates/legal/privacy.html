@@ -11,203 +11,220 @@
   <link rel="stylesheet" href="/static/css/components.css">
   <link rel="stylesheet" href="/static/css/utilities.css">
   <style>
-    .legal-layout { max-width: 800px; margin: 0 auto; padding: 48px 24px 80px; }
-    .legal-layout h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .legal-layout h2 { font-size: 1.25rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.75rem; color: var(--text-strong); }
-    .legal-layout h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-strong); }
-    .legal-layout p { font: 400 14px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 1rem; }
+    .legal-layout { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+    .legal-header { margin-bottom: 2rem; }
+    .legal-header-label { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+    .legal-brand { font: 600 13px/1 var(--font-mono); letter-spacing: 0.1em; color: var(--text-muted); }
+    .legal-badge { display: inline-block; padding: 3px 10px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-sm); font: 500 11px/1 var(--font-mono); letter-spacing: 0.05em; color: var(--text-muted); }
+    .legal-layout h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.02em; }
+    .legal-intro { font: 400 16px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 1.5rem; }
+    .legal-meta { font: 500 12px/1.5 var(--font-mono); color: var(--text-muted); margin-bottom: 2rem; }
+    .legal-toc { background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 2.5rem; }
+    .legal-toc h3 { font: 600 11px/1 var(--font-mono); letter-spacing: 0.1em; color: var(--text-muted); margin: 0 0 12px; text-transform: uppercase; }
+    .legal-toc ul { margin: 0; padding: 0; list-style: none; }
+    .legal-toc li { margin-bottom: 6px; }
+    .legal-toc a { font: 400 14px/1.5 var(--font-sans); color: var(--text-link); text-decoration: none; }
+    .legal-toc a:hover { text-decoration: underline; }
+    .legal-layout h2 { font-size: 1.25rem; font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; color: var(--text-strong); letter-spacing: -0.01em; }
+    .legal-layout h3 { font-size: 1.05rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text-strong); }
+    .legal-layout p { font: 400 15px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 1rem; }
     .legal-layout ul { margin: 0 0 1rem 1.25rem; }
-    .legal-layout li { font: 400 14px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 0.25rem; }
+    .legal-layout li { font: 400 15px/1.7 var(--font-sans); color: var(--text-body); margin-bottom: 0.5rem; }
     .legal-layout table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 13px; }
-    .legal-layout th, .legal-layout td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; }
-    .legal-layout th { background: var(--bg-inset); font-weight: 600; }
-    .legal-meta { font: 500 12px/1 var(--font-mono); color: var(--text-muted); margin-bottom: 2rem; }
+    .legal-layout th, .legal-layout td { padding: 10px 12px; border: 1px solid var(--border); text-align: left; }
+    .legal-layout th { background: var(--bg-inset); font-weight: 600; font-size: 12px; }
+    .legal-layout td { background: transparent; }
+    .legal-layout a { color: var(--text-link); text-decoration: underline; text-underline-offset: 2px; }
     .legal-notice { padding: 14px 16px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 2rem; }
-    .legal-notice p { font: 400 12px/1.6 var(--font-sans); color: var(--text-muted); margin: 0; }
-    .compliance-badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; margin-right: 6px; }
+    .legal-notice p { font: 400 13px/1.6 var(--font-sans); color: var(--text-muted); margin: 0; }
+    .compliance-badges { margin-top: 8px; }
+    .compliance-badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 10px; font-weight: 600; margin-right: 4px; margin-bottom: 4px; }
     .badge-gdpr { background: #dbeafe; color: #1e40af; }
     .badge-nfadp { background: #fef3c7; color: #92400e; }
     .badge-fadp { background: #fce7f3; color: #9d174d; }
     .badge-pdpa { background: #dcfce7; color: #166534; }
     .badge-coppa { background: #f3e8ff; color: #7c3aed; }
+    .legal-footer-nav { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-faint); }
+    .legal-footer-nav a { color: var(--text-link); font: 500 13px/1 var(--font-sans); text-decoration: none; }
+    .legal-footer-nav a:hover { text-decoration: underline; }
+    .legal-footer-links { margin-top: 1rem; font-size: 12px; color: var(--text-muted); }
+    .legal-footer-links a { color: var(--text-muted); text-decoration: none; margin-right: 1rem; }
+    .legal-footer-links a:hover { color: var(--text-link); }
   </style>
 </head>
 <body style="background: var(--bg-1); min-height: 100vh;">
   <main class="legal-layout">
-    <a href="/" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; margin-bottom: 24px;">
-      <img src="/static/assets/NFCCard.png" alt="" style="width: 24px; height: auto;">
-      <span style="font: 600 12px/1 var(--font-mono); letter-spacing: 0.1em; color: var(--text-strong);">UWITZ CARDS</span>
-    </a>
-
-    <h1>Privacy Policy</h1>
-    <div class="legal-meta">
-      Effective 7 September 2026 · Last updated 7 September 2026
-      <div style="margin-top: 8px;">
-        <span class="compliance-badge badge-gdpr">GDPR (EU)</span>
-        <span class="compliance-badge badge-nfadp">nFADP (CH)</span>
-        <span class="compliance-badge badge-fadp">FADP (CH)</span>
-        <span class="compliance-badge badge-pdpa">PDPA (SG)</span>
-        <span class="compliance-badge badge-coppa">COPPA (US)</span>
+    <header class="legal-header">
+      <div class="legal-header-label">
+        <span class="legal-brand">UWITZ CARDS</span>
+        <span class="legal-badge">LEGAL</span>
       </div>
-    </div>
+      <h1>Privacy Policy</h1>
+      <p class="legal-intro">We sell NFC business cards. It would be difficult to explain a policy that gave us licence to do the things we tell clients not to do. This one describes what actually happens, in the order it happens.</p>
+      <div class="legal-meta">
+        Effective 7 September 2026<br>
+        Last updated 7 September 2026
+        <div class="compliance-badges">
+          <span class="compliance-badge badge-gdpr">GDPR</span>
+          <span class="compliance-badge badge-nfadp">nFADP</span>
+          <span class="compliance-badge badge-fadp">FADP</span>
+          <span class="compliance-badge badge-pdpa">PDPA</span>
+          <span class="compliance-badge badge-coppa">COPPA</span>
+        </div>
+      </div>
+    </header>
+
+    <nav class="legal-toc">
+      <h3>On this page</h3>
+      <ul>
+        <li><a href="#who-we-are">1. Who we are</a></li>
+        <li><a href="#what-we-collect">2. What we collect</a></li>
+        <li><a href="#what-we-do-not-do">3. What we do not do</a></li>
+        <li><a href="#lawful-basis">4. Why we may lawfully hold it</a></li>
+        <li><a href="#recipients">5. Who else sees it</a></li>
+        <li><a href="#retention">6. How long we keep it</a></li>
+        <li><a href="#international">7. International transfers</a></li>
+        <li><a href="#rights">8. Your rights</a></li>
+        <li><a href="#security">9. How it is protected</a></li>
+        <li><a href="#changes">10. Changes</a></li>
+        <li><a href="#contact">11. Contact</a></li>
+      </ul>
+    </nav>
 
     <div class="legal-notice">
-      <p><strong style="color: var(--text-muted);">Legal status:</strong> Uwitz Cards is currently unincorporated. We are preparing to legally register and operate under Estonia in the foreseeable future. This policy complies with GDPR (EU), nFADP/FADP (Switzerland), PDPA (Singapore), and COPPA (US).</p>
+      <p><strong style="color: var(--text-muted);">Legal status:</strong> Uwitz Cards is currently unincorporated. We are preparing to legally register and operate under Estonia in the foreseeable future. All Stripe transactions are processed via our Financial Representative based in Malaysia.</p>
     </div>
 
-    <h2>1. Controller and Contact</h2>
-    <p><strong>Data Controller:</strong> Uwitz Cards<br>
-    <strong>Contact:</strong> <a href="mailto:privacy@uwitz.org" style="color: var(--text-link); text-decoration: underline; text-underline-offset: 2px;">privacy@uwitz.org</a><br>
-    <strong>Data Protection Officer:</strong> <a href="mailto:dpo@uwitz.org" style="color: var(--text-link); text-decoration: underline; text-underline-offset: 2px;">dpo@uwitz.org</a></p>
+    <section id="who-we-are">
+      <h2>1. Who we are</h2>
+      <p><strong>Uwitz Cards</strong> is the data controller for everything described in this policy. Uwitz Cards is not yet a fully incorporated entity — we are preparing to legally register and operate in Estonia in the foreseeable future.</p>
+      <p>This policy covers <strong>uwitz.cards</strong> and the commercial products and services sold from it. It does not cover <a href="https://uwitz.org">uwitz.org</a>, which publishes its own policy, or any deployment of our software that you run yourself — in that case you are the controller and we are not involved.</p>
+    </section>
 
-    <h2>2. What Personal Data We Process</h2>
-    <p>We process only the personal data necessary for the purposes described below. The categories of personal data depend on how you use our service:</p>
-    <table>
-      <thead>
-        <tr><th>Category</th><th>Data Elements</th><th>Source</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Account Data</td><td>Email, username, display name, password hash (bcrypt), role, status, referral code</td><td>You (registration)</td></tr>
-        <tr><td>SSO Data</td><td>Email, display name, group memberships from Entra ID/Irys</td><td>Identity Provider</td></tr>
-        <tr><td>Card Data</td><td>Card ID, type, tier, vCard content, redirect URL, template fields, images</td><td>You (card creation)</td></tr>
-        <tr><td>Order Data</td><td>Shipping address, order ID, card type/tier, amount, payment status</td><td>You (ordering)</td></tr>
-        <tr><td>Payment Data</td><td>Stripe customer ID, payment intent, invoice ID (no card numbers stored)</td><td>Stripe</td></tr>
-        <tr><td>Usage Data</td><td>Card tap counts (anonymous, no IP/device tracking)</td><td>Automated</td></tr>
-        <tr><td>Security Data</td><td>IP address, user agent, timestamps, actions (audit logs)</td><td>Automated</td></tr>
-        <tr><td>Consent Records</td><td>Consent type, granted/withdrawn, timestamp, IP, user agent</td><td>You (consent UI)</td></tr>
-        <tr><td>Age Verification</td><td>Birth date, age category, parental consent status</td><td>You (age check)</td></tr>
-      </tbody>
-    </table>
+    <section id="what-we-collect">
+      <h2>2. What we collect</h2>
+      <h3>Visiting this website</h3>
+      <p>Our web server writes an access log entry for each request: your IP address, the time, the path requested, the HTTP status, your browser's user-agent string, and the referring page if your browser sent one. This is ordinary server logging, not a profile — we do not tie these entries to a person and we do not build behavioural records from them.</p>
+      <p>This site sets <strong>no cookies</strong> except for essential session and CSRF tokens. It runs <strong>no analytics</strong>, no tag manager, no advertising or social pixels, and no session recording. There is nothing to opt out of because there is nothing running.</p>
 
-    <h2>3. Purposes and Lawful Bases (GDPR Art. 6, nFADP Art. 31, PDPA)</h2>
-    <table>
-      <thead>
-        <tr><th>Purpose</th><th>Lawful Basis</th><th>Regulation Reference</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Account creation & management</td><td>Contract (Art. 6(1)(b) GDPR)</td><td>GDPR Art. 6(1)(b), nFADP Art. 31, PDPA s.13</td></tr>
-        <tr><td>Card creation & NFC serving</td><td>Contract (Art. 6(1)(b) GDPR)</td><td>GDPR Art. 6(1)(b), nFADP Art. 31, PDPA s.13</td></tr>
-        <tr><td>Order fulfillment & shipping</td><td>Contract (Art. 6(1)(b) GDPR)</td><td>GDPR Art. 6(1)(b), nFADP Art. 31, PDPA s.13</td></tr>
-        <tr><td>Payment processing</td><td>Contract (Art. 6(1)(b) GDPR)</td><td>GDPR Art. 6(1)(b), nFADP Art. 31, PDPA s.13</td></tr>
-        <tr><td>Transactional emails</td><td>Legitimate Interests (Art. 6(1)(f) GDPR)</td><td>GDPR Art. 6(1)(f), nFADP Art. 31, PDPA s.17</td></tr>
-        <tr><td>Security & fraud prevention</td><td>Legitimate Interests (Art. 6(1)(f) GDPR)</td><td>GDPR Art. 6(1)(f), nFADP Art. 31, PDPA s.24</td></tr>
-        <tr><td>Legal compliance</td><td>Legal Obligation (Art. 6(1)(c) GDPR)</td><td>GDPR Art. 6(1)(c), nFADP Art. 31, PDPA s.24</td></tr>
-        <tr><td>Analytics / Marketing</td><td>Consent (Art. 6(1)(a) GDPR)</td><td>GDPR Art. 6(1)(a), nFADP Art. 31, PDPA s.13</td></tr>
-      </tbody>
-    </table>
+      <h3>Creating an account</h3>
+      <p>When you sign up, we collect your email address, a display name, and a password hash. If you use SSO (Entra ID or Irys), we receive your email and group memberships from the identity provider.</p>
 
-    <h2>4. Special Categories & Children's Data (COPPA)</h2>
-    <p>We do not process special category data (health, biometrics, etc.) under GDPR Art. 9. For children's data:</p>
-    <ul>
-      <li><strong>Under 13:</strong> We do not knowingly collect personal data from children under 13 without verifiable parental consent (COPPA). Age verification is required at registration.</li>
-      <li><strong>Ages 13–17:</strong> Standard data subject rights apply with enhanced protections.</li>
-      <li><strong>Parental Rights:</strong> Parents can review, correct, or delete their child's data at any time by contacting <a href="mailto:privacy@uwitz.org">privacy@uwitz.org</a>.</li>
-    </ul>
+      <h3>Card data</h3>
+      <p>When you create a card, you provide vCard content (name, phone, email, social links), a redirect URL, and optional custom fields and images. This content belongs to you — we only store and serve it.</p>
 
-    <h2>5. Data Retention (GDPR Art. 5(1)(e), nFADP Art. 5, PDPA s.25)</h2>
-    <table>
-      <thead>
-        <tr><th>Category</th><th>Retention Period</th><th>Legal Basis</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Account Data</td><td>Account lifetime + 30 days after deletion</td><td>Contract + Legal Obligation</td></tr>
-        <tr><td>Card Data</td><td>Card lifetime + 30 days after account deletion</td><td>Contract</td></tr>
-        <tr><td>Order & Shipping Data</td><td>7 years (tax/legal requirement)</td><td>Legal Obligation</td></tr>
-        <tr><td>Payment Data</td><td>7 years (tax/legal requirement)</td><td>Legal Obligation</td></tr>
-        <tr><td>Email & Communication Logs</td><td>1 year</td><td>Legitimate Interests</td></tr>
-        <tr><td>Audit & Security Logs</td><td>1 year</td><td>Legitimate Interests / Legal Obligation</td></tr>
-        <tr><td>Consent Records</td><td>Account lifetime + 3 years</td><td>Legal Obligation (GDPR Art. 7)</td></tr>
-        <tr><td>Session Data</td><td>7 days</td><td>Contract</td></tr>
-        <tr><td>Age Verification</td><td>Account lifetime + 3 years</td><td>Legal Obligation (COPPA)</td></tr>
-      </tbody>
-    </table>
+      <h3>Orders and shipping</h3>
+      <p>If you order physical cards, we collect your shipping address, order details, and payment information via Stripe.</p>
 
-    <h2>6. Data Recipients & International Transfers</h2>
-    <p><strong>Internal:</strong> Uwitz Cards staff (need-to-know basis).<br>
-    <strong>Processors:</strong></p>
-    <ul>
-      <li><strong>Stripe (US):</strong> Payment processing — Standard Contractual Clauses (SCCs) in place.</li>
-      <li><strong>SMTP2Go (NZ/US):</strong> Email delivery — SCCs in place.</li>
-      <li><strong>MongoDB Atlas (EU/US):</strong> Database hosting — SCCs + BCRs.</li>
-    </ul>
-    <p>All international transfers rely on adequacy decisions, SCCs, or Binding Corporate Rules as required by GDPR Chapter V, nFADP Art. 16-17, PDPA s.26.</p>
+      <h3>Payments</h3>
+      <p>Card payments are handled by Stripe using their hosted fields. <strong>Card numbers, expiry dates, and security codes never reach a Uwitz Cards server</strong> — they go from your browser to Stripe directly, and we could not log them if we wanted to. What our server receives and records is the amount, payment frequency, any reference you provide, and a Stripe payment-method token.</p>
+    </section>
 
-    <h2>7. Your Rights (GDPR Art. 15-22, nFADP Art. 17-18, PDPA s.21-22)</h2>
-    <p>You have the following rights regarding your personal data:</p>
-    <table>
-      <thead>
-        <tr><th>Right</th><th>Description</th><th>How to Exercise</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Access (Art. 15 GDPR)</td><td>Obtain copy of your data and processing info</td><td><a href="/api/compliance/data-export" style="color: var(--text-link);">API: GET /api/compliance/data-export</a></td></tr>
-        <tr><td>Rectification (Art. 16 GDPR)</td><td>Correct inaccurate or incomplete data</td><td><a href="/api/compliance/rectify" style="color: var(--text-link);">API: POST /api/compliance/rectify</a></td></tr>
-        <tr><td>Erasure (Art. 17 GDPR)</td><td>Delete your data (right to be forgotten)</td><td><a href="/api/compliance/account" style="color: var(--text-link);">API: DELETE /api/compliance/account</a></td></tr>
-        <tr><td>Restriction (Art. 18 GDPR)</td><td>Limit processing of your data</td><td><a href="/api/compliance/restrict-processing" style="color: var(--text-link);">API: POST /api/compliance/restrict-processing</a></td></tr>
-        <tr><td>Portability (Art. 20 GDPR)</td><td>Receive your data in structured format</td><td><a href="/api/compliance/data-export" style="color: var(--text-link);">API: GET /api/compliance/data-export</a></td></tr>
-        <tr><td>Objection (Art. 21 GDPR)</td><td>Object to processing based on legitimate interests</td><td><a href="/api/compliance/object-processing" style="color: var(--text-link);">API: POST /api/compliance/object-processing</a></td></tr>
-        <tr><td>Withdraw Consent (Art. 7 GDPR)</td><td>Withdraw consent at any time</td><td><a href="/api/compliance/consent" style="color: var(--text-link);">API: POST /api/compliance/consent/{type}</a></td></tr>
-        <tr><td>Complaint</td><td>Lodge complaint with supervisory authority</td><td>Contact your local DPA or <a href="mailto:privacy@uwitz.org">privacy@uwitz.org</a></td></tr>
-      </tbody>
-    </table>
+    <section id="what-we-do-not-do">
+      <h2>3. What we do not do</h2>
+      <p>Stated plainly, so it can be held against us:</p>
+      <ul>
+        <li>We do not sell, rent, or trade personal data. There is no circumstance in which this changes without your explicit consent.</li>
+        <li>We do not use your data to train machine-learning models, ours or anyone else's.</li>
+        <li>We do not run advertising, and we do not share data with advertising or data-broker networks.</li>
+        <li>We do not track you across other websites, and we honour <code>Do Not Track</code> and Global Privacy Control by having nothing to disable.</li>
+        <li>We do not read the contents of what you store in your cards. Your vCard data, redirects, and custom content are yours alone.</li>
+      </ul>
+    </section>
 
-    <h2>8. Automated Decision-Making (GDPR Art. 22)</h2>
-    <p>We do not use solely automated decision-making (including profiling) that produces legal effects or significantly affects you. Any automated processes (e.g., fraud detection) include human review.</p>
+    <section id="lawful-basis">
+      <h2>4. Why we may lawfully hold it</h2>
+      <p>Under the UK GDPR, EU GDPR, Swiss nFADP, and Singapore PDPA we rely on the following bases:</p>
+      <table>
+        <thead>
+          <tr><th>Data</th><th>Basis</th><th>Reasoning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Server access logs</td><td>Legitimate interests</td><td>Operating the site securely, diagnosing faults, and investigating abuse.</td></tr>
+          <tr><td>Authentication logs</td><td>Legitimate interests</td><td>Detecting credential attacks against our systems.</td></tr>
+          <tr><td>Account data</td><td>Contract</td><td>Providing the service you contracted for.</td></tr>
+          <tr><td>Card content</td><td>Contract</td><td>Storing and serving your card data as part of the service.</td></tr>
+          <tr><td>Correspondence</td><td>Legitimate interests / contract</td><td>Answering you, and performing an agreement where one exists.</td></tr>
+          <tr><td>Billing and payment records</td><td>Contract and legal obligation</td><td>Taking payment, and meeting tax and accounting retention rules.</td></tr>
+        </tbody>
+      </table>
+      <p>Where we rely on legitimate interests, we have considered whether our interest is overridden by your rights, and we have kept the data minimal so that it is not. You can object at any time — see section 8.</p>
+    </section>
 
-    <h2>9. Privacy by Design & Default (GDPR Art. 25, nFADP Art. 7)</h2>
-    <p>We implement privacy by design and by default:</p>
-    <ul>
-      <li><strong>Data Minimization:</strong> We collect only data necessary for each purpose.</li>
-      <li><strong>Opt-in by Default:</strong> Analytics, marketing, third-party sharing, and non-essential cookies require explicit opt-in.</li>
-      <li><strong>Encryption:</strong> TLS 1.3 for data in transit; AES-256 for data at rest.</li>
-      <li><strong>Access Controls:</strong> Role-based access, least privilege, audit logging.</li>
-      <li><strong>Automatic Deletion:</strong> Data automatically deleted after retention periods.</li>
-    </ul>
+    <section id="recipients">
+      <h2>5. Who else sees it</h2>
+      <p>We use a small number of processors. Each one is listed here because we think an unenumerated "trusted partners" clause is worthless to you.</p>
+      <table>
+        <thead>
+          <tr><th>Recipient</th><th>What they receive</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Stripe</td><td>Card details entered on our billing page, payment amounts, any reference you provide, IP address</td><td>Card processing. Stripe is a controller in its own right for fraud prevention.</td></tr>
+          <tr><td>SMTP2Go</td><td>Email addresses, message content, timestamps</td><td>Email delivery for transactional and account emails.</td></tr>
+          <tr><td>MongoDB Atlas</td><td>Account data, card content, order records, logs</td><td>Database hosting. Data stored in EU by default, with US option.</td></tr>
+          <tr><td>Our hosting provider</td><td>Everything transiting the server, as infrastructure operator</td><td>Running the site.</td></tr>
+        </tbody>
+      </table>
+      <p>We will also disclose data where we are legally compelled to. If we receive a valid order, we will tell you unless we are prohibited from doing so, and we will challenge requests we consider overbroad.</p>
+    </section>
 
-    <h2>9. Security Measures (GDPR Art. 32, nFADP Art. 8, PDPA s.24)</h2>
-    <ul>
-      <li>TLS 1.3 for all connections</li>
-      <li>AES-256 encryption for data at rest (MongoDB encryption at rest)</li>
-      <li>Bcrypt for password hashing (cost factor 12)</li>
-      <li>Rate limiting on auth endpoints (5 req/min)</li>
-      <li>Account lockout after 5 failed attempts (30 min)</li>
-      <li>CSRF protection with session-bound tokens</li>
-      <li>Content Security Policy (CSP) headers</li>
-      <li>Regular security assessments</li>
-    </ul>
+    <section id="retention">
+      <h2>6. How long we keep it</h2>
+      <ul>
+        <li><strong>Server access logs</strong> — 90 days, then deleted.</li>
+        <li><strong>Authentication logs</strong> — 12 months, as a security record.</li>
+        <li><strong>Account data</strong> — until the account is closed, then deleted within 30 days.</li>
+        <li><strong>Card content</strong> — until the card is deleted, then deleted within 30 days.</li>
+        <li><strong>Billing records</strong> — seven years, or whatever the applicable tax law requires, whichever is longer. We cannot delete these on request.</li>
+        <li><strong>Correspondence</strong> — for the life of the relationship plus 12 months.</li>
+      </ul>
+    </section>
 
-    <h2>10. Data Breach Notification (GDPR Art. 33-34, nFADP Art. 24, PDPA s.26A)</h2>
-    <p>In the event of a personal data breach:</p>
-    <ul>
-      <li>We will notify the supervisory authority within 72 hours (GDPR Art. 33, nFADP Art. 24).</li>
-      <li>Affected individuals will be notified without undue delay if the breach poses high risk (GDPR Art. 34).</li>
-      <li>Breach records are maintained per GDPR Art. 33(5).</li>
-    </ul>
+    <section id="international">
+      <h2>7. International transfers</h2>
+      <p>Our engineering is distributed across the EU and the US, and some of the processors above are US-based. Where personal data leaves the UK or EEA, it is transferred under Standard Contractual Clauses or an equivalent approved mechanism, together with technical measures — encryption in transit and at rest — intended to make the data useless to anyone intercepting it.</p>
+    </section>
 
-    <h2>11. Data Protection Impact Assessments (GDPR Art. 35, nFADP Art. 22)</h2>
-    <p>We conduct DPIAs for high-risk processing including: NFC card serving, physical card shipping with PII, payment processing via Stripe, and corporate card management. DPIA summaries are available upon request.</p>
+    <section id="rights">
+      <h2>8. Your rights</h2>
+      <p>If you are in the UK or EEA you have the right to access a copy of your data, correct it, have it erased, restrict or object to how we use it, receive it in a portable format, and withdraw consent where consent was the basis. If you are in California you have equivalent rights of access, deletion, correction, and portability, and a right not to be discriminated against for exercising them — noting that we do not sell or share personal information as those terms are defined under the CCPA.</p>
+      <p>If you are in Singapore you have rights under the PDPA to access and correct your personal data.</p>
+      <p>Write to <a href="mailto:privacy@uwitz.org">privacy@uwitz.org</a>. We will respond within one month. We do not require you to create an account or prove identity beyond what is necessary to be confident we are not disclosing your data to someone else.</p>
+      <p>If you are unhappy with our response you can complain to your supervisory authority. In the UK that is the Information Commissioner's Office at <a href="https://ico.org.uk">ico.org.uk</a>. In Switzerland, contact the Federal Data Protection Commissioner. In Singapore, contact the Personal Data Protection Commission. We would rather you came to us first, but that is your choice, not a precondition.</p>
+    </section>
 
-    <h2>12. Records of Processing Activities (GDPR Art. 30, nFADP Art. 12)</h2>
-    <p>We maintain ROPA covering all processing activities. Available to supervisory authorities on request.</p>
+    <section id="security">
+      <h2>9. How it is protected</h2>
+      <ul>
+        <li>All traffic is served over TLS 1.3.</li>
+        <li>Credentials are stored as salted bcrypt hashes, never in recoverable form.</li>
+        <li>Authentication endpoints are rate-limited, and failures are logged and reviewed.</li>
+        <li>Access to production systems is scoped, time-bound, and logged.</li>
+        <li>Database encryption at rest via MongoDB Atlas.</li>
+      </ul>
+      <p>If we suffer a breach affecting your personal data, we will notify the relevant supervisory authority within 72 hours where required, and we will tell you directly where there is a meaningful risk to you.</p>
+    </section>
 
-    <h2>13. Cookies and Tracking</h2>
-    <p>We use only essential cookies:</p>
-    <ul>
-      <li><code>uwitz_session</code> — Session authentication (7 days, HttpOnly, Secure, SameSite=Lax)</li>
-      <li><code>uwitz_csrf</code> — CSRF protection (7 days, HttpOnly=false for JS access, Secure, SameSite=Lax)</li>
-    </ul>
-    <p>No analytics, advertising, or third-party tracking cookies. Non-essential cookies require your explicit consent.</p>
+    <section id="changes">
+      <h2>10. Changes</h2>
+      <p>If we change this policy materially, we will update the version and effective date above and notify contract holders directly. We will not make a substantive change quietly and rely on you re-reading the page.</p>
+    </section>
 
-    <h2>14. Changes to This Policy</h2>
-    <p>We may update this policy. Significant changes will be communicated via email or platform notice at least 30 days before taking effect. The "Last updated" date above will be revised.</p>
+    <section id="contact">
+      <h2>11. Contact</h2>
+      <p>Privacy questions and rights requests: <a href="mailto:privacy@uwitz.org">privacy@uwitz.org</a></p>
+      <p>Security reports: <a href="mailto:security@uwitz.org">security@uwitz.org</a></p>
+      <p>Everything else: <a href="mailto:hello@uwitz.org">hello@uwitz.org</a></p>
+      <p>See also our <a href="/terms">Terms of Service</a>.</p>
+    </section>
 
-    <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-faint);">
-      <a href="/" style="color: var(--text-link); font: 500 13px/1 var(--font-sans);">← Back to Uwitz Cards</a>
-      <div style="margin-top: 1rem; font-size: 12px; color: var(--text-muted);">
-        <a href="/api/compliance/privacy-notice/account_management" style="color: var(--text-link); margin-right: 1rem;">Account Management Notice</a>
-        <a href="/api/compliance/privacy-notice/service_provision" style="color: var(--text-link); margin-right: 1rem;">Service Provision Notice</a>
-        <a href="/api/compliance/privacy-notice/order_fulfillment" style="color: var(--text-link);">Order Fulfillment Notice</a>
+    <footer class="legal-footer-nav">
+      <a href="/">&larr; Back to Uwitz Cards</a>
+      <div class="legal-footer-links">
+        <a href="/terms">Terms of Service</a>
+        <a href="mailto:privacy@uwitz.org">Contact</a>
       </div>
-    </div>
+    </footer>
   </main>
 </body>
 </html>
