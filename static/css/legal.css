@@ -105,12 +105,12 @@ body { min-height: 100vh; }
   transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 .legal-sidebar-nav a:hover { color: var(--text-strong); background: var(--surface-card); text-decoration: none; }
-.legal-sidebar-nav a.active { color: var(--red-700); }
+.legal-sidebar-nav a.active { color: var(--red-300); }
 .legal-num {
   font: var(--fw-medium) 11px/1 var(--font-mono);
   color: var(--text-faint); margin-right: 6px;
 }
-.legal-sidebar-nav a.active .legal-num { color: var(--red-700); }
+.legal-sidebar-nav a.active .legal-num { color: var(--red-300); }
 
 /* ============================================================
    LEGAL PROSE (from ds.css .legal)

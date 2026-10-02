@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Processing Addendum — {{ brand }}</title>
-  <meta name="description" content="Data Processing Addendum for Uwitz Cards — GDPR Art. 28, nFADP Art. 9, PDPA s.24 compliant DPA.">
+  <meta name="description" content="Data Processing Addendum for Uwitz Cards — GDPR Art. 28, nFADP Art. 9, Malaysian PDPA 2010 compliant DPA.">
   <meta name="theme-color" content="#09090A">
   <meta name="robots" content="index,follow">
   <link rel="icon" type="image/png" href="/static/assets/NFCCard.png">
@@ -26,7 +26,7 @@
     <div class="legal-meta">
       <span>Version 1.0</span>
       <span>Effective 7 September 2026</span>
-      <span>GDPR Art. 28 · nFADP Art. 9 · PDPA s.24</span>
+      <span>GDPR Art. 28 · nFADP Art. 9 · Malaysian PDPA 2010</span>
     </div>
   </div>
 </section>
@@ -61,7 +61,7 @@
       <li><strong>Special Categories:</strong> None processed.</li>
     </ul>
 
-    <h2 id="obligations">3. Processor's obligations (GDPR Art. 28(3), nFADP Art. 9, PDPA s.24)</h2>
+    <h2 id="obligations">3. Processor's obligations (GDPR Art. 28(3), nFADP Art. 9, Malaysian PDPA 2010)</h2>
     <h3>3.1 Processing instructions</h3>
     <p>The Processor shall process personal data only on documented instructions from the Controller, including transfers to third countries, unless required by EU or Member State law. The Processor shall inform the Controller if an instruction infringes GDPR or other applicable law.</p>
 
@@ -88,7 +88,7 @@
         <tbody>
           <tr><td>Stripe Inc.</td><td>Payment processing</td><td>USA</td><td>SCCs, PCI DSS Level 1</td></tr>
           <tr><td>SMTP2Go</td><td>Email delivery</td><td>New Zealand / USA</td><td>SCCs</td></tr>
-          <tr><td>MongoDB Atlas</td><td>Database hosting</td><td>EU / USA</td><td>SCCs, BCRs, SOC 2</td></tr>
+          <tr><td>MongoDB Atlas</td><td>Database hosting</td><td>EU</td><td>SCCs, BCRs, SOC 2</td></tr>
           <tr><td>Entra ID (Microsoft)</td><td>Identity provider</td><td>Global</td><td>Standard Contractual Clauses</td></tr>
         </tbody>
       </table>
@@ -107,15 +107,16 @@
     <h3>3.8 Audit rights</h3>
     <p>The Controller may audit the Processor's compliance with this DPA upon reasonable notice, or require the Processor to provide a SOC 2 Type II report or equivalent certification. The Processor shall make available all information necessary to demonstrate compliance.</p>
 
-    <h2 id="transfers">4. International data transfers (GDPR Ch. V, nFADP Art. 16-17, PDPA s.26)</h2>
-    <p>Personal data may be transferred to countries outside the EEA/Switzerland/Singapore. Transfers rely on:</p>
+    <h2 id="transfers">4. International data transfers (GDPR Ch. V, nFADP Art. 16-17, Malaysian PDPA 2010 s.129)</h2>
+    <p>Personal data may be transferred to countries outside the EEA and Switzerland, including the USA, New Zealand, and Malaysia. Transfers rely on:</p>
     <ul>
       <li>Adequacy decisions (where applicable)</li>
       <li>Standard Contractual Clauses (SCCs) approved by the European Commission</li>
       <li>Binding Corporate Rules (BCRs) where applicable</li>
       <li>Derogations under GDPR Art. 49 (explicit consent, contract necessity)</li>
+      <li>The transfer limitation principle under the Malaysian PDPA 2010 (s.129) — any onward transfer out of Malaysia is made only to countries providing a comparable level of protection</li>
     </ul>
-    <p>Current sub-processor locations: USA (Stripe), New Zealand (SMTP2Go), Global (Microsoft Entra ID). SCCs are in place for all non-adequate jurisdictions.</p>
+    <p>Current sub-processor locations: EU (MongoDB Atlas), USA (Stripe), New Zealand / USA (SMTP2Go), Global (Microsoft Entra ID). SCCs are in place for all non-adequate jurisdictions.</p>
 
     <h2 id="dpa-liability">5. Liability and indemnification</h2>
     <p>Each party's liability is governed by the main agreement. The Processor's total liability for data protection breaches shall not exceed the fees paid by the Controller in the 12 months preceding the claim, except for willful misconduct or gross negligence.</p>
