@@ -1,0 +1,357 @@
+/* UWITZ CARDS — LEGAL PAGE DESIGN SYSTEM
+   Ported from uwitz.org (css/ds.css + legal page layouts).
+   Load AFTER base.css on legal pages only. */
+
+@font-face { font-family: 'Geist'; font-style: normal; font-weight: 400 800; font-display: swap; src: url('/static/assets/fonts/geist-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Geist'; font-style: normal; font-weight: 400 800; font-display: swap; src: url('/static/assets/fonts/geist-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('/static/assets/fonts/geist-mono-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('/static/assets/fonts/geist-mono-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root { --container-wide: 1440px; }
+
+body { min-height: 100vh; }
+
+/* ============================================================
+   BRAND PRIMITIVES (from ds.css)
+   ============================================================ */
+.u-eyebrow {
+  font: var(--fw-semibold) var(--fs-xs)/1 var(--font-sans);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  color: var(--text-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.u-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 0.8em; height: 0.9em;
+  flex-shrink: 0;
+  background: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 604 669'%3E%3Cpath d='M139.09 460.17 226.13 340.44 85.56 294.26 114.16 205.59 255.14 251.77 254.32 103.43 348.72 103.43 347.90 251.77 489.29 206.00 518.30 294.67 377.73 340.44 463.54 460.17 388.35 514.93 301.72 394.79 214.28 514.52Z'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 604 669'%3E%3Cpath d='M139.09 460.17 226.13 340.44 85.56 294.26 114.16 205.59 255.14 251.77 254.32 103.43 348.72 103.43 347.90 251.77 489.29 206.00 518.30 294.67 377.73 340.44 463.54 460.17 388.35 514.93 301.72 394.79 214.28 514.52Z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.u-label {
+  font: var(--fw-medium) var(--fs-2xs)/1 var(--font-sans);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   LEGAL HERO (from uwitz privacy.html / terms.html)
+   ============================================================ */
+.legal-hero {
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--line-1);
+  background: var(--bg-0);
+  background-image: var(--bg-vignette);
+}
+.legal-hero-inner {
+  position: relative; z-index: 1;
+  max-width: var(--container); margin: 0 auto;
+  padding: 72px 40px 52px;
+}
+.legal-hero h1 {
+  margin-top: 14px; max-width: 24ch;
+  font: var(--fw-medium) clamp(32px, 3.2vw, 42px)/1.08 var(--font-hero);
+  letter-spacing: -0.022em;
+  color: var(--text-strong);
+}
+.legal-hero-intro {
+  margin-top: 16px; max-width: 62ch;
+  font: var(--fw-regular) 15.5px/1.7 var(--font-sans);
+  color: var(--text-muted);
+}
+.legal-notice {
+  margin-top: 20px; padding: 14px 16px;
+  background: var(--surface-inset);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  max-width: 62ch;
+}
+.legal-notice p {
+  font: var(--fw-regular) 12px/1.6 var(--font-sans);
+  color: var(--text-faint); margin: 0;
+}
+.legal-notice strong { color: var(--text-muted); }
+.legal-meta {
+  margin-top: 20px; display: flex; gap: 20px; flex-wrap: wrap;
+  font: var(--fw-medium) 12px/1 var(--font-mono);
+  color: var(--text-faint);
+}
+
+/* ============================================================
+   LEGAL LAYOUT — sticky sidebar + prose (from uwitz legal pages)
+   ============================================================ */
+.legal-layout {
+  display: grid; grid-template-columns: 220px 1fr; gap: 48px;
+  max-width: var(--container); margin: 0 auto;
+  padding: 48px 40px 88px;
+}
+.legal-sidebar { position: sticky; top: 100px; align-self: start; }
+.legal-sidebar-title {
+  font: var(--fw-semibold) 11px/1 var(--font-mono);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-faint); margin-bottom: 16px;
+}
+.legal-sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
+.legal-sidebar-nav a {
+  font: var(--fw-regular) 13px/1.4 var(--font-sans);
+  color: var(--text-muted); text-decoration: none;
+  padding: 8px 12px; border-radius: var(--radius-md);
+  border-left: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.legal-sidebar-nav a:hover { color: var(--text-strong); background: var(--surface-card); text-decoration: none; }
+.legal-sidebar-nav a.active { color: var(--text-accent); border-left-color: var(--text-accent); background: var(--surface-card); }
+.legal-num {
+  font: var(--fw-medium) 11px/1 var(--font-mono);
+  color: var(--text-faint); margin-right: 6px;
+}
+.legal-sidebar-nav a.active .legal-num { color: var(--text-accent); }
+
+/* ============================================================
+   LEGAL PROSE (from ds.css .legal)
+   ============================================================ */
+.legal { max-width: 74ch; margin: 0 auto; }
+.legal h2 {
+  margin: 48px 0 0;
+  font: var(--fw-medium) 20px/1.3 var(--font-hero);
+  letter-spacing: var(--ls-tight);
+  color: var(--text-strong);
+  scroll-margin-top: 76px;
+}
+.legal h2:first-child { margin-top: 0; }
+.legal h3 {
+  margin: 28px 0 0;
+  font: var(--fw-semibold) 15px/1.4 var(--font-sans);
+  color: var(--text-strong);
+}
+.legal p, .legal li {
+  font: var(--fw-regular) 15px/1.75 var(--font-sans);
+  color: var(--text-muted);
+}
+.legal p { margin-top: 14px; }
+.legal ul { margin: 14px 0 0; padding-left: 20px; }
+.legal li { margin-top: 8px; }
+.legal li::marker { color: var(--text-faint); }
+.legal a { color: var(--text-strong); text-decoration: underline; text-underline-offset: 3px; }
+.legal strong { color: var(--text-body); font-weight: var(--fw-semibold); }
+.legal hr { margin: 44px 0 0; border: none; border-top: 1px solid var(--line-1); }
+.legal table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+.legal th, .legal td {
+  padding: 12px 14px; text-align: left; vertical-align: top;
+  border-bottom: 1px solid var(--line-1);
+  font: var(--fw-regular) 14px/1.6 var(--font-sans); color: var(--text-muted);
+}
+.legal th {
+  font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-sans);
+  letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--text-faint);
+}
+.legal td:first-child { color: var(--text-body); font-weight: var(--fw-medium); }
+.legal-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Cross-link to the sibling legal page (uwitz pattern) */
+.legal-xlink {
+  margin-top: 24px;
+  font: var(--fw-semibold) 13px/1 var(--font-hero);
+  color: var(--text-accent); text-decoration: none;
+}
+.legal-xlink:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* DPA signature block */
+.signature-block { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+.signature-field { margin-bottom: 1.5rem; }
+.signature-field label {
+  display: block; font: var(--fw-medium) 13px/1 var(--font-sans);
+  color: var(--text-body); margin-bottom: 8px;
+}
+.signature-field input {
+  width: 100%; margin-bottom: 8px;
+  background: var(--surface-inset);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  color: var(--text-strong);
+  font: var(--fw-medium) 14px/1 var(--font-sans);
+  padding: 0 var(--space-3); height: var(--control-md);
+  box-shadow: var(--shadow-inset);
+}
+
+/* ============================================================
+   SITE HEADER (from ds.css — uwitz chrome, cards routes)
+   ============================================================ */
+.site-header {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  background: rgba(9,9,10,0.86);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line-1);
+}
+.hdr-inner {
+  max-width: var(--container-wide); margin: 0 auto;
+  padding: 0 32px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+.hdr-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+.hdr-logo img { width: 20px; height: auto; display: block; flex: none; }
+.hdr-logo span {
+  font: var(--fw-semibold) 16px/1 var(--font-hero);
+  letter-spacing: 0.14em; color: #F3F1EF;
+}
+.hdr-logo:hover { text-decoration: none; }
+.hdr-nav {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 3px; border: 1px solid var(--line-1);
+  border-radius: 10px; background: rgba(20,20,22,0.45);
+}
+.nav-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 30px; padding: 0 13px; border-radius: 7px;
+  font: var(--fw-semibold) 12.5px/1 var(--font-sans);
+  text-decoration: none; white-space: nowrap;
+  color: var(--text-muted);
+  transition: background var(--dur-2) var(--ease-out),
+              color var(--dur-2) var(--ease-out),
+              box-shadow var(--dur-2) var(--ease-out);
+}
+.nav-item:hover {
+  background: var(--surface-hover);
+  color: var(--text-strong);
+  text-decoration: none;
+}
+.hdr-actions { display: flex; align-items: center; gap: 12px; }
+.hdr-signin {
+  display: flex; align-items: center; height: 32px; padding: 0 12px;
+  border-radius: var(--radius-md); color: #BDB9B6;
+  font: var(--fw-semibold) 12.5px/1 var(--font-sans);
+  text-decoration: none; white-space: nowrap;
+  transition: background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+.hdr-signin:hover { background: var(--surface-hover); color: var(--text-strong); text-decoration: none; }
+.hdr-cta {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 34px; padding: 0 18px; border-radius: 999px;
+  background: var(--accent); color: #FFFFFF;
+  font: var(--fw-semibold) 12.5px/1 var(--font-sans);
+  text-decoration: none; white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 4px 14px -6px rgba(0,0,0,0.8);
+  transition: transform var(--dur-1) var(--ease-out),
+              background var(--dur-2) var(--ease-out),
+              box-shadow var(--dur-2) var(--ease-out);
+}
+.hdr-cta:hover {
+  transform: translateY(-1px);
+  background: var(--accent-hover);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 7px 20px -6px rgba(0,0,0,0.85);
+  text-decoration: none; color: #FFFFFF;
+}
+
+/* ── Mobile menu ── */
+.hdr-burger {
+  display: none;
+  width: 38px; height: 34px; padding: 0 9px;
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 5px;
+  background: none; border: 1px solid var(--line-2);
+  border-radius: var(--radius-sm); cursor: pointer;
+}
+.hdr-burger span {
+  display: block; width: 18px; height: 1.5px; border-radius: 2px;
+  background: var(--text-body);
+  transition: transform var(--dur-2) var(--ease-out),
+              opacity var(--dur-1) var(--ease-out);
+}
+.hdr-burger.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.hdr-burger.is-open span:nth-child(2) { opacity: 0; }
+.hdr-burger.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.hdr-mobile {
+  display: none;
+  border-top: 1px solid var(--line-1);
+  background: rgba(9,9,10,0.97);
+  backdrop-filter: blur(8px);
+  padding: 10px 16px 16px;
+}
+.hdr-mobile[hidden] { display: none !important; }
+.hdr-mobile nav { display: flex; flex-direction: column; }
+.hdr-mobile-link {
+  padding: 13px 4px;
+  border-bottom: 1px solid var(--line-1);
+  font: var(--fw-semibold) 14px/1 var(--font-sans);
+  color: var(--text-body); text-decoration: none;
+}
+.hdr-mobile-link:hover { color: var(--text-strong); text-decoration: none; }
+.hdr-mobile-actions {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 16px; flex-wrap: wrap;
+}
+.hdr-mobile-actions .hdr-cta { flex: 1; min-width: 150px; height: 42px; }
+.hdr-mobile-actions .hdr-signin { height: 42px; padding: 0 14px; }
+
+/* ============================================================
+   SITE FOOTER (from ds.css — uwitz chrome, cards content)
+   ============================================================ */
+.site-footer {
+  border-top: 1px solid var(--line-1);
+  background: var(--bg-0);
+}
+.ftr-inner {
+  max-width: var(--container-wide); margin: 0 auto;
+  padding: 56px 40px 40px;
+  display: grid; grid-template-columns: minmax(240px, 1fr) 2.2fr;
+  gap: 56px; align-items: start;
+}
+.ftr-brand { max-width: 34ch; }
+.ftr-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.ftr-logo img { width: 20px; height: auto; display: block; flex: none; }
+.ftr-logo span { font: var(--fw-semibold) 15px/1 var(--font-hero); letter-spacing: 0.14em; color: var(--text-strong); }
+.ftr-logo .ftr-logo-sub { font-weight: 500; color: var(--text-faint); }
+.ftr-blurb { font: var(--fw-regular) 13px/1.65 var(--font-sans); color: var(--text-muted); }
+
+.ftr-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.ftr-col { display: flex; flex-direction: column; align-items: flex-start; gap: 11px; }
+.ftr-col-title { margin-bottom: 3px; color: var(--text-faint); }
+.ftr-link {
+  font: var(--fw-regular) 13px/1.2 var(--font-hero); color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--dur-2) var(--ease-out);
+}
+.ftr-link:hover { color: var(--text-strong); text-decoration: none; }
+
+.ftr-base {
+  max-width: var(--container-wide); margin: 0 auto;
+  padding: 20px 40px 40px;
+  border-top: 1px solid var(--line-1);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+}
+.ftr-base span { font: var(--fw-regular) 12px/1.4 var(--font-hero); color: var(--text-faint); }
+.ftr-base .ftr-tagline { color: var(--text-accent); }
+.ftr-base-links { display: inline-flex; gap: 20px; flex-wrap: wrap; }
+.ftr-base-links a {
+  font: var(--fw-regular) 12px/1.4 var(--font-hero); color: var(--text-faint);
+  text-decoration: none; transition: color var(--dur-2) var(--ease-out);
+}
+.ftr-base-links a:hover { color: var(--text-body); text-decoration: none; }
+
+/* ============================================================
+   RESPONSIVE (from ds.css + uwitz legal pages)
+   ============================================================ */
+@media (max-width: 900px) {
+  .legal-layout { grid-template-columns: 1fr; gap: 0; padding: 0 20px 64px !important; }
+  .legal-sidebar { display: none; }
+  .legal h2 { font-size: 18px !important; }
+}
+@media (max-width: 820px) {
+  uwitz-flicker-field { opacity: 0.45 !important; }
+}
+@media (max-width: 720px) {
+  .hdr-nav, .hdr-actions { display: none; }
+  .hdr-burger { display: flex; }
+  .hdr-mobile:not([hidden]) { display: block; }
+  .hdr-inner { padding: 0 16px; }
+  .ftr-inner { grid-template-columns: 1fr; gap: 36px; padding: 40px 22px 28px; }
+  .ftr-cols { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .ftr-base { padding: 18px 22px 36px; }
+}

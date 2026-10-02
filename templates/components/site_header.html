@@ -1,0 +1,35 @@
+{# Uwitz Cards site header — uwitz.org chrome (ds.css), cards routes. #}
+<header class="site-header">
+  <div class="hdr-inner">
+    <div style="display:flex;align-items:center;gap:22px;">
+      <a href="/" class="hdr-logo" aria-label="Uwitz Cards home">
+        <img src="/static/assets/NFCCard.png" alt="">
+        <span>UWITZ CARDS</span>
+      </a>
+      <nav class="hdr-nav" aria-label="Primary">
+        <a href="/" class="nav-item"><span>Home</span></a>
+        <a href="/#features" class="nav-item"><span>Features</span></a>
+        <a href="/#pricing" class="nav-item"><span>Pricing</span></a>
+      </nav>
+    </div>
+    <div class="hdr-actions">
+      <a href="/dashboard/login" class="hdr-signin">Sign in</a>
+      <a href="/register" class="hdr-cta">Get Started</a>
+    </div>
+    <button class="hdr-burger" id="js-burger" aria-label="Open menu"
+            aria-expanded="false" aria-controls="js-mobile-nav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="hdr-mobile" id="js-mobile-nav" hidden>
+    <nav aria-label="Primary (mobile)">
+      <a href="/" class="hdr-mobile-link">Home</a>
+      <a href="/#features" class="hdr-mobile-link">Features</a>
+      <a href="/#pricing" class="hdr-mobile-link">Pricing</a>
+    </nav>
+    <div class="hdr-mobile-actions">
+      <a href="/dashboard/login" class="hdr-signin">Sign in</a>
+      <a href="/register" class="hdr-cta">Get Started</a>
+    </div>
+  </div>
+</header>
